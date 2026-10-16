@@ -1,0 +1,1473 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>てラボ みんなの日本語</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+Thai:wght@400;600;700&family=Klee+One:wght@400;600&family=Mali:wght@400;600&family=M+PLUS+Rounded+1c:wght@400;700&family=Mitr:wght@400;500&family=Noto+Serif+JP:wght@400;700&family=Noto+Serif+Thai:wght@400;700&display=swap">
+<style>
+/* Layout: header + sticky 5-tab bar (home KPI / grammar / vocab / practice / hist), one column max 960px.
+   Skins via [data-skin] on <html>; no skin = follows system light/dark. Fonts via [data-font]. */
+:root{
+  --bg:#f7f6f2; --card:#ffffff; --ink:#24232a; --muted:#67646f; --line:#e2dfd7;
+  --accent:#2f4a7a; --on-accent:#ffffff; --soft:#ebeff6;
+  --ok:#23824f; --ok-soft:#e3f4ea; --ng:#cc3434; --ng-soft:#fbe5e5;
+  --g1:#d1453b; --g1-soft:#fbe6e3; --g1-ink:#a32c23;
+  --g2:#2f6fd0; --g2-soft:#e3edfb; --g2-ink:#1f50a0;
+  --g3:#d9a400; --g3-soft:#fbf1cf; --g3-ink:#7f5d00;
+  --jp:"Noto Sans JP","Hiragino Sans",sans-serif; --th:"Noto Sans Thai","Leelawadee UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-skin]){
+  --bg:#141418; --card:#1e1e24; --ink:#ecebf0; --muted:#a3a1ad; --line:#34333c;
+  --accent:#a3b8ec; --on-accent:#141418; --soft:#262a36;
+  --ok:#5fcf8f; --ok-soft:#1d3327; --ng:#f07a7a; --ng-soft:#3d2224;
+  --g1:#ef7d72; --g1-soft:#3d2422; --g1-ink:#f3a198; --g2:#79a8f0; --g2-soft:#1f2c42; --g2-ink:#a7c6f6;
+  --g3:#e8c04a; --g3-soft:#3a3220; --g3-ink:#f0d27a; color-scheme:dark}}
+:root[data-theme="dark"]:not([data-skin]),:root[data-skin="black"]{
+  --bg:#141418; --card:#1e1e24; --ink:#ecebf0; --muted:#a3a1ad; --line:#34333c;
+  --accent:#a3b8ec; --on-accent:#141418; --soft:#262a36;
+  --ok:#5fcf8f; --ok-soft:#1d3327; --ng:#f07a7a; --ng-soft:#3d2224;
+  --g1:#ef7d72; --g1-soft:#3d2422; --g1-ink:#f3a198; --g2:#79a8f0; --g2-soft:#1f2c42; --g2-ink:#a7c6f6;
+  --g3:#e8c04a; --g3-soft:#3a3220; --g3-ink:#f0d27a; color-scheme:dark}
+:root[data-skin="white"]{--bg:#ffffff; --card:#ffffff; --ink:#1f1f24; --muted:#64626c; --line:#e3e2e7; --accent:#2f4a7a; --on-accent:#fff; --soft:#f1f3f8}
+:root[data-skin="pink"]{--bg:#fdf2f6; --card:#ffffff; --ink:#3a2330; --muted:#86607a; --line:#f1d3df; --accent:#c2386e; --on-accent:#fff; --soft:#fbe3ec}
+:root[data-skin="blue"]{--bg:#eff5fc; --card:#ffffff; --ink:#1b2939; --muted:#5a6c84; --line:#d3e1f1; --accent:#1d68bd; --on-accent:#fff; --soft:#e0ecf9}
+:root[data-skin="gold"]{--bg:#faf5e6; --card:#fffdf6; --ink:#2d2513; --muted:#75684a; --line:#e8dcba; --accent:#8c6200; --on-accent:#fff; --soft:#f4e8c6}
+:root[data-skin="gray"]{--bg:#f0f0f2; --card:#ffffff; --ink:#212226; --muted:#62646b; --line:#d9d9de; --accent:#474a53; --on-accent:#fff; --soft:#e4e4e8}
+:root[data-font="hand"]{--jp:"Klee One","Noto Sans JP",serif; --th:"Mali","Noto Sans Thai",sans-serif}
+:root[data-font="round"]{--jp:"M PLUS Rounded 1c","Noto Sans JP",sans-serif; --th:"Mitr","Noto Sans Thai",sans-serif}
+:root[data-font="serif"]{--jp:"Noto Serif JP","Noto Sans JP",serif; --th:"Noto Serif Thai","Noto Sans Thai",serif}
+
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--th),var(--jp);font-size:16px;line-height:1.65;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.wrap{max-width:960px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.jp{font-family:var(--jp)}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0}
+.mut{color:var(--muted)}
+.sm{font-size:14px}
+
+header .wrap{padding-block:18px 14px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.brand{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px;font-weight:600;color:var(--muted)}
+.logo{background:var(--accent);color:var(--on-accent);border-radius:999px;padding:2px 12px;font-family:var(--jp)}
+header h1{font-family:var(--jp);font-size:38px;line-height:1.1;margin-top:8px}
+header .sub{font-weight:600;font-size:17px}
+
+.btn{white-space:nowrap;font:inherit;font-size:15px;font-weight:600;min-height:42px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover{border-color:var(--accent)}
+.btn.solid{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.danger{border-color:var(--ng);color:var(--ng)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.say{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--accent);cursor:pointer;display:inline-grid;place-items:center}
+.say svg{width:18px;height:18px}
+
+#settings{border-bottom:1px solid var(--line);background:var(--card)}
+#settings .wrap{padding-block:14px;display:grid;gap:14px}
+.opt{display:flex;flex-wrap:wrap;gap:8px}
+.sw{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.sw i{width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,0,0,.15);display:block}
+.sw[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);font-weight:600}
+.fo{min-height:56px;padding:6px 14px;border-radius:12px;text-align:left;display:grid;gap:0;line-height:1.3}
+.fo b{font-size:17px}.fo span{font-size:12px;color:var(--muted)}
+
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.tabs .wrap{padding-block:10px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.tab{flex:1 0 auto;font:inherit;font-weight:600;font-size:15px;min-height:42px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+main .wrap{padding-block:22px 120px}
+.panel{display:grid;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.card>h2{font-size:20px;display:flex;gap:10px;align-items:baseline}
+.card>h2 .n{font-family:var(--jp);color:var(--muted);font-size:15px}
+.stack{display:grid;gap:12px}
+.inner{background:var(--bg);border-radius:12px;padding:12px}
+
+.gb{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:3px 12px;font-size:14px;font-weight:600;white-space:nowrap}
+.gb i{width:10px;height:10px;border-radius:50%}
+.gb.g1{background:var(--g1-soft);color:var(--g1-ink)}.gb.g1 i{background:var(--g1)}
+.gb.g2{background:var(--g2-soft);color:var(--g2-ink)}.gb.g2 i{background:var(--g2)}
+.gb.g3{background:var(--g3-soft);color:var(--g3-ink)}.gb.g3 i{background:var(--g3)}
+.soft1{background:var(--g1-soft)}.soft2{background:var(--g2-soft)}.soft3{background:var(--g3-soft)}
+.ink1{color:var(--g1-ink)}.ink2{color:var(--g2-ink)}.ink3{color:var(--g3-ink)}
+
+.posters{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.poster{border-radius:16px;padding:14px;display:grid;gap:6px;text-decoration:none;color:var(--ink);min-height:120px;align-content:space-between}
+.poster .c{font-size:14px;font-weight:700}
+.poster .t{font-family:var(--jp);font-size:26px;font-weight:700;line-height:1.1}
+.poster .l{font-family:var(--jp);font-weight:600}
+.jumps{display:flex;flex-wrap:wrap;gap:8px}
+.jumps a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;font-weight:600;font-size:14px}
+section[id]{scroll-margin-top:80px}
+
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:9px 10px 9px 0;border-top:1px solid var(--line);vertical-align:top}
+thead th{border-top:0;font-size:13px;color:var(--muted);font-weight:600}
+.rules{display:grid;gap:8px;list-style:none;margin:0;padding:0}
+.rules li{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;border-radius:12px;padding:10px 12px}
+.big{font-size:22px;font-weight:700}
+.dash{border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
+.ex{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ex li{display:flex;gap:12px;align-items:flex-start;background:var(--bg);border-radius:12px;padding:10px 12px}
+.ex .j{font-family:var(--jp);font-size:18px;font-weight:700;white-space:pre-line;line-height:1.5}
+.pat{font-family:var(--jp);font-size:24px;font-weight:700}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+select{font:inherit;min-height:42px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0 10px;flex:1;min-width:0}
+.mix{border-radius:16px;padding:16px;display:grid;gap:8px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.between{justify-content:space-between}
+
+input[type=text],input[type=search]{font:inherit;min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:0 12px;min-width:0;flex:1 1 160px}
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.word{display:flex;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.word>div{min-width:0;display:grid;gap:2px}
+.word .j{font-family:var(--jp);font-size:20px;font-weight:700}
+.kb{font:inherit;font-size:13px;font-weight:600;min-height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.kb[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+/* practice */
+.recbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 63px);z-index:10;border-radius:14px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line)}
+.recbar.on{border-color:var(--ng);box-shadow:inset 0 0 0 1px var(--ng)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--ng);display:inline-block;margin-right:6px;animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.25}}
+.score{font-family:var(--jp);font-weight:700;font-size:18px;font-variant-numeric:tabular-nums}
+ol.qs{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.q{background:var(--bg);border:2px solid transparent;border-radius:14px;padding:12px;display:grid;gap:10px;transition:border-color .2s}
+.q.ok{border-color:var(--ok);background:var(--ok-soft)}
+.q.ng{border-color:var(--ng);background:var(--ng-soft)}
+.qh{display:flex;gap:10px;align-items:flex-start}
+.qh .num{font-weight:700;padding-top:8px;font-variant-numeric:tabular-nums;min-width:20px}
+.qh .j{font-family:var(--jp);font-size:24px;font-weight:700;line-height:1.3}
+.q input{font-family:var(--jp);font-size:18px;border-width:2px}
+.q.ok input{border-color:var(--ok)}
+.q.ng input{border-color:var(--ng)}
+.res{font-weight:600;min-height:1.6em}
+.res.ok{color:var(--ok)}.res.ng{color:var(--ng)}
+.ch{white-space:normal;width:100%;justify-content:flex-start;text-align:left;font-family:var(--jp);font-weight:600;border-width:2px;min-height:46px;height:auto;padding:8px 14px;border-radius:12px}
+.ch.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ink)}
+.ch.ng{border-color:var(--ng);background:var(--ng-soft);color:var(--ink)}
+.ch:disabled{opacity:1;cursor:default}
+.gpick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.gpick .ch{justify-content:center}
+.result{border:2px solid var(--ok);background:var(--ok-soft);border-radius:16px;padding:16px;display:grid;gap:10px}
+
+.picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pk,.lv button{font:inherit;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px 12px;cursor:pointer;display:grid;gap:2px;line-height:1.35}
+.pk b{font-size:18px}.pk span,.lv span{font-size:13px;color:var(--muted)}
+.pk em{font-style:normal;font-size:11px;font-weight:700;color:var(--accent);background:var(--soft);border-radius:999px;padding:0 6px}
+.pk[aria-pressed="true"],.lv button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.pk[aria-pressed="true"] span,.lv button[aria-pressed="true"] span,.pk[aria-pressed="true"] em{color:var(--on-accent);background:transparent}
+.pk:disabled,.lv button:disabled{cursor:not-allowed;opacity:.55}
+.lv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lv b{font-size:16px}
+.listen{flex:none}.listen svg{width:18px;height:18px}
+.slot{min-height:52px;border:2px dashed var(--line);border-radius:12px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--card)}
+.slot.ok{border-style:solid;border-color:var(--ok)}.slot.ng{border-style:solid;border-color:var(--ng)}
+.chip{font-family:var(--jp);font-size:17px;font-weight:600;min-height:42px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.chip.on{background:var(--soft);border-color:var(--accent)}
+.chip:disabled{cursor:default}
+.ch.th{font-family:var(--th)}
+.lnav{margin-top:10px;gap:6px}.lnav .btn{min-height:38px}
+#lessons{border-bottom:1px solid var(--line);background:var(--card)}
+#lessons .wrap{padding-block:14px;display:grid;gap:10px}
+.lgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.lb{font:inherit;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:8px 10px;cursor:pointer;display:grid;gap:1px;line-height:1.3;min-width:0}
+.lb b{font-family:var(--jp);font-size:18px}.lb span{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb em{font-style:normal;font-size:11px;font-weight:700;color:var(--ok)}
+.lb[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}.lb[aria-pressed="true"] span,.lb[aria-pressed="true"] em{color:var(--on-accent)}
+.lrow{font:inherit;color:var(--ink);text-align:left;background:var(--bg);border:0;border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:6px 10px;cursor:pointer;align-items:center}
+.lrow .meter{grid-column:1/-1}.lrow b{font-variant-numeric:tabular-nums}
+.legend>summary{cursor:pointer;list-style:none;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.legend>summary::-webkit-details-marker{display:none}
+.lgd{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+.lgd>div{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border-radius:10px;padding:8px 10px;min-width:0}
+.sym{display:inline-flex;align-items:center;justify-content:center;min-width:38px;padding:2px 8px;border-radius:8px;background:var(--soft);color:var(--accent);font-weight:700;font-size:14px;font-family:var(--jp);white-space:nowrap;border:1px solid var(--line)}
+.symline{font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}.sp{display:inline-flex;gap:6px;align-items:center}
+.srow{display:flex;gap:10px;align-items:center}.srow p{min-width:0;flex:1}
+.steps{display:grid;gap:8px;background:var(--bg);border-radius:12px;padding:12px}
+.step{display:grid;gap:4px;padding-top:8px;border-top:1px dashed var(--line)}.step:first-of-type{border-top:0;padding-top:0}
+.chain{font-size:19px;font-weight:700}
+.means{margin:0;padding-left:20px;display:grid;gap:10px}.means li{display:grid;gap:2px}
+.warn2{border-color:var(--ng)}.warn2 b{color:var(--ng)}
+.gbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.gsec{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);scroll-margin-top:80px}
+.ghead{width:100%;display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--accent);color:var(--on-accent);border:0;font:inherit;font-size:19px;font-weight:700;text-align:left;cursor:pointer;line-height:1.35}
+.ghead .gtitle{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;min-width:0}
+.ghead .n{color:var(--on-accent);opacity:.75;font-family:var(--jp);font-size:15px;border:1px solid currentColor;border-radius:999px;padding:0 8px}
+.ghead .chev{margin-left:auto;flex:none;font-size:16px;transition:transform .2s}
+.gsec.closed .chev{transform:rotate(-90deg)}
+.gsec.closed{border-color:var(--accent)}
+.ghead:focus-visible{outline:2px solid var(--ink);outline-offset:-4px}
+.gbody{padding:16px;display:grid;gap:12px}
+.gfoot{justify-self:end;font:inherit;font-size:14px;font-weight:600;color:var(--accent);background:var(--soft);border:1px solid var(--line);border-radius:999px;min-height:38px;padding:0 14px;cursor:pointer}
+/* home */
+.hero{display:grid;gap:12px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:4px;align-content:start}
+.kpi .l{font-size:13px;color:var(--muted);font-weight:600;letter-spacing:.02em}
+.kpi .v{font-size:30px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:15px;color:var(--muted);font-weight:600}
+.kpi .d{font-size:13px;font-weight:600}
+.up{color:var(--ok)}.down{color:var(--ng)}
+.meter{height:8px;border-radius:999px;background:var(--soft);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.chartbox{position:relative}
+.chartbox svg{display:block;width:100%;height:220px}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:13px;padding:6px 10px;border-radius:8px;white-space:nowrap;transform:translate(-50%,-110%)}
+.dr{display:grid;gap:6px}
+.dr .row{justify-content:space-between}
+.miss{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.miss li{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--bg);border-radius:12px;padding:10px 12px}
+.empty{border:1px dashed var(--line);border-radius:16px;padding:22px;display:grid;gap:10px;justify-items:start;background:var(--card)}
+
+/* hist */
+details.ses{background:var(--card);border:1px solid var(--line);border-radius:14px}
+details.ses>summary{list-style:none;cursor:pointer;padding:14px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between}
+details.ses>summary::-webkit-details-marker{display:none}
+details.ses[open]>summary{border-bottom:1px solid var(--line)}
+.ses .body{padding:6px 14px 14px;display:grid;gap:14px}
+.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.ng{background:var(--ng-soft);color:var(--ng)}
+.pill.mid{background:var(--soft);color:var(--accent)}
+td.jp{font-size:16px}
+
+#top{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:40;width:52px;height:52px;border-radius:50%;border:0;background:var(--accent);color:var(--on-accent);box-shadow:0 6px 18px rgba(0,0,0,.18);cursor:pointer;display:grid;place-items:center;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .2s,transform .2s}
+#top.show{opacity:1;transform:none;pointer-events:auto}
+#top svg{width:22px;height:22px}
+footer{margin-top:28px;font-size:14px;color:var(--muted)}
+
+@media (max-width:720px){
+  .lgrid{grid-template-columns:repeat(3,1fr)}
+  .picker{grid-template-columns:repeat(2,1fr)}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .vgrid{grid-template-columns:1fr 1fr}
+  .grid3{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .lgd{grid-template-columns:1fr}
+  .lv{grid-template-columns:1fr}
+  .posters{grid-template-columns:1fr}
+  .poster{min-height:0}
+  .vgrid,.grid2{grid-template-columns:1fr}
+  .gpick{grid-template-columns:1fr}
+  header h1{font-size:32px}
+  .kpi .v{font-size:26px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+
+<header>
+ <div class="wrap">
+  <div>
+   <p class="brand"><span class="logo">てラボ</span>みんなの日本語 · 初級</p>
+   <h1 id="lh">第14課</h1>
+   <p class="sub" id="lsub">รูป て ให้จำด้วย 3 สี</p>
+   <p class="mut sm" id="ldesc"></p>
+   <div class="row lnav">
+    <button class="btn" id="lprev" data-act="lstep" data-v="-1" aria-label="บทก่อนหน้า">‹</button>
+    <button class="btn solid" id="lsel" data-act="lpick" aria-expanded="false" aria-controls="lessons">เลือกบท 1–25 ▾</button>
+    <button class="btn" id="lnext" data-act="lstep" data-v="1" aria-label="บทถัดไป">›</button>
+   </div>
+  </div>
+  <button class="btn" id="setBtn" data-act="settings" aria-expanded="false" aria-controls="settings">
+   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+   ธีม · ฟอนต์
+  </button>
+ </div>
+</header>
+
+<div id="lessons" hidden>
+ <div class="wrap"><p class="sm" style="font-weight:700">เลือกบทเรียน</p><div class="lgrid" id="lgrid"></div></div>
+</div>
+
+<div id="settings" hidden>
+ <div class="wrap">
+  <div class="stack">
+   <p class="sm" style="font-weight:700">ธีมสี</p>
+   <div class="opt" id="skins"></div>
+  </div>
+  <div class="stack">
+   <p class="sm" style="font-weight:700">ฟอนต์</p>
+   <div class="opt" id="fonts"></div>
+  </div>
+ </div>
+</div>
+
+<nav class="tabs" aria-label="ส่วนของบทเรียน">
+ <div class="wrap" role="tablist">
+  <button class="tab" role="tab" data-act="tab" data-v="home">หน้าแรก</button>
+  <button class="tab" role="tab" data-act="tab" data-v="grammar">ไวยากรณ์</button>
+  <button class="tab" role="tab" data-act="tab" data-v="vocab">คำศัพท์</button>
+  <button class="tab" role="tab" data-act="tab" data-v="practice">แบบฝึก</button>
+  <button class="tab" role="tab" data-act="tab" data-v="hist">ประวัติ</button>
+ </div>
+</nav>
+
+<main>
+ <div class="wrap">
+  <div class="panel" id="p-home"></div>
+  <div class="panel" id="p-grammar" hidden></div>
+  <div class="panel" id="p-vocab" hidden></div>
+  <div class="panel" id="p-practice" hidden></div>
+  <div class="panel" id="p-hist" hidden></div>
+  <footer>てラボ · みんなの日本語 初級 บทที่ 1–25 · ผลการฝึกเก็บไว้ในเบราว์เซอร์เครื่องนี้</footer>
+ </div>
+</main>
+
+<button id="top" data-act="top" aria-label="กลับขึ้นด้านบน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+
+<script>
+/* ---------- data ---------- */
+const GROUP={I:{name:"กลุ่ม I",color:"แดง",k:"1"},II:{name:"กลุ่ม II",color:"น้ำเงิน",k:"2"},III:{name:"กลุ่ม III",color:"เหลือง",k:"3"}};
+const VERBS=[
+["つけます","つけて","เปิด (ไฟ แอร์)","II"],["けします","けして","ปิด (ไฟ แอร์)","I"],["あけます","あけて","เปิด (ประตู หน้าต่าง)","II"],
+["しめます","しめて","ปิด (ประตู หน้าต่าง)","II"],["いそぎます","いそいで","รีบ","I"],["まちます","まって","รอ","I"],["もちます","もって","ถือ","I"],
+["とります","とって","หยิบ ส่งให้","I"],["てつだいます","てつだって","ช่วย (งาน)","I"],["よびます","よんで","เรียก","I"],["はなします","はなして","พูด คุย","I"],
+["つかいます","つかって","ใช้","I"],["とめます","とめて","จอด หยุด","II"],["みせます","みせて","ให้ดู","II"],["おしえます","おしえて","บอก (ที่อยู่)","II"],
+["すわります","すわって","นั่ง","I"],["たちます","たって","ยืน","I"],["はいります","はいって","เข้า (ร้าน)","I"],["でます","でて","ออก (จากร้าน)","II"],
+["ふります","ふって","(ฝน) ตก","I"],["まがります","まがって","เลี้ยว","I"],["コピーします","コピーして","ถ่ายเอกสาร","III"],
+["いきます","いって","ไป","I",1],["きます","きて","มา","III",1],["よみます","よんで","อ่าน","I",1],["かきます","かいて","เขียน","I",1],["みます","みて","ดู","II",1]
+].map(([masu,te,th,group,review])=>({masu,te,th,group,review:!!review}));
+const NOUNS=[["でんき","ไฟฟ้า ไฟ"],["エアコン","แอร์"],["パスポート","หนังสือเดินทาง"],["なまえ","ชื่อ"],["じゅうしょ","ที่อยู่"],["ちず","แผนที่"],["しお","เกลือ"],["さとう","น้ำตาล"],["もんだい","ปัญหา โจทย์"],["こたえ","คำตอบ"],["よみかた","วิธีอ่าน"],["〜かた","วิธี…"],["しんごう","สัญญาณไฟจราจร"],["みぎ","ขวา"],["ひだり","ซ้าย"],["おつり","เงินทอน"]];
+const PHRASES=[["まっすぐ","ตรงไป"],["ゆっくり","ช้า ๆ"],["すぐ","ทันที"],["また","อีกครั้ง"],["あとで","ทีหลัง"],["もう すこし","อีกนิด"],["もう 〜","อีก… เช่น もう いちど"],["これで おねがいします","ใช้อันนี้นะครับ (ตอนจ่ายเงิน)"],["いいえ、けっこうです","ไม่เป็นไร ขอบคุณ"]];
+const I_RULES=[["い・ち・り","って","まちます → まって"],["み・び・に","んで","よみます → よんで"],["き","いて","かきます → かいて"],["ぎ","いで","いそぎます → いそいで"],["し","して","はなします → はなして"]];
+const II_TRAPS=[["みます","みて","ดู"],["います","いて","อยู่"],["おきます","おきて","ตื่นนอน"],["かります","かりて","ยืม"],["あびます","あびて","อาบ"],["できます","できて","ทำได้"]];
+const KUDASAI=[["ちょっと まって ください。","รอสักครู่นะครับ"],["すみませんが、まどを あけて ください。","ขอโทษนะครับ ช่วยเปิดหน้าต่างให้หน่อย"],["ここに なまえと じゅうしょを かいて ください。","กรุณาเขียนชื่อและที่อยู่ตรงนี้"]];
+const IMASU=[["いま あめが ふって います。","ตอนนี้ฝนกำลังตก"],["たなかさんは でんわを かけて います。","คุณทานากะกำลังโทรศัพท์อยู่"],["A：いま なにを して いますか。\nB：てがみを かいて います。","A: ตอนนี้ทำอะไรอยู่ / B: กำลังเขียนจดหมาย"]];
+const MASHOU=[["A：にもつを もちましょうか。\nB：ありがとう ございます。おねがいします。","A: ให้ช่วยถือกระเป๋าไหม / B: ขอบคุณ รบกวนด้วยนะ"],["A：エアコンを つけましょうか。\nB：いいえ、けっこうです。","A: เปิดแอร์ให้ไหม / B: ไม่เป็นไร ขอบคุณ"]];
+const MISTAKES=[["いきますてください","いって ください","ต้องผันเป็นรูป て ก่อนเสมอ ห้ามเอา ます ไปต่อ て"],["かきて","かいて","กลุ่มแดงเปลี่ยนเสียง き เป็น いて ไม่ใช่แค่ตัด ます"],["みって","みて","みます เป็นกลุ่มน้ำเงิน ทั้งที่เสียงหน้า ます ดูเหมือนแดง"],["よびて","よんで","เสียง び อยู่ในชุด み・び・に เปลี่ยนเป็น んで"]];
+const SITU=[
+{th:"รอตรงนี้สักครู่นะครับ",prompt:"ここで ちょっと（　）。",a:"まって ください",d:["まちます ください","まちましょうか","まちて ください"]},
+{th:"ตอนนี้ฝนกำลังตก",prompt:"いま あめが（　）。",a:"ふって います",d:["ふって ください","ふりましょうか","ふりって います"]},
+{th:"เห็นเพื่อนถือของหนัก ให้ช่วยถือไหม",prompt:"にもつを（　）。",a:"もちましょうか",d:["もって います","もって ください","もってましょうか"]},
+{th:"ช่วยพูดช้า ๆ หน่อยครับ",prompt:"すみませんが、ゆっくり（　）。",a:"はなして ください",d:["はなしって ください","はなします ください","はなして います"]},
+{th:"คุณมิลเลอร์กำลังทำอะไรอยู่",prompt:"ミラーさんは いま なにを（　）か。",a:"して います",d:["して ください","しましょう","しって います"]},
+{th:"บนแท็กซี่ ช่วยเลี้ยวขวาที่ไฟแดงครับ",prompt:"しんごうを みぎへ（　）。",a:"まがって ください",d:["まがって います","まがりましょうか","まがいて ください"]},
+{th:"ห้องร้อน เปิดแอร์ให้ไหม",prompt:"あついですね。エアコンを（　）。",a:"つけましょうか",d:["つけって ください","つけて います","つけてましょうか"]},
+{th:"ช่วยเขียนที่อยู่ตรงนี้ด้วยค่ะ",prompt:"ここに じゅうしょを（　）。",a:"かいて ください",d:["かきて ください","かいて います","かきって ください"]},
+{th:"ตอนนี้คุณทานากะกำลังคุยโทรศัพท์",prompt:"たなかさんは いま でんわで（　）。",a:"はなして います",d:["はなして ください","はなしましょうか","はなって います"]},
+{th:"ไม่มีเวลาแล้ว รีบหน่อย",prompt:"じかんが ありません。（　）。",a:"いそいで ください",d:["いそぎて ください","いそいて ください","いそいで います"]},
+{th:"ให้ช่วยเรียกแท็กซี่ไหม",prompt:"タクシーを（　）。",a:"よびましょうか",d:["よんで います","よびて ください","よんましょうか"]},
+{th:"ขอโทษ ช่วยปิดไฟด้วยครับ",prompt:"すみませんが、でんきを（　）。",a:"けして ください",d:["けしって ください","けして います","けいて ください"]},
+{th:"ตรงไปเลยครับ",prompt:"まっすぐ（　）。",a:"いって ください",d:["いきて ください","いいて ください","いって います"]},
+{th:"เชิญเข้ามาเลยครับ",prompt:"どうぞ（　）。",a:"はいって ください",d:["はいて ください","はいりて ください","はいって います"]}];
+const EXTRA=[["のみます","のんで","ดื่ม","I"],["かいます","かって","ซื้อ","I"],["ききます","きいて","ฟัง","I"],["およぎます","およいで","ว่ายน้ำ","I"],["あそびます","あそんで","เล่น","I"],["かえります","かえって","กลับ","I"],["しにます","しんで","ตาย","I"],["います","いて","อยู่ (คน สัตว์)","II"],["おきます","おきて","ตื่นนอน","II"],["かります","かりて","ยืม","II"],["あびます","あびて","อาบ (น้ำ)","II"],["できます","できて","ทำได้","II"],["ねます","ねて","นอน","II"],["たべます","たべて","กิน","II"]].map(([masu,te,th,group])=>({masu,te,th,group,extra:true}));
+const TRAPS=new Set(["いきます","みます","います","おきます","かります","あびます","できます","きます","かえります","はいります","しにます"]);
+const ORDER={
+easy:[[["まどを","あけて","ください"],"ช่วยเปิดหน้าต่างหน่อย"],[["ちょっと","まって","ください"],"รอสักครู่นะ"],[["あめが","ふって","います"],"ฝนกำลังตก"],[["でんきを","けして","ください"],"ช่วยปิดไฟหน่อย"],[["ゆっくり","はなして","ください"],"ช่วยพูดช้า ๆ หน่อย"],[["ここに","すわって","ください"],"เชิญนั่งตรงนี้"],[["しおを","とって","ください"],"ช่วยส่งเกลือให้หน่อย"]],
+mid:[[["ここに","なまえを","かいて","ください"],"ช่วยเขียนชื่อตรงนี้"],[["たなかさんは","でんわを","かけて","います"],"คุณทานากะกำลังโทรศัพท์"],[["しんごうを","みぎへ","まがって","ください"],"เลี้ยวขวาที่ไฟแดง"],[["すみませんが、","しおを","とって","ください"],"ขอโทษนะ ช่วยส่งเกลือหน่อย"],[["ミラーさんは","てがみを","かいて","います"],"คุณมิลเลอร์กำลังเขียนจดหมาย"],[["もう すこし","ゆっくり","はなして","ください"],"ช่วยพูดช้าลงอีกนิด"],[["さむいですね。","まどを","しめましょうか"],"หนาวนะ ปิดหน้าต่างให้ไหม"],[["ちょっと","パスポートを","みせて","ください"],"ขอดูหนังสือเดินทางหน่อย"]],
+hard:[[["すみませんが、","この","もんだいの","こたえを","おしえて","ください"],"ขอโทษนะ ช่วยบอกคำตอบของโจทย์นี้หน่อย","おしえって"],[["つぎの","しんごうを","ひだりへ","まがって","ください"],"เลี้ยวซ้ายที่ไฟแดงถัดไป","まがいて"],[["すみませんが、","パスポートを","みせて","ください"],"ขอโทษนะ ขอดูหนังสือเดินทางหน่อย","みせって"],[["ミラーさんは","いま","かいぎしつで","コピーして","います"],"ตอนนี้คุณมิลเลอร์กำลังถ่ายเอกสารที่ห้องประชุม","コピーしって"],[["あついですね。","エアコンを","つけましょうか"],"ร้อนนะ เปิดแอร์ให้ไหม","つけてましょうか"],[["すみませんが、","もう いちど","ゆっくり","はなして","ください"],"ขอโทษนะ ช่วยพูดอีกครั้งช้า ๆ","はなしって"],[["いま","あめが","ふって","います。","かさを","もって","いきましょう"],"ฝนกำลังตก เอาร่มไปด้วยกันเถอะ","ふりて"],[["タクシーを","よびましょうか。","いいえ、","けっこうです"],"ให้เรียกแท็กซี่ไหม ไม่เป็นไรครับ","よんで"]]};
+const I_TO={い:"って",ち:"って",り:"って",み:"んで",び:"んで",に:"んで",き:"いて",ぎ:"いで",し:"して"};
+const TRAP=new Set(Object.keys(I_TO));
+const DRILL={A:"ผันรูป て",B:"เติมให้เข้าสถานการณ์",C:"จัดสีให้ถูกกลุ่ม",D:"เลือกรูป て ที่ถูก",E:"แปลงตามความหมาย",F:"ฟังแล้วตอบ",G:"เรียงประโยค",H:"ความหมายคำศัพท์"};
+const DRILL_DESC={A:"พิมพ์รูป て ของคำกริยาเอง",B:"เลือกรูปที่ตรงกับสถานการณ์ภาษาไทย",C:"บอกว่าคำกริยาอยู่กลุ่มสีไหน ตอบได้ครั้งเดียว",D:"มีรูปที่ผันผิดปนอยู่ เลือกอันที่ถูก",E:"พิมพ์ทั้งวลี เช่น まって ください ให้ตรงความหมาย",F:"ฟังเสียงอย่างเดียว ไม่เห็นตัวหนังสือจนกว่าจะตอบ",G:"แตะคำเรียงให้เป็นประโยคที่ถูก",H:"จับคู่คำญี่ปุ่นกับความหมายไทย"};
+const NEWD=new Set(["D","E","F","G","H"]);
+const LEVELS={easy:{label:"ง่าย",n:6,opts:2,desc:"6 ข้อ · 2 ตัวเลือก · มีใบ้"},mid:{label:"ปานกลาง",n:8,opts:3,desc:"8 ข้อ · 3 ตัวเลือก · ใบ้เมื่อกด"},hard:{label:"ยาก",n:10,opts:4,desc:"10 ข้อ · 4 ตัวเลือก · คำกับดัก ไม่มีใบ้"}};
+const SKINS=[["white","ขาว","#ffffff","#2f4a7a"],["black","ดำ","#141418","#a3b8ec"],["pink","ชมพู","#fdf2f6","#c2386e"],["blue","ฟ้า","#eff5fc","#1d68bd"],["gold","ทอง","#faf5e6","#8c6200"],["gray","เทา","#f0f0f2","#474a53"]];
+const FONTS=[["std","มาตรฐาน","Noto Sans","\"Noto Sans JP\",\"Noto Sans Thai\""],["hand","ลายมือ","Klee One · Mali","\"Klee One\",\"Mali\""],["round","ตัวกลม","M PLUS Rounded · Mitr","\"M PLUS Rounded 1c\",\"Mitr\""],["serif","มีเชิง","Noto Serif","\"Noto Serif JP\",\"Noto Serif Thai\""]];
+
+function explain(v){
+  if(v.masu==="いきます")return{formula:"いきます → いって",detail:"ข้อยกเว้นเดียวของกลุ่มแดง ปกติเสียง き เป็น いて แต่ いきます จำเป็น いって"};
+  if(v.group==="III"){const s=v.masu.endsWith("します");return{formula:s?"します → して":"きます → きて",detail:s?"กลุ่มเหลือง คำที่ลงท้าย します เปลี่ยนเป็น して รวมคำนาม + します":"กลุ่มเหลือง きます จำเป็น きて"}}
+  const stem=v.masu.slice(0,-2),last=stem.slice(-1);
+  if(v.group==="II")return{formula:`${stem} + て`,detail:TRAP.has(last)?"เสียงหน้า ます ดูเหมือนกลุ่มแดง แต่คำนี้เป็นกลุ่มน้ำเงิน ตัด ます แล้วเติม て":"กลุ่มน้ำเงิน ตัด ます แล้วเติม て ไม่เปลี่ยนเสียงท้าย"};
+  const to=I_TO[last];return{formula:to?`${stem.slice(0,-1)} + ${to}`:v.te,detail:to?`เสียง ${last} เป็นกลุ่มแดง เปลี่ยนท้ายเป็น ${to}`:"จำรูป て ของคำนี้ทั้งคำ"};
+}
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const store={get(k,d){try{const v=localStorage.getItem("telab14."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("telab14."+k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm=s=>String(s).trim().replace(/[\s　]/g,"");
+const shuffle=l=>{const a=[...l];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const filled=q=>q.prompt.replace("（　）",q.choices[q.answer]);
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const fmtDur=ms=>{const s=Math.max(0,Math.round(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),r=s%60;return h?`${h} ชม. ${m} นาที`:`${m}:${String(r).padStart(2,"0")}`};
+const fmtDate=t=>new Date(t).toLocaleString("th-TH",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+const SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>';
+const say=(t,l)=>`<button class="say" data-say="${esc(t)}" aria-label="${esc(l||"ฟัง "+t.replace(/\n/g," "))}">${SPK}</button>`;
+const gb=g=>`<span class="gb g${GROUP[g].k}"><i></i>${GROUP[g].color} · ${GROUP[g].name}</span>`;
+const legend=()=>`<div class="row">${["I","II","III"].map(gb).join("")}</div>`;
+function speak(t){try{if(!("speechSynthesis" in window))return;const u=new SpeechSynthesisUtterance(t.replace(/[A-BＡＢ]：/g,"").replace(/\n/g," "));u.lang="ja-JP";u.rate=.92;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+
+/* ---------- state ---------- */
+let tab=store.get("tab","home");
+let known=new Set(store.get("known",[]));
+let hist=store.get("hist",[]);
+let vq="",vkind="all",vmem="all",histWrong=false,confirmClear=false,mixIdx=VERBS.findIndex(v=>v.masu==="かきます");
+let rec=null,lastResult=null,recTimer=null;
+const cur={drill:store.get("pdrill","A"),level:store.get("plevel","mid"),qs:[]};
+if(!DRILL[cur.drill])cur.drill="A";if(!LEVELS[cur.level])cur.level="mid";
+
+/* ---------- appearance ---------- */
+function applySkin(s){const r=document.documentElement;if(s&&s!=="auto")r.setAttribute("data-skin",s);else r.removeAttribute("data-skin");store.set("skin",s||"auto");renderSettings();if(tab==="home")drawChart()}
+function applyFont(f){document.documentElement.setAttribute("data-font",f);store.set("font",f);renderSettings()}
+function renderSettings(){
+  const cur=store.get("skin","auto"),cf=store.get("font","std");
+  $("#skins").innerHTML=`<button class="sw" data-act="skin" data-v="auto" aria-pressed="${cur==="auto"}"><i style="background:linear-gradient(135deg,#fff 50%,#141418 50%)"></i>ตามระบบ</button>`+
+    SKINS.map(([k,l,bg,ac])=>`<button class="sw" data-act="skin" data-v="${k}" aria-pressed="${cur===k}"><i style="background:linear-gradient(135deg,${bg} 50%,${ac} 50%)"></i>${l}</button>`).join("");
+  $("#fonts").innerHTML=FONTS.map(([k,l,d,fam])=>`<button class="sw fo" data-act="font" data-v="${k}" aria-pressed="${cf===k}"><b style="font-family:${fam.replace(/"/g,"'")}">て形 ${l}</b><span>${d}</span></button>`).join("");
+}
+applySkin(store.get("skin","auto"));applyFont(store.get("font","std"));
+
+/* ---------- tabs ---------- */
+function setTab(t,noScroll){
+  tab=t;store.set("tab",t);
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===t));
+  ["home","grammar","vocab","practice","hist"].forEach(k=>$("#p-"+k).hidden=k!==t);
+  if(t==="home")renderHome();if(t==="grammar")renderGrammar();if(t==="hist")renderHistory();if(t==="vocab")renderVocab();if(t==="practice")renderPractice();
+  if(!noScroll)window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+}
+
+/* ---------- KPI / home ---------- */
+const sesScore=s=>{const ok=s.items.filter(i=>i.firstOk).length;return{ok,total:s.items.length,p:pct(ok,s.items.length)}};
+function streak(){
+  const days=new Set(hist.map(s=>new Date(s.end).toDateString()));
+  let d=new Date(),n=0;if(!days.has(d.toDateString()))d.setDate(d.getDate()-1);
+  while(days.has(d.toDateString())){n++;d.setDate(d.getDate()-1)}return n;
+}
+function drawChart(){
+  const box=$("#chart");if(!box)return;
+  const data=hist.slice(-12),w=box.clientWidth||600,h=220,pl=34,pr=8,pt=18,pb=26,pw=w-pl-pr,ph=h-pt-pb;
+  const cs=getComputedStyle(document.documentElement),col=k=>cs.getPropertyValue(k).trim();
+  const step=pw/data.length,bw=Math.min(40,step*.6),y=v=>pt+ph-v/100*ph;
+  let s=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="กราฟคะแนนแต่ละครั้ง">`;
+  [0,50,100].forEach(v=>{s+=`<line x1="${pl}" x2="${w-pr}" y1="${y(v)}" y2="${y(v)}" stroke="${col("--line")}" stroke-width="1"/><text x="${pl-6}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="${col("--muted")}">${v}</text>`});
+  data.forEach((ses,i)=>{const sc=sesScore(ses),x=pl+step*i+(step-bw)/2,top=y(sc.p),bh=Math.max(0,y(0)-top),last=i===data.length-1;
+    const fill=last?col("--accent"):col("--accent")+"88";
+    if(bh>0){s+=`<rect x="${x}" y="${top}" width="${bw}" height="${bh}" rx="4" fill="${fill}"/>`;if(bh>4)s+=`<rect x="${x}" y="${y(0)-4}" width="${bw}" height="4" fill="${fill}"/>`}
+    s+=`<text x="${x+bw/2}" y="${h-8}" text-anchor="middle" font-size="11" fill="${col("--muted")}">#${ses.n}</text>`;
+    if(last)s+=`<text x="${x+bw/2}" y="${top-5}" text-anchor="middle" font-size="12" font-weight="700" fill="${col("--ink")}">${sc.p}%</text>`;
+    s+=`<rect class="hit" data-i="${i}" x="${pl+step*i}" y="${pt}" width="${step}" height="${ph}" fill="transparent" tabindex="0"/>`;
+  });
+  box.innerHTML=s+"</svg><div class=\"tip\" hidden></div>";
+  const tip=box.querySelector(".tip");
+  const show=el=>{const i=+el.dataset.i,ses=data[i],sc=sesScore(ses);tip.textContent=`ครั้งที่ ${ses.n} · บท ${sesL(ses)} · ${sc.p}% · ถูก ${sc.ok}/${sc.total} · ${fmtDate(ses.end)}`;tip.hidden=false;
+    const cx=(pl+step*i+step/2)/w*box.clientWidth;tip.style.left=Math.min(Math.max(cx,tip.offsetWidth/2),box.clientWidth-tip.offsetWidth/2)+"px";tip.style.top=(y(sc.p)/h*220)+"px"};
+  box.querySelectorAll(".hit").forEach(el=>{el.addEventListener("pointerenter",()=>show(el));el.addEventListener("focus",()=>show(el));el.addEventListener("pointerleave",()=>tip.hidden=true);el.addEventListener("blur",()=>tip.hidden=true)});
+}
+let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{if(tab==="home")drawChart()},150)});
+
+/* ---------- grammar ---------- */
+const exList=items=>`<ul class="ex">${items.map(([j,t])=>`<li>${say(j)}<div style="min-width:0"><p class="j" lang="ja">${esc(j)}</p><p class="mut">${t}</p></div></li>`).join("")}</ul>`;
+function renderGrammar14(){
+  $("#p-grammar").innerHTML=`${legendCard()}
+  <div class="posters">
+   <a class="poster soft1" href="#group-i"><span class="c ink1">แดง</span><span class="t">กลุ่ม I</span><span class="l">い ち り → って</span></a>
+   <a class="poster soft2" href="#group-ii"><span class="c ink2">น้ำเงิน</span><span class="t">กลุ่ม II</span><span class="l">ตัด ます + て</span></a>
+   <a class="poster soft3" href="#group-iii"><span class="c ink3">เหลือง</span><span class="t">กลุ่ม III</span><span class="l">して · きて</span></a>
+  </div>
+  <nav class="jumps" aria-label="ข้ามในหน้าไวยากรณ์">
+   <a href="#mixer">ลองผัน</a><a href="#rules">สูตรสี</a><a href="#kudasai">てください</a><a href="#imasu">ています</a><a href="#mashou">ましょうか</a><a href="#traps">จุดพลาด</a>
+  </nav>
+  <section class="card stack" id="mixer">
+   <h2>ลองผันทีละคำ</h2>
+   <p class="mut">เลือกคำกริยา แล้วดูว่าตกสีไหน ก่อนเห็นรูป て</p>
+   <div class="row">
+    <button class="btn" data-act="mix" data-v="-1" aria-label="คำก่อนหน้า">‹ ก่อน</button>
+    <select id="mixSel" aria-label="เลือกคำกริยา">
+     <optgroup label="คำบทนี้">${VERBS.map((v,i)=>v.review?"":`<option value="${i}">${v.masu} · ${v.th}</option>`).join("")}</optgroup>
+     <optgroup label="คำเก่า ที่ต้องผันเป็นรูป て">${VERBS.map((v,i)=>v.review?`<option value="${i}">${v.masu} · ${v.th}</option>`:"").join("")}</optgroup>
+    </select>
+    <button class="btn" data-act="mix" data-v="1" aria-label="คำถัดไป">ถัดไป ›</button>
+   </div>
+   <div id="mixOut"></div>
+  </section>
+  <section class="card stack" id="rules">
+   <h2><span class="n">1</span>ดูกลุ่มก่อน แล้วค่อยผัน</h2>
+   <p>ดูเสียงพยางค์สุดท้ายก่อน ます เสียงแถว い ส่วนใหญ่เป็นแดง เสียงแถว え เป็นน้ำเงิน และมีคำน้ำเงินที่แอบหน้าตาเหมือนแดง</p>
+   <div class="tbl"><table><thead><tr><th>กลุ่ม</th><th>วิธีดู</th><th>ตัวอย่าง</th></tr></thead><tbody>
+    <tr><td>${gb("I")}</td><td>หน้า ます เป็นแถว い</td><td class="jp">かきます · のみます · まちます</td></tr>
+    <tr><td>${gb("II")}</td><td>หน้า ます เป็นแถว え หรือเป็นคำยกเว้น</td><td class="jp">たべます · あけます · みます</td></tr>
+    <tr><td>${gb("III")}</td><td>します กับ きます และคำนาม + します</td><td class="jp">します · きます · コピーします</td></tr>
+   </tbody></table></div>
+  </section>
+  <section class="card stack" id="group-i">
+   <h2><span class="n">2</span>แดง · กลุ่ม I เปลี่ยนเสียงท้าย</h2>
+   <ul class="rules">${I_RULES.map(([f,t,e])=>`<li class="soft1"><span class="jp big">${f}</span><span class="ink1" aria-hidden="true">→</span><span class="jp big ink1">${t}</span><span class="jp mut">${e}</span></li>`).join("")}</ul>
+   <p class="dash" style="border-color:var(--g1)"><b class="ink1">ข้อยกเว้นเดียว </b><b class="jp">いきます → いって</b> ไม่ใช่ いいて จำคำนี้คำเดียวพอ</p>
+  </section>
+  <section class="card stack" id="group-ii">
+   <h2><span class="n">2</span>น้ำเงิน · กลุ่ม II ตัด ます เติม て</h2>
+   <p class="pat">たべます → たべて</p>
+   <p>ไม่ต้องเปลี่ยนเสียงท้าย ตัด ます แล้วเติม て ได้เลย เช่น あけます → あけて, みせます → みせて</p>
+   <div class="inner soft2 stack">
+    <p class="ink2" style="font-weight:700">กับดัก: หน้าตาเหมือนแดง แต่เป็นน้ำเงิน</p>
+    <p>6 คำนี้เสียงก่อน ます เป็นแถว い ห้ามใช้สูตรแดง</p>
+    <div class="grid2">${II_TRAPS.map(([m,t,th])=>`<div style="background:var(--card);border-radius:10px;padding:8px 12px"><p class="jp" style="font-weight:700;font-size:18px">${m} → ${t}</p><p class="mut sm">${th}</p></div>`).join("")}</div>
+   </div>
+  </section>
+  <section class="card stack" id="group-iii">
+   <h2><span class="n">2</span>เหลือง · กลุ่ม III จำสองแบบ</h2>
+   <div class="grid2">
+    <div class="inner soft3"><p class="pat">します → して</p><p class="ink3">รวมคำนาม + します เช่น コピーします → コピーして</p></div>
+    <div class="inner soft3"><p class="pat">きます → きて</p><p class="ink3">คำว่า 来ます คำเดียว อย่าปนกับ き → いて ของกลุ่มแดง</p></div>
+   </div>
+  </section>
+  <section class="card stack" id="kudasai">
+   <h2><span class="n">3</span>ขอให้ทำ</h2>
+   <p class="pat">Vて + ください</p>
+   <p>ขอร้องหรือบอกให้อีกฝ่ายทำอย่างสุภาพ อยากให้นุ่มขึ้น เติม すみませんが ข้างหน้า</p>
+   ${exList(KUDASAI)}
+   <p class="inner">บทที่ 7 <b class="jp">N を ください</b> = ขอของ · <b class="jp">Vて ください</b> = ขอให้ทำ</p>
+  </section>
+  <section class="card stack" id="imasu">
+   <h2><span class="n">4</span>กำลังทำอยู่</h2>
+   <p class="pat">Vて + います</p>
+   <p>การกระทำกำลังดำเนินอยู่ตอนนี้ คล้าย “กำลัง…อยู่” ในภาษาไทย</p>
+   ${exList(IMASU)}
+   <p class="inner">ปฏิเสธ <b class="jp">〜て いません</b> · อดีต <b class="jp">〜て いました</b> แปลว่าตอนนั้นกำลังทำอยู่</p>
+  </section>
+  <section class="card stack" id="mashou">
+   <h2><span class="n">5</span>เสนอว่าให้ฉันทำให้ไหม</h2>
+   <p class="pat">ตัด ます + ましょうか</p>
+   <p>ในหนังสือเขียนว่า Vます + ましょうか หมายถึงเอากริยารูป ます แล้วเปลี่ยน ます เป็น ましょうか</p>
+   <p class="jp" style="font-weight:700;font-size:19px">もちます → もちましょうか</p>
+   ${exList(MASHOU)}
+   <p class="dash">คนละอันกับ ましょう ของบทที่ 6 ที่ใช้ชวนทำด้วยกัน อันนี้คือเสนอตัวช่วย</p>
+  </section>
+  <section class="card stack" id="traps">
+   <h2><span class="n">!</span>จุดที่มักพลาด</h2>
+   <ul class="ex">${MISTAKES.map(([b,g,w])=>`<li style="display:grid;gap:4px"><p class="mut"><b>ผิด </b><span class="jp" style="text-decoration:line-through">${b}</span></p><p class="row"><b>ถูก</b><span class="jp" style="font-weight:700;font-size:18px">${g}</span>${say(g)}</p><p class="mut">${w}</p></li>`).join("")}</ul>
+  </section>`;
+  $("#mixSel").value=mixIdx;renderMix();
+}
+function renderMix(){
+  const v=VERBS[mixIdx],e=explain(v),k=GROUP[v.group].k;
+  $("#mixOut").innerHTML=`
+   <div class="mix soft${k}">
+    <div class="row">${gb(v.group)}<b class="sm">${v.th}</b>${v.review?'<span class="mut sm">คำเก่า</span>':""}</div>
+    <p class="jp" style="font-size:30px;font-weight:700">${v.masu}</p>
+    <p>${e.detail}</p>
+    <p class="mut sm" style="font-weight:600">สูตร</p>
+    <p class="jp ink${k}" style="font-size:20px;font-weight:700">${e.formula}</p>
+    <div class="row"><p class="jp" style="font-size:38px;font-weight:700">${v.te}</p>${say(v.te)}</div>
+   </div>
+   <div class="grid3" style="margin-top:4px">
+    <div class="inner"><p class="sm" style="font-weight:600">ขอให้ทำ</p><p class="jp" style="font-weight:700;font-size:18px">${v.te} ください</p></div>
+    <div class="inner"><p class="sm" style="font-weight:600">กำลังทำ</p><p class="jp" style="font-weight:700;font-size:18px">${v.te} います</p></div>
+    <div class="inner dash"><p class="sm" style="font-weight:600">ให้ฉันทำให้ไหม</p><p class="jp" style="font-weight:700;font-size:18px">${v.masu.replace(/ます$/,"ましょうか")}</p><p class="mut sm">อันนี้ใช้รูป ます ไม่ใช่รูป て</p></div>
+   </div>`;
+}
+
+/* ---------- vocab ---------- */
+function renderVocab14Old(){
+  const pool=VERBS.length+NOUNS.length+PHRASES.length,q=vq.trim().toLowerCase();
+  const hit=(j,t)=>!q||j.toLowerCase().includes(q)||t.toLowerCase().includes(q);
+  const mem=id=>vmem==="all"||(vmem==="known"?known.has(id):!known.has(id));
+  const kb=(id,l)=>`<button class="kb" data-act="known" data-v="${esc(id)}" aria-pressed="${known.has(id)}" aria-label="${known.has(id)?"เอา "+esc(l)+" ออกจากคำที่จำแล้ว":"จำ "+esc(l)+" แล้ว"}">${known.has(id)?"จำแล้ว ✓":"ยังไม่จำ"}</button>`;
+  const vcard=v=>`<article class="word">${say(v.masu)}<div><p class="j" lang="ja">${v.masu}</p><p class="jp ink${GROUP[v.group].k}" style="font-weight:700">→ ${v.te}</p><p class="mut">${v.th}</p><div class="row" style="margin-top:6px">${gb(v.group)}${kb("v:"+v.masu,v.masu)}</div></div></article>`;
+  const pcard=([j,t],k,pre)=>`<article class="word">${say(j)}<div><p class="j" lang="ja">${j}</p><p class="mut">${t}</p><div class="row" style="margin-top:6px"><span class="pill mid">${k}</span>${kb(pre+j,j)}</div></div></article>`;
+  const vs=VERBS.filter(v=>hit(v.masu+" "+v.te,v.th)&&mem("v:"+v.masu));
+  const ns=NOUNS.filter(([j,t])=>hit(j,t)&&mem("n:"+j)),ps=PHRASES.filter(([j,t])=>hit(j,t)&&mem("p:"+j));
+  const sv=vkind==="all"||vkind==="verb",sn=vkind==="all"||vkind==="noun",sp=vkind==="all"||vkind==="phrase";
+  const total=(sv?vs.length:0)+(sn?ns.length:0)+(sp?ps.length:0);
+  const fb=(act,cur,list)=>list.map(([k,l])=>`<button class="btn ${cur===k?"solid":""}" data-act="${act}" data-v="${k}" aria-pressed="${cur===k}">${l}</button>`).join("");
+  const body=`
+   ${total===0?`<div class="empty"><b>ไม่พบคำนี้</b><p class="mut">ลองคำสั้นลง หรือล้างช่องค้นหา</p><button class="btn" data-act="vclear">ล้างคำค้น</button></div>`:""}
+   ${sv&&vs.length?`<section class="stack"><h2 style="font-size:20px">คำกริยา</h2><div class="vgrid">${vs.filter(v=>!v.review).map(vcard).join("")}</div>${vs.some(v=>v.review)?`<h3 class="mut sm">คำเก่า ที่บทนี้เอาไปผันเป็นรูป て</h3><div class="vgrid">${vs.filter(v=>v.review).map(vcard).join("")}</div>`:""}</section>`:""}
+   ${sn&&ns.length?`<section class="stack"><h2 style="font-size:20px">คำนาม</h2><div class="vgrid">${ns.map(x=>pcard(x,"คำนาม","n:")).join("")}</div></section>`:""}
+   ${sp&&ps.length?`<section class="stack"><h2 style="font-size:20px">คำวิเศษณ์และสำนวน</h2><div class="vgrid">${ps.map(x=>pcard(x,"สำนวน","p:")).join("")}</div></section>`:""}`;
+  if(!$("#vbody")){
+    $("#p-vocab").innerHTML=`
+    <div class="stack">${legend()}<p class="mut">สีอยู่ที่คำกริยาเท่านั้น คำนามกับสำนวนไม่ปนสี จะได้ไม่จำมั่ว</p><p style="font-weight:700" id="vcount"></p><span class="meter" id="vmeter"><i></i></span></div>
+    <div class="stack">
+     <label class="stack" style="gap:4px"><span class="sm" style="font-weight:600">ค้นหา</span><input type="search" id="vsearch" placeholder="เช่น まって, เปิด, แผนที่" autocomplete="off"></label>
+     <div class="row" id="vkinds"></div><div class="row" id="vmems"></div>
+    </div>
+    <div class="stack" id="vbody" style="gap:22px"></div>`;
+    $("#vsearch").addEventListener("input",e=>{vq=e.target.value;renderVocab()});
+  }
+  $("#vcount").textContent=`จำแล้ว ${known.size} จาก ${pool}`;
+  $("#vmeter i").style.width=pct(known.size,pool)+"%";
+  $("#vkinds").innerHTML=fb("kind",vkind,[["all","ทั้งหมด"],["verb","คำกริยา"],["noun","คำนาม"],["phrase","สำนวน"]]);
+  $("#vmems").innerHTML=fb("mem",vmem,[["all","ทุกสถานะ"],["new","ยังไม่จำ"],["known","จำแล้ว"]]);
+  $("#vbody").innerHTML=body;
+}
+
+/* ---------- practice ---------- */
+const VOC=[...VERBS.filter(v=>!v.review).map(v=>({jp:v.masu,th:v.th})),...NOUNS.map(([jp,th])=>({jp,th})),...PHRASES.map(([jp,th])=>({jp,th}))];
+const TF={
+ k:{label:"〜て ください",cue:th=>`ขอให้${th}`,make:v=>v.te+" ください"},
+ i:{label:"〜て います",cue:th=>`กำลัง${th}อยู่`,make:v=>v.te+" います"},
+ m:{label:"〜ましょうか",cue:th=>`ให้ฉัน${th}ให้ไหม`,make:v=>v.masu.replace(/ます$/,"ましょうか")},
+ n:{label:"〜て いません",cue:th=>`ไม่ได้กำลัง${th}อยู่`,make:v=>v.te+" いません"}};
+function pickVerbs(level,n,exclude){
+  const ok=v=>!(exclude&&exclude.has(v.masu));
+  if(level==="easy")return shuffle(VERBS.filter(v=>!v.review&&!TRAPS.has(v.masu)&&ok(v))).slice(0,n);
+  if(level==="mid")return shuffle(VERBS.filter(ok)).slice(0,n);
+  const all=[...VERBS,...EXTRA].filter(ok),tr=shuffle(all.filter(v=>TRAPS.has(v.masu))).slice(0,Math.ceil(n/2));
+  return shuffle([...tr,...shuffle(all.filter(v=>!tr.includes(v))).slice(0,n-tr.length)]);
+}
+function wrongTe(v){
+  const stem=v.masu.slice(0,-2),last=stem.slice(-1),head=stem.slice(0,-1);
+  const c=[stem+"て",stem+"って",head+(I_TO[last]||"って"),head+"いて",head+"って",head+"んで",head+"いで",head+"して"];
+  if(v.masu==="いきます")c.unshift("いいて");
+  return [...new Set(c)].filter(x=>x!==v.te&&x.length>=2);
+}
+const optsOf=(right,wrongs,k)=>{const o=shuffle([right,...shuffle(wrongs).slice(0,k-1)]);return{options:o,answer:o.indexOf(right)}};
+function gen(d,level){
+  if(curL!==14)return genG(d,level);
+  const L=LEVELS[level],n=L.n,k=L.opts;
+  if(d==="A")return pickVerbs(level,n).map(v=>({kind:"type",q:v.masu,th:v.th,say:v.masu,main:v.masu,sub:v.th,answer:v.te,group:v.group,hint:level==="easy"?"show":level==="mid"?"button":"none",ph:"รูป て"}));
+  if(d==="B")return shuffle(SITU).slice(0,n).map(s=>({kind:"choice",q:s.prompt,th:s.th,top:s.th,main:s.prompt,...optsOf(s.a,s.d,k),sayDone:s.prompt.replace("（　）",s.a)}));
+  if(d==="C")return pickVerbs(level,n).map(v=>({kind:"choice",once:true,groups:true,q:v.masu,th:v.th,say:v.masu,main:v.masu,sub:v.th,options:["I","II","III"],answer:["I","II","III"].indexOf(v.group)}));
+  if(d==="D")return pickVerbs(level,n).map(v=>({kind:"choice",q:v.masu,th:v.th,say:v.masu,main:v.masu,sub:`${v.th} · รูป て คือข้อไหน`,...optsOf(v.te,level==="easy"?wrongTe(v).slice(0,2):wrongTe(v).slice(0,5),k),sayDoneOpt:true}));
+  if(d==="E"){
+    const ts=level==="easy"?["k"]:level==="mid"?["k","i"]:["k","i","m","n"];
+    return pickVerbs(level,n,new Set(["ふります","できます","います","しにます"])).map((v,j)=>{const t=TF[ts[j%ts.length]],ans=t.make(v);return{kind:"type",q:`${v.masu} → ${t.label}`,th:t.cue(v.th),say:v.masu,main:v.masu,sub:t.cue(v.th),label:level==="hard"?"":t.label,teHint:level==="easy"?v.te:"",answer:ans,ph:"พิมพ์ทั้งวลี"}}).sort(()=>Math.random()-.5);
+  }
+  if(d==="F")return pickVerbs(level,n).map(v=>{
+    if(level==="hard")return{kind:"type",listen:v.te,q:v.te,th:v.th,main:v.te,sub:"พิมพ์รูป て ที่ได้ยิน",answer:v.te,ph:"รูป て ที่ได้ยิน"};
+    const others=[...VERBS,...EXTRA].filter(x=>x.te!==v.te&&x.masu!==v.masu).map(x=>x.masu);
+    return{kind:"choice",listen:v.te,q:v.te,th:v.th,main:v.te,sub:"ฟังรูป て แล้วเลือกรูป ます ที่มาของคำนี้",...optsOf(v.masu,others,k)};
+  });
+  if(d==="G"){const pool=ORDER[level];return shuffle(pool).slice(0,Math.min(n,pool.length)).map(([ch,th,dis])=>({kind:"order",q:ch.join(" "),th,top:th,chunks:ch,bank:shuffle(dis?[...ch,dis]:ch),answer:ch.join(" ")}))}
+  if(d==="H")return shuffle(VOC).slice(0,n).map(it=>{
+    const rev=level==="hard"&&Math.random()<.5,others=VOC.filter(x=>x!==it);
+    return rev?{kind:"choice",q:it.jp,th:it.th,main:it.th,mainTh:true,sub:"คำนี้ภาษาญี่ปุ่นคือข้อไหน",jpOpts:true,...optsOf(it.jp,others.map(x=>x.jp),k),sayDone:it.jp}
+      :{kind:"choice",q:it.jp,th:it.th,say:it.jp,main:it.jp,sub:"แปลว่าอะไร",thOpts:true,...optsOf(it.th,others.map(x=>x.th),k)};
+  });
+  return[];
+}
+const expectOf=q=>q.kind==="choice"?(q.groups?`${GROUP[q.options[q.answer]].color} ${GROUP[q.options[q.answer]].name}`:q.options[q.answer]):q.answer;
+const optLabel=(q,k)=>q.groups?`${GROUP[q.options[k]].color} ${GROUP[q.options[k]].name}`:q.options[k];
+const isDone=q=>q.st==="ok"||q.st==="reveal"||q.st==="miss";
+function newSet(){cur.qs=gen(cur.drill,cur.level).map(q=>({...q,st:"idle",val:"",wrong:[],picked:[],hintOn:false}))}
+function setPref(){store.set("pdrill",cur.drill);store.set("plevel",cur.level)}
+function log(i,given,ok){
+  if(!rec)return;const q=cur.qs[i],k=cur.drill+i;let it=rec.items[k];
+  if(!it)rec.items[k]={d:cur.drill,i,q:q.q,th:q.th,first:given,firstOk:ok,final:given,finalOk:ok,expected:expectOf(q),tries:1,revealed:false};
+  else if(!it.finalOk){it.tries++;it.final=given;it.finalOk=ok}
+}
+function afterAnswer(){if(rec&&cur.qs.every(isDone))finishRec();else renderPractice()}
+function startRec(){
+  newSet();lastResult=null;
+  rec={n:hist.reduce((m,s)=>Math.max(m,s.n),0)+1,start:Date.now(),items:{},drill:cur.drill,level:cur.level};
+  clearInterval(recTimer);recTimer=setInterval(()=>{const t=$("#recTime");if(t&&rec)t.textContent=fmtDur(Date.now()-rec.start)},1000);
+  renderPractice();
+}
+function finishRec(){
+  clearInterval(recTimer);
+  const items=Object.values(rec.items).sort((a,b)=>a.i-b.i);
+  if(items.length){const s={n:rec.n,start:rec.start,end:Date.now(),total:cur.qs.length,drill:rec.drill,level:rec.level,lesson:curL,dname:DM.names[rec.drill],items};hist.push(s);if(hist.length>300)hist=hist.slice(-300);store.set("hist",hist);lastResult=s}
+  rec=null;renderPractice();
+  const r=$("#lastRes");if(r)r.scrollIntoView({block:"start",behavior:"smooth"});
+}
+function cancelRec(){clearInterval(recTimer);rec=null;renderPractice()}
+function answerType(i){
+  const q=cur.qs[i];if(isDone(q)||!norm(q.val))return;
+  const ok=norm(q.val)===norm(q.answer);q.st=ok?"ok":"bad";log(i,q.val.trim(),ok);
+  if(ok&&q.listen)speak(q.listen);
+  afterAnswer();
+  const nx=ok?cur.qs.findIndex((x,j)=>j>i&&!isDone(x)&&x.kind==="type"):i;const el=nx>=0&&$("#qi"+nx);if(el&&!el.disabled)el.focus({preventScroll:!ok});
+}
+function choose(i,k){
+  const q=cur.qs[i];if(isDone(q)||q.wrong.includes(k))return;
+  const ok=k===q.answer;log(i,optLabel(q,k),ok);
+  if(ok){q.st="ok";const s=q.sayDone||(q.sayDoneOpt?q.options[q.answer]:q.listen);if(s)speak(s)}
+  else if(q.once){q.st="miss";q.wrong.push(k)}
+  else q.wrong.push(k);
+  afterAnswer();
+}
+function checkOrder(i){
+  const q=cur.qs[i];if(isDone(q)||!q.picked.length)return;
+  const given=q.picked.map(j=>q.bank[j]).join(" "),ok=given===q.answer;q.st=ok?"ok":"bad";log(i,given,ok);
+  if(ok)speak(q.answer);afterAnswer();
+}
+function reveal(i){const q=cur.qs[i];q.st="reveal";q.hintOn=true;if(rec&&rec.items[cur.drill+i])rec.items[cur.drill+i].revealed=true;
+  if(q.kind==="order")q.picked=q.chunks.map(c=>q.bank.indexOf(c));if(q.sayDone)speak(q.sayDone);afterAnswer()}
+const listenBtn=t=>`<button class="btn solid listen" data-say="${esc(t)}" aria-label="ฟังเสียง">${SPK}<span>ฟังเสียง</span></button>`;
+function renderQ(q,i){
+  const done=isDone(q),cls=q.st==="ok"?"ok":(q.st==="bad"||q.st==="reveal"||q.st==="miss"||(q.kind==="choice"&&q.wrong.length))?"ng":"";
+  const hideMain=q.listen&&!done;
+  let h=`<li class="q ${cls}">`;
+  if(q.top)h+=`<p class="mut">${i+1}. ${esc(q.top)}</p>`;
+  if(q.main!=null||q.listen||q.say)h+=`<div class="qh">${q.top?"":`<span class="num">${i+1}</span>`}${q.listen?listenBtn(q.listen):q.say?say(q.say):""}<div style="min-width:0">
+    ${hideMain?`<p class="mut" style="padding-top:6px">ฟังเสียงแล้วตอบ ยังไม่เห็นตัวหนังสือ</p>`:q.main!=null?`<p class="${q.mainTh?"":"j"}" ${q.mainTh?'style="font-size:20px;font-weight:700"':'lang="ja"'}>${esc(q.main)}</p>`:""}
+    ${q.sub&&!q.top?`<p class="mut">${esc(q.sub)}</p>`:""}</div></div>`;
+  if(q.kind==="type"){
+    const showHint=(q.group||q.hintHtml)&&(q.hint==="show"||q.hintOn);
+    if(showHint||q.label||q.teHint)h+=`<div class="row">${showHint?(q.hintHtml||gb(q.group)):""}${q.label?`<span class="pill mid jp">${q.label}</span>`:""}${q.teHint?`<span class="pill mid">ใบ้ รูป て: <span class="jp">${q.teHint}</span></span>`:""}</div>`;
+    h+=`<form class="row" data-form="q" data-i="${i}">
+      <input type="text" id="qi${i}" data-qin="${i}" value="${esc(q.val)}" lang="ja" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${q.ph}" aria-label="คำตอบข้อ ${i+1}" ${done?"disabled":""}>
+      <button class="btn solid" type="submit" ${done?"disabled":""}>ตรวจ</button>
+      ${q.hint==="button"?`<button class="btn" type="button" data-act="q-hint" data-i="${i}" ${q.hintOn||done?"disabled":""}>ใบ้สี</button>`:""}
+      ${q.st==="bad"?`<button class="btn" type="button" data-act="q-reveal" data-i="${i}">เฉลย</button>`:""}
+     </form>
+     <p class="res ${cls}" role="status">${q.st==="ok"?`✓ ถูกต้อง · <span class="jp">${esc(q.answer)}</span>`:q.st==="bad"?"✗ ยังไม่ใช่ ลองใหม่ หรือกดเฉลย":q.st==="reveal"?`✗ คำตอบคือ <span class="jp">${esc(q.answer)}</span>`:""}</p>`;
+  }else if(q.kind==="choice"){
+    h+=`<div class="${q.groups?"gpick":"stack"}" style="gap:8px">${q.options.map((o,k)=>{const good=done&&k===q.answer,bad=q.wrong.includes(k);
+      return`<button class="btn ch ${good?"ok":bad?"ng":""} ${q.thOpts?"th":""}" data-act="q-pick" data-i="${i}" data-k="${k}" ${done||bad?"disabled":""}>${good?"✓ ":bad?"✗ ":""}${q.groups?gb(o):esc(o)}</button>`}).join("")}</div>
+     <div class="row"><p class="res ${cls}" role="status">${q.st==="ok"?"✓ ถูกต้อง":q.st==="miss"?`✗ คำตอบคือ ${esc(expectOf(q))}`:q.st==="reveal"?`✗ เฉลย ${esc(expectOf(q))}`:q.wrong.length?"✗ ยังไม่ใช่ ลองข้ออื่น":""}</p>
+      ${!done&&q.wrong.length&&!q.once?`<button class="btn" data-act="q-reveal" data-i="${i}">เฉลย</button>`:""}${done&&q.sayDone?say(q.sayDone,"ฟังคำตอบ"):""}</div>`;
+  }else{
+    const used=new Set(q.picked);
+    h+=`<div class="slot ${cls}" aria-label="ประโยคที่เรียง">${q.picked.length?q.picked.map(j=>`<button class="chip on" data-act="o-un" data-i="${i}" data-k="${j}" ${done?"disabled":""}>${esc(q.bank[j])}</button>`).join(""):`<span class="mut sm">แตะคำด้านล่างเพื่อเรียงประโยค</span>`}</div>
+     ${done?"":`<div class="row">${q.bank.map((c,j)=>used.has(j)?"":`<button class="chip" data-act="o-add" data-i="${i}" data-k="${j}">${esc(c)}</button>`).join("")}</div>
+     <div class="row"><button class="btn solid" data-act="o-check" data-i="${i}" ${q.picked.length?"":"disabled"}>ตรวจ</button><button class="btn" data-act="o-clear" data-i="${i}" ${q.picked.length?"":"disabled"}>ล้าง</button>${q.st==="bad"?`<button class="btn" data-act="q-reveal" data-i="${i}">เฉลย</button>`:""}</div>`}
+     <div class="row"><p class="res ${cls}" role="status">${q.st==="ok"?"✓ ถูกต้อง":q.st==="bad"?"✗ ลำดับยังไม่ใช่ แตะคำเพื่อเอาออกแล้วลองใหม่":q.st==="reveal"?"✗ นี่คือลำดับที่ถูก":""}</p>${done?say(q.answer,"ฟังประโยค"):""}</div>`;
+  }
+  return h+"</li>";
+}
+function renderPractice(){
+  const qs=cur.qs,okN=qs.filter(q=>q.st==="ok").length,doneN=qs.filter(isDone).length;
+  const nextN=hist.reduce((m,s)=>Math.max(m,s.n),0)+1,lr=lastResult?sesScore(lastResult):null,lock=rec?"disabled":"";
+  $("#p-practice").innerHTML=`
+  ${lastResult&&!rec?`<div class="result" id="lastRes" style="scroll-margin-top:80px">
+    <h2 style="font-size:20px">บันทึกครั้งที่ ${lastResult.n} แล้ว · บทที่ ${sesL(lastResult)} · ${lastResult.drill} ${esc(dname(lastResult))} · ${LEVELS[lastResult.level].label}</h2>
+    <p>ถูกตั้งแต่ครั้งแรก <b class="score">${lr.ok}/${lr.total}</b> (${lr.p}%) · ใช้เวลา ${fmtDur(lastResult.end-lastResult.start)}${lr.total<lastResult.total?` · ทำไป ${lr.total} จาก ${lastResult.total} ข้อ`:""}</p>
+    <div class="row"><button class="btn solid" data-act="rec-start">ทำชุดนี้อีกรอบ</button><button class="btn" data-act="rand">🎲 สุ่มแบบฝึกถัดไป</button><button class="btn" data-act="tab" data-v="hist">ดูประวัติทุกข้อ</button></div>
+  </div>`:""}
+  <div class="recbar ${rec?"on":""}">
+   ${rec?`<div><b><span class="dot" aria-hidden="true"></span>กำลังบันทึก ครั้งที่ ${rec.n}</b><br><span class="mut sm">${cur.drill} ${DM.names[cur.drill]} · ${LEVELS[cur.level].label} · ทำแล้ว ${doneN}/${qs.length} · <span id="recTime">${fmtDur(Date.now()-rec.start)}</span> · ครบแล้วบันทึกเอง</span></div>
+     <div class="row"><button class="btn solid" data-act="rec-end">จบและบันทึก</button><button class="btn" data-act="rec-cancel">ยกเลิก</button></div>`
+   :`<div><b>ยังไม่ได้บันทึก</b><br><span class="mut sm">ฝึกไปแล้ว ${hist.length} ครั้ง · กดเริ่มเพื่อเก็บผลครั้งที่ ${nextN}</span></div>
+     <button class="btn solid" data-act="rec-start">● เริ่มบันทึก</button>`}
+  </div>
+  <section class="card stack">
+   <div class="row between"><h2 style="font-size:20px">เลือกแบบฝึก</h2><button class="btn" data-act="rand" ${lock}>🎲 สุ่มแบบฝึก</button></div>
+   <div class="picker">${Object.keys(DM.names).map(d=>`<button class="pk" data-act="drill" data-v="${d}" aria-pressed="${cur.drill===d}" ${lock}><b>${d}</b><span>${DM.names[d]}${DM.newd.has(d)?' <em>ใหม่</em>':""}</span></button>`).join("")}</div>
+   <p class="sm" style="font-weight:700">ระดับ</p>
+   <div class="lv" role="group" aria-label="ระดับความยาก">${Object.entries(LEVELS).map(([k,L])=>`<button data-act="level" data-v="${k}" aria-pressed="${cur.level===k}" ${lock}><b>${L.label}</b><span>${L.desc}</span></button>`).join("")}</div>
+  </section>
+  <section class="card stack" id="drillCard">
+   <div class="row between"><div><h2 style="font-size:20px">${cur.drill} · ${DM.names[cur.drill]} <span class="pill mid">${LEVELS[cur.level].label}</span></h2><p class="mut">${DM.desc[cur.drill]}</p></div><span class="score" aria-live="polite">${okN} / ${qs.length}</span></div>
+   <div class="row">${["A","C","D"].includes(cur.drill)?legend():""}<button class="btn" data-act="reroll" ${lock}>สุ่มข้อใหม่</button></div>
+   <ol class="qs">${qs.map(renderQ).join("")}</ol>
+  </section>`;
+}
+
+const LESSONS={};
+LESSONS[1]={title:"แนะนำตัว",topic:"N1は N2です",
+grammar:[
+{t:"บอกว่าใครเป็นอะไร",p:["N1 は N2 です"],e:"は (อ่านว่า wa) บอกหัวเรื่องของประโยค です ทำให้ประโยคสุภาพ ความหมายคล้าย “เป็น/คือ”",ex:[["わたしは タイじんです。","ฉันเป็นคนไทย"],["ミラーさんは かいしゃいんです。","คุณมิลเลอร์เป็นพนักงานบริษัท"]],n:"は ที่เป็นคำช่วยอ่านว่า わ"},
+{t:"ปฏิเสธ",p:["N1 は N2 じゃ ありません"],e:"เปลี่ยน です เป็น じゃ ありません (ภาษาเขียนใช้ では ありません)",ex:[["わたしは がくせいじゃ ありません。","ฉันไม่ใช่นักเรียน"],["たなかさんは せんせいじゃ ありません。","คุณทานากะไม่ใช่ครู"]]},
+{t:"ประโยคคำถาม",p:["～ か"],e:"เติม か ท้ายประโยคเป็นคำถาม ตอบด้วย はい หรือ いいえ",ex:[["ワンさんは いしゃですか。","คุณหวังเป็นหมอไหม"],["はい、いしゃです。","ใช่ เป็นหมอ"]]},
+{t:"ก็…เหมือนกัน",p:["N も ～"],e:"ใช้ も แทน は เมื่อสิ่งที่พูดเหมือนกับเรื่องก่อนหน้า",ex:[["わたしも かいしゃいんです。","ฉันก็เป็นพนักงานบริษัท"]]},
+{t:"สังกัด",p:["N1 の N2"],e:"の เชื่อมคำนาม บอกว่า N2 สังกัดหรือเป็นส่วนหนึ่งของ N1",ex:[["わたしは さくらだいがくの がくせいです。","ฉันเป็นนักศึกษามหาวิทยาลัยซากุระ"]]},
+{t:"ถามอายุ ถามว่าใคร",p:["なんさい（おいくつ）ですか","あの ひとは だれ（どなた）ですか"],e:"おいくつ และ どなた สุภาพกว่า なんさい และ だれ",ex:[["テレサちゃんは なんさいですか。","น้องเทเรซ่าอายุเท่าไร"],["あの かたは どなたですか。","ท่านนั้นคือใคร"]]}],
+mistakes:[["わたしは タナカさんです","わたしは タナカです","ไม่ใช้ さん กับชื่อตัวเอง"],["ミラーさんも は せんせいです","ミラーさんも せんせいです","も ใช้แทน は ห้ามใช้ซ้อนกัน"],["がくせいじゃ ありませんです","がくせいじゃ ありません","じゃ ありません ไม่ต้องต่อ です"]],
+vocab:[["わたし","ฉัน","n"],["あなた","คุณ","n"],["あの ひと","คนนั้น","n"],["あの かた","ท่านนั้น","n"],["～さん","คุณ…","x"],["～じん","คนชาติ…","x"],["せんせい","ครู (เรียกผู้อื่น)","n"],["きょうし","ครู (อาชีพตัวเอง)","n"],["がくせい","นักเรียน","n"],["かいしゃいん","พนักงานบริษัท","n"],["しゃいん","พนักงานของบริษัท…","n"],["ぎんこういん","พนักงานธนาคาร","n"],["いしゃ","แพทย์","n"],["けんきゅうしゃ","นักวิจัย","n"],["だいがく","มหาวิทยาลัย","n"],["びょういん","โรงพยาบาล","n"],["だれ","ใคร","x"],["どなた","ท่านใด","x"],["なんさい","อายุเท่าไร","x"],["おいくつ","อายุเท่าไร (สุภาพ)","x"],["はい","ใช่","x"],["いいえ","ไม่ใช่","x"],["はじめまして","ยินดีที่ได้รู้จัก","x"],["どうぞ よろしく","ฝากตัวด้วย","x"],["しつれいですが","ขอเสียมารยาท","x"],["おなまえは？","ชื่ออะไรครับ","x"]],
+fill:[["ฉันเป็นคนไทย","わたし（　）タイじんです。","は","を","に","で"],["ฉันไม่ใช่นักเรียน","わたしは がくせい（　）。","じゃ ありません","じゃ です","ありません です","じゃ ありますか"],["คุณหวังเป็นหมอไหม","ワンさんは いしゃです（　）。","か","を","は","も"],["ฉันก็เป็นพนักงานบริษัท","わたし（　）かいしゃいんです。","も","の","か","を"],["นักศึกษามหาวิทยาลัยซากุระ","さくらだいがく（　）がくせいです。","の","は","も","か"],["คนนั้นคือใคร","あの ひとは（　）ですか。","だれ","なん","どこ","いくつ"],["น้องอายุเท่าไร","テレサちゃんは（　）ですか。","なんさい","だれ","なんの","どなた"],["ไม่ใช่ ไม่ใช่ครู","いいえ、せんせい（　）。","じゃ ありません","です","ですか","も です"],["ท่านนั้นคือใคร (สุภาพ)","あの かたは（　）ですか。","どなた","だれさん","なんさい","どこ"],["ใช่ เป็นนักวิจัย","はい、（　）です。","けんきゅうしゃ","けんきゅうしゃか","けんきゅうしゃじゃ","けんきゅうしゃの"]],
+order:[[["わたしは","タイじん","です"],"ฉันเป็นคนไทย"],[["ミラーさんは","かいしゃいん","です"],"คุณมิลเลอร์เป็นพนักงานบริษัท"],[["あの","ひとは","だれ","ですか"],"คนนั้นคือใคร"],[["わたしは","いしゃじゃ","ありません"],"ฉันไม่ใช่หมอ"],[["わたしも","がくせい","です"],"ฉันก็เป็นนักเรียน"],[["ワンさんは","びょういんの","いしゃ","です"],"คุณหวังเป็นหมอของโรงพยาบาล"],[["サントスさんは","ブラジルじん","ですか"],"คุณซานโตสเป็นคนบราซิลไหม"],[["わたしは","さくらだいがくの","がくせい","です"],"ฉันเป็นนักศึกษามหาวิทยาลัยซากุระ","を"]]};
+
+LESSONS[2]={title:"これ・それ・あれ",topic:"これ／この N",
+grammar:[
+{t:"นี่ นั่น โน่น",p:["これ／それ／あれ は N です"],e:"これ ใกล้ผู้พูด それ ใกล้ผู้ฟัง あれ ไกลจากทั้งคู่ ใช้แทนสิ่งของได้เลย",ex:[["これは じしょです。","นี่คือพจนานุกรม"],["それは わたしの かさです。","นั่นคือร่มของฉัน"]]},
+{t:"…นี้ …นั้น …โน้น",p:["この／その／あの N"],e:"ต้องมีคำนามตามหลังเสมอ",ex:[["この ほんは わたしのです。","หนังสือเล่มนี้เป็นของฉัน"],["あの かばんは だれのですか。","กระเป๋าใบโน้นเป็นของใคร"]]},
+{t:"ใช่ ไม่ใช่",p:["そうです／そうじゃ ありません"],e:"ตอบคำถาม N ですか โดยไม่ต้องพูดคำนามซ้ำ",ex:[["それは テレビですか。…はい、そうです。","นั่นคือทีวีไหม … ใช่ ใช่แล้ว"]]},
+{t:"ถามให้เลือก",p:["～ですか、～ですか"],e:"ตอบด้วยตัวเลือก ไม่ใช้ はい หรือ いいえ",ex:[["これは「9」ですか、「7」ですか。…「9」です。","นี่คือ 9 หรือ 7 … 9"]]},
+{t:"เกี่ยวกับ / ของใคร",p:["N1 の N2","N の (ละคำนามได้)"],e:"N1 บอกว่า N2 เกี่ยวกับอะไร หรือเป็นของใคร ถ้ารู้อยู่แล้วว่าพูดถึงอะไรละ N2 ได้",ex:[["これは コンピューターの ほんです。","นี่คือหนังสือเกี่ยวกับคอมพิวเตอร์"],["あれは だれの かばんですか。…さとうさんのです。","นั่นกระเป๋าของใคร … ของคุณซาโต้"]]},
+{t:"นี่คืออะไร",p:["これは なんですか"],ex:[["これは なんですか。…めいしです。","นี่คืออะไร … นามบัตร"]],e:"なん แปลว่าอะไร"}],
+mistakes:[["この は ほんです","これは ほんです","この ต้องมีคำนามตาม ถ้าไม่มีใช้ これ"],["わたし かばん","わたしの かばん","เชื่อมคำนามด้วย の"],["はい、これです","はい、そうです","ตอบรับคำถาม N ですか ใช้ そうです"]],
+vocab:[["これ","สิ่งนี้","x"],["それ","สิ่งนั้น","x"],["あれ","สิ่งโน้น","x"],["この ～","…นี้","x"],["その ～","…นั้น","x"],["あの ～","…โน้น","x"],["ほん","หนังสือ","n"],["じしょ","พจนานุกรม","n"],["ざっし","นิตยสาร","n"],["しんぶん","หนังสือพิมพ์","n"],["ノート","สมุด","n"],["めいし","นามบัตร","n"],["カード","บัตร","n"],["えんぴつ","ดินสอ","n"],["ボールペン","ปากกาลูกลื่น","n"],["かぎ","กุญแจ","n"],["とけい","นาฬิกา","n"],["かさ","ร่ม","n"],["かばん","กระเป๋า","n"],["テレビ","โทรทัศน์","n"],["カメラ","กล้องถ่ายรูป","n"],["コンピューター","คอมพิวเตอร์","n"],["くるま","รถยนต์","n"],["つくえ","โต๊ะ","n"],["いす","เก้าอี้","n"],["チョコレート","ช็อกโกแลต","n"],["コーヒー","กาแฟ","n"],["おみやげ","ของฝาก","n"],["えいご","ภาษาอังกฤษ","n"],["にほんご","ภาษาญี่ปุ่น","n"],["なん","อะไร","x"],["そう","ใช่ อย่างนั้น","x"]],
+fill:[["นี่คือพจนานุกรม","（　）は じしょです。","これ","この","ここ","どれ"],["หนังสือเล่มนี้เป็นของฉัน","（　）ほんは わたしのです。","この","これ","ここ","どの"],["นี่คืออะไร","これは（　）ですか。","なん","だれ","どこ","なんさい"],["นั่นคือร่มของใคร","それは（　）かさですか。","だれの","だれ","なんの","どなた"],["หนังสือเกี่ยวกับรถยนต์","くるま（　）ほんです。","の","は","も","か"],["นั่นคือกล้องไหม … ใช่","それは カメラですか。…はい、（　）。","そうです","そうですか","これです","あれです"],["ไม่ใช่อย่างนั้น","いいえ、（　）。","そうじゃ ありません","そうです","そうですか","そうじゃ です"],["นี่คือ 9 หรือ 7","これは「9」です（　）、「7」ですか。","か","と","の","も"],["กระเป๋าใบนั้น (ใกล้ผู้ฟัง)","（　）かばんは さとうさんのです。","その","それ","そこ","あれ"],["โน่นคือนาฬิกา","（　）は とけいです。","あれ","あの","あそこ","この"]],
+order:[[["これは","わたしの","ほん","です"],"นี่คือหนังสือของฉัน"],[["それは","なん","ですか"],"นั่นคืออะไร"],[["この","かばんは","だれの","ですか"],"กระเป๋าใบนี้เป็นของใคร"],[["あれは","くるまの","ざっし","です"],"โน่นคือนิตยสารรถยนต์"],[["その","かぎは","わたしのじゃ","ありません"],"กุญแจนั่นไม่ใช่ของฉัน"],[["これは","にほんごの","じしょ","ですか"],"นี่คือพจนานุกรมภาษาญี่ปุ่นไหม"],[["これは","コーヒーの","チョコレート","です"],"นี่คือช็อกโกแลตรสกาแฟ"],[["それは","ボールペン","ですか、","えんぴつですか"],"นั่นคือปากกาลูกลื่นหรือดินสอ"]]};
+
+LESSONS[3]={title:"ที่นี่ ที่นั่น ที่โน่น · ราคา",topic:"ここ・そこ・あそこ",
+grammar:[
+{t:"ที่นี่คือ…",p:["ここ／そこ／あそこ は N(สถานที่) です"],e:"ใช้ชี้สถานที่ หลักใกล้ไกลเหมือน これ それ あれ",ex:[["ここは しょくどうです。","ที่นี่คือโรงอาหาร"],["トイレは あそこです。","ห้องน้ำอยู่ที่โน่น"]]},
+{t:"…อยู่ที่ไหน",p:["N は どこですか"],e:"ถามตำแหน่งของสถานที่ สิ่งของ หรือคน ตอบด้วย สถานที่ + です",ex:[["エレベーターは どこですか。…あそこです。","ลิฟต์อยู่ที่ไหน … ที่โน่น"],["やまださんは じむしょです。","คุณยามาดะอยู่ที่สำนักงาน"]]},
+{t:"รูปสุภาพ こちら",p:["こちら／そちら／あちら／どちら"],e:"รูปสุภาพของ ここ そこ あそこ どこ และใช้ถามชื่อประเทศ บริษัท โรงเรียน",ex:[["おくには どちらですか。…タイです。","มาจากประเทศอะไรครับ … ไทย"],["かいしゃは どちらですか。","ทำงานบริษัทอะไร"]]},
+{t:"ผลิตที่ไหน",p:["N1(ประเทศ/บริษัท) の N2"],e:"บอกแหล่งผลิต ถามด้วย どこの",ex:[["これは にほんの くるまです。","นี่คือรถของญี่ปุ่น"],["それは どこの ワインですか。…フランスの ワインです。","นั่นไวน์ของที่ไหน … ของฝรั่งเศส"]]},
+{t:"ราคาเท่าไร",p:["N は いくらですか"],e:"ถามราคา ตอบด้วย จำนวน + えん",ex:[["この ネクタイは いくらですか。…せんごひゃくえんです。","เนคไทเส้นนี้ราคาเท่าไร … 1,500 เยน"]]},
+{t:"ชั้นไหน",p:["～かい／なんがい"],e:"ชั้น 3 อ่าน さんがい และถามว่า なんがい",ex:[["くつうりばは なんがいですか。…ちかです。","แผนกรองเท้าอยู่ชั้นไหน … ชั้นใต้ดิน"]]}],
+mistakes:[["トイレは どこ ありますか","トイレは どこですか","บทนี้ใช้ どこですか (あります เรียนบทที่ 10)"],["にほんで くるま","にほんの くるま","บอกแหล่งผลิตใช้ の"],["さんかい (ชั้น 3)","さんがい","ชั้น 3 อ่าน さんがい"]],
+vocab:[["ここ","ที่นี่","x"],["そこ","ที่นั่น","x"],["あそこ","ที่โน่น","x"],["どこ","ที่ไหน","x"],["こちら","ทางนี้ (สุภาพ)","x"],["そちら","ทางนั้น (สุภาพ)","x"],["あちら","ทางโน้น (สุภาพ)","x"],["どちら","ที่ไหน (สุภาพ)","x"],["きょうしつ","ห้องเรียน","n"],["しょくどう","โรงอาหาร","n"],["じむしょ","สำนักงาน","n"],["かいぎしつ","ห้องประชุม","n"],["うけつけ","แผนกต้อนรับ","n"],["ロビー","ล็อบบี้","n"],["へや","ห้อง","n"],["トイレ","ห้องน้ำ","n"],["かいだん","บันได","n"],["エレベーター","ลิฟต์","n"],["じどうはんばいき","ตู้ขายของอัตโนมัติ","n"],["でんわ","โทรศัพท์","n"],["くに","ประเทศ","n"],["かいしゃ","บริษัท","n"],["うち","บ้าน","n"],["くつ","รองเท้า","n"],["ネクタイ","เนคไท","n"],["ワイン","ไวน์","n"],["うりば","แผนกขาย","n"],["ちか","ชั้นใต้ดิน","n"],["なんがい","ชั้นไหน","x"],["～えん","…เยน","x"],["いくら","เท่าไร","x"],["ひゃく","ร้อย","x"],["せん","พัน","x"],["まん","หมื่น","x"]],
+fill:[["ที่นี่คือโรงอาหาร","（　）は しょくどうです。","ここ","これ","この","どこ"],["ห้องน้ำอยู่ที่ไหน","トイレは（　）ですか。","どこ","なん","だれ","いくら"],["เนคไทนี้ราคาเท่าไร","この ネクタイは（　）ですか。","いくら","どこ","なんがい","どちら"],["มาจากประเทศอะไร (สุภาพ)","おくには（　）ですか。","どちら","どれ","だれ","なん"],["นี่คือรถของญี่ปุ่น","これは にほん（　）くるまです。","の","で","は","か"],["ไวน์นั้นของที่ไหน","それは（　）ワインですか。","どこの","どこ","どちら","なんの"],["แผนกรองเท้าอยู่ชั้นไหน","くつうりばは（　）ですか。","なんがい","なんかい","なんさい","いくつ"],["ลิฟต์อยู่ที่โน่น","エレベーターは（　）です。","あそこ","あれ","あの","どこ"],["ชั้น 3","3（　）","がい","かい","さい","えん"],["นี่คือร่มของอิตาลี","これは（　）の かさです。","イタリア","イタリアで","イタリアに","イタリアは"]],
+order:[[["ここは","きょうしつ","です"],"ที่นี่คือห้องเรียน"],[["トイレは","どこ","ですか"],"ห้องน้ำอยู่ที่ไหน"],[["これは","どこの","くるま","ですか"],"นี่คือรถของที่ไหน"],[["この","とけいは","いくら","ですか"],"นาฬิกาเรือนนี้ราคาเท่าไร"],[["でんわは","あそこ","です"],"โทรศัพท์อยู่ที่โน่น"],[["かいしゃは","どちら","ですか"],"ทำงานบริษัทอะไร"],[["ワインうりばは","ちか","です"],"แผนกไวน์อยู่ชั้นใต้ดิน"],[["それは","イタリアの","くつ","です"],"นั่นคือรองเท้าของอิตาลี"]]};
+
+LESSONS[4]={title:"เวลา · กริยารูป ます",topic:"Vます・Vました",forms:["masen","mashita","masendeshita"],
+grammar:[
+{t:"บอกเวลา",p:["いま ～じ ～ふん です"],e:"นาทีอ่าน ふん หรือ ぷん แล้วแต่ตัวเลข",ex:[["いま 7じ 10ぷんです。","ตอนนี้ 7 โมง 10 นาที"],["ニューヨークは いま なんじですか。","ตอนนี้ที่นิวยอร์กกี่โมง"]]},
+{t:"กริยาสุภาพ 4 รูป",p:["Vます／Vません／Vました／Vませんでした"],e:"ปัจจุบันหรืออนาคต ปฏิเสธ อดีต และอดีตปฏิเสธ",ex:[["まいあさ 6じに おきます。","ทุกเช้าตื่น 6 โมง"],["きのう べんきょうしませんでした。","เมื่อวานไม่ได้เรียน"]]},
+{t:"ทำตอนกี่โมง",p:["N(เวลา) に V"],e:"เวลาที่มีตัวเลขใส่ に แต่ きょう あした まいにち ไม่ใส่ に",ex:[["6じはんに おきます。","ตื่น 6 โมงครึ่ง"],["あした はたらきます。","พรุ่งนี้ทำงาน"]]},
+{t:"ตั้งแต่…ถึง…",p:["N1 から N2 まで"],e:"บอกจุดเริ่มต้นและจุดสิ้นสุดของเวลาหรือสถานที่",ex:[["9じから 5じまで はたらきます。","ทำงาน 9 โมงถึง 5 โมง"],["ぎんこうは なんじから なんじまでですか。","ธนาคารเปิดกี่โมงถึงกี่โมง"]]},
+{t:"…และ… / นะ",p:["N1 と N2","～ね"],e:"と เชื่อมคำนาม ね ท้ายประโยคแสดงความเห็นใจหรือขอความเห็นด้วย",ex:[["やすみは どようびと にちようびです。","วันหยุดคือวันเสาร์และวันอาทิตย์"],["たいへんですね。","ลำบากนะ"]]}],
+mistakes:[["まいにちに おきます","まいにち おきます","まいにち きょう あした ไม่ใส่ に"],["べんきょうしましたでした","べんきょうしませんでした","อดีตปฏิเสธคือ ませんでした"],["7じに から","7じから","から ใช้แทน に ได้เลย"]],
+vocab:[["おきます","ตื่นนอน","v2"],["ねます","นอน","v2"],["はたらきます","ทำงาน","v1"],["やすみます","พัก หยุด","v1"],["べんきょうします","เรียน","v3"],["おわります","จบ เสร็จ","v1"],["いま","ตอนนี้","n"],["はん","ครึ่ง","x"],["なんじ","กี่โมง","x"],["なんぷん","กี่นาที","x"],["ごぜん","ก่อนเที่ยง","n"],["ごご","หลังเที่ยง","n"],["あさ","เช้า","n"],["ひる","กลางวัน","n"],["ばん","กลางคืน","n"],["きのう","เมื่อวาน","n"],["きょう","วันนี้","n"],["あした","พรุ่งนี้","n"],["けさ","เช้านี้","n"],["こんばん","คืนนี้","n"],["やすみ","วันหยุด","n"],["ひるやすみ","พักกลางวัน","n"],["しけん","การสอบ","n"],["かいぎ","การประชุม","n"],["えいが","ภาพยนตร์","n"],["まいあさ","ทุกเช้า","n"],["まいばん","ทุกคืน","n"],["まいにち","ทุกวัน","n"],["げつようび","วันจันทร์","n"],["にちようび","วันอาทิตย์","n"],["なんようび","วันอะไร","x"],["ぎんこう","ธนาคาร","n"],["としょかん","ห้องสมุด","n"],["～から","ตั้งแต่…","x"],["～まで","จนถึง…","x"]],
+fill:[["ทุกเช้าตื่น 6 โมง","まいあさ 6じ（　）おきます。","に","で","を","へ"],["เมื่อวานไม่ได้เรียน","きのう べんきょう（　）。","しませんでした","しません","しました","しますでした"],["ทำงาน 9 โมงถึง 5 โมง","9じ（　）5じまで はたらきます。","から","まで","に","と"],["ตอนนี้กี่โมง","いま（　）ですか。","なんじ","なんようび","いくら","どこ"],["เช้านี้ตื่น 7 โมง","けさ 7じに（　）。","おきました","おきます","おきません","ねます"],["วันหยุดคือเสาร์และอาทิตย์","どようび（　）にちようびです。","と","を","に","か"],["ข้อสอบเมื่อวานจบ 3 โมง","きのうの しけんは 3じに（　）。","おわりました","おわります","おわりません","はたらきました"],["ห้องสมุดเปิดถึงกี่โมง","としょかんは なんじ（　）ですか。","まで","に","と","の"],["ลำบากนะ","たいへんです（　）。","ね","か","の","を"],["ทุกวันทำงาน","まいにち（　）。","はたらきます","はたらきますか","はたらきましたでした","はたらきません でした か"]],
+order:[[["まいにち","6じに","おきます"],"ตื่น 6 โมงทุกวัน"],[["9じから","5じまで","はたらきます"],"ทำงาน 9 โมงถึง 5 โมง"],[["きのう","べんきょう","しませんでした"],"เมื่อวานไม่ได้เรียน"],[["いま","なんじ","ですか"],"ตอนนี้กี่โมง"],[["けさ","なんじに","おきましたか"],"เช้านี้ตื่นกี่โมง"],[["ひるやすみは","12じから","1じまで","です"],"พักกลางวันเที่ยงถึงบ่ายโมง"],[["こんばん","11じに","ねます"],"คืนนี้จะนอน 5 ทุ่ม"],[["あしたは","やすみ","です"],"พรุ่งนี้หยุด"]]};
+
+LESSONS[5]={title:"ไป มา กลับ",topic:"へ・で・と",forms:["mashita","masen","masendeshita"],
+grammar:[
+{t:"ไป มา กลับ ที่ไหน",p:["N(สถานที่) へ いきます／きます／かえります"],e:"へ อ่านว่า え บอกทิศทางที่ไป",ex:[["きょうとへ いきます。","จะไปเกียวโต"],["きょねん にほんへ きました。","มาญี่ปุ่นเมื่อปีที่แล้ว"]]},
+{t:"ไม่ไปไหนเลย",p:["どこ［へ］も いきません"],e:"คำแสดงคำถาม + も + รูปปฏิเสธ = ไม่…เลย",ex:[["にちようび どこへ いきましたか。…どこも いきませんでした。","วันอาทิตย์ไปไหนมา … ไม่ได้ไปไหนเลย"]]},
+{t:"ไปด้วยยานพาหนะ",p:["N(ยานพาหนะ) で いきます"],e:"ถ้าเดินใช้ あるいて ไม่มี で",ex:[["でんしゃで いきます。","ไปด้วยรถไฟ"],["えきから あるいて かえりました。","เดินกลับจากสถานี"]]},
+{t:"ไปกับใคร",p:["N(คน) と いきます"],e:"ถ้าไปคนเดียวใช้ ひとりで ไม่มี と",ex:[["かぞくと にほんへ きました。","มาญี่ปุ่นกับครอบครัว"],["ひとりで いきます。","ไปคนเดียว"]]},
+{t:"เมื่อไร / นะ (บอกข้อมูลใหม่)",p:["いつ","～よ"],e:"いつ ถามเวลา よ บอกข้อมูลที่ผู้ฟังยังไม่รู้",ex:[["いつ にほんへ きましたか。…3がつ 25にちに きました。","มาญี่ปุ่นเมื่อไร … มาวันที่ 25 มีนาคม"],["あの バスは いきませんよ。","รถบัสคันนั้นไม่ไปนะ"]]}],
+mistakes:[["あるいてで いきます","あるいて いきます","เดินไม่ใช้ で"],["ひとりと いきます","ひとりで いきます","ไปคนเดียวใช้ ひとりで"],["どこへも いきます","どこへも いきません","どこも ต้องตามด้วยรูปปฏิเสธ"]],
+vocab:[["いきます","ไป","v1"],["きます","มา","v3"],["かえります","กลับ","v1"],["がっこう","โรงเรียน","n"],["スーパー","ซูเปอร์มาร์เก็ต","n"],["えき","สถานี","n"],["ひこうき","เครื่องบิน","n"],["ふね","เรือ","n"],["でんしゃ","รถไฟ","n"],["ちかてつ","รถไฟใต้ดิน","n"],["しんかんせん","ชินคันเซ็น","n"],["バス","รถบัส","n"],["タクシー","แท็กซี่","n"],["じてんしゃ","จักรยาน","n"],["あるいて","เดิน (ไป)","x"],["ひと","คน","n"],["ともだち","เพื่อน","n"],["かぞく","ครอบครัว","n"],["ひとりで","คนเดียว","x"],["せんしゅう","สัปดาห์ที่แล้ว","n"],["こんしゅう","สัปดาห์นี้","n"],["らいしゅう","สัปดาห์หน้า","n"],["せんげつ","เดือนที่แล้ว","n"],["らいげつ","เดือนหน้า","n"],["きょねん","ปีที่แล้ว","n"],["ことし","ปีนี้","n"],["らいねん","ปีหน้า","n"],["いつ","เมื่อไร","x"],["たんじょうび","วันเกิด","n"],["つぎの","…ถัดไป","x"]],
+fill:[["จะไปเกียวโต","きょうと（　）いきます。","へ","を","で","と"],["ไปด้วยรถไฟ","でんしゃ（　）いきます。","で","へ","と","を"],["มาญี่ปุ่นกับครอบครัว","かぞく（　）にほんへ きました。","と","で","へ","に"],["ไปคนเดียว","（　）いきます。","ひとりで","ひとりと","ひとりに","ひとりへ"],["เดินกลับบ้าน","うちへ（　）かえります。","あるいて","あるいてで","あるきで","あるくで"],["ไม่ได้ไปไหนเลย","どこ（　）いきませんでした。","も","を","か","の"],["มาญี่ปุ่นเมื่อไร","（　）にほんへ きましたか。","いつ","どこ","なに","だれ"],["ปีหน้าจะกลับประเทศ","（　）くにへ かえります。","らいねん","きょねん","せんげつ","きのう"],["ไปโรงเรียนกับใคร","だれ（　）がっこうへ いきますか。","と","で","へ","を"],["เมื่อวานไปซูเปอร์มาร์เก็ต","きのう スーパーへ（　）。","いきました","いきます","きます","いきません"]],
+order:[[["あした","きょうとへ","いきます"],"พรุ่งนี้จะไปเกียวโต"],[["ひこうきで","くにへ","かえります"],"กลับประเทศด้วยเครื่องบิน"],[["ともだちと","スーパーへ","いきました"],"ไปซูเปอร์มาร์เก็ตกับเพื่อน"],[["いつ","にほんへ","きましたか"],"มาญี่ปุ่นเมื่อไร"],[["えきから","あるいて","かえりました"],"เดินกลับจากสถานี"],[["にちようび","どこも","いきませんでした"],"วันอาทิตย์ไม่ได้ไปไหนเลย"],[["らいしゅう","ひとりで","とうきょうへ","いきます"],"สัปดาห์หน้าจะไปโตเกียวคนเดียว"],[["なんで","がっこうへ","きましたか"],"มาโรงเรียนด้วยอะไร"]]};
+
+LESSONS[6]={title:"กริยา + を · ชวนทำ",topic:"Nを V・Vませんか",forms:["masenka","mashou"],
+grammar:[
+{t:"ทำอะไรกับอะไร",p:["N を V"],e:"を (อ่านว่า お) บอกกรรมของกริยา",ex:[["ジュースを のみます。","ดื่มน้ำผลไม้"],["まいあさ しんぶんを よみます。","อ่านหนังสือพิมพ์ทุกเช้า"]]},
+{t:"ทำอะไร",p:["N を します","なにを しますか"],e:"します ใช้กับกีฬา งาน การบ้าน ฯลฯ",ex:[["サッカーを します。","เล่นฟุตบอล"],["にちようび なにを しましたか。","วันอาทิตย์ทำอะไร"]]},
+{t:"ทำที่ไหน",p:["N(สถานที่) で V"],e:"で บอกสถานที่ที่เกิดการกระทำ",ex:[["えきで しんぶんを かいます。","ซื้อหนังสือพิมพ์ที่สถานี"],["としょかんで べんきょうします。","เรียนที่ห้องสมุด"]]},
+{t:"ชวนอย่างสุภาพ",p:["Vませんか"],e:"ชวนโดยให้อีกฝ่ายตัดสินใจ",ex:[["いっしょに きょうとへ いきませんか。…ええ、いいですね。","ไปเกียวโตด้วยกันไหม … ดีสิ"]]},
+{t:"…กันเถอะ",p:["Vましょう"],e:"ชวนอย่างกระตือรือร้น หรือตอบรับคำชวน",ex:[["ちょっと やすみましょう。","พักกันหน่อยเถอะ"],["ええ、いきましょう。","ได้ ไปกันเถอะ"]]}],
+mistakes:[["えきに しんぶんを かいます","えきで しんぶんを かいます","สถานที่ทำกิจกรรมใช้ で"],["コーヒーが のみます","コーヒーを のみます","กรรมของกริยาใช้ を"],["いっしょに いきますか","いっしょに いきませんか","ชวนใช้ ませんか"]],
+vocab:[["たべます","กิน","v2"],["のみます","ดื่ม","v1"],["すいます","สูบ (บุหรี่)","v1"],["みます","ดู","v2"],["ききます","ฟัง","v1"],["よみます","อ่าน","v1"],["かきます","เขียน","v1"],["かいます","ซื้อ","v1"],["とります","ถ่าย (รูป)","v1"],["します","ทำ","v3"],["あいます","พบ เจอ","v1"],["ごはん","ข้าว","n"],["あさごはん","อาหารเช้า","n"],["ばんごはん","อาหารเย็น","n"],["パン","ขนมปัง","n"],["たまご","ไข่","n"],["にく","เนื้อสัตว์","n"],["さかな","ปลา","n"],["やさい","ผัก","n"],["くだもの","ผลไม้","n"],["みず","น้ำ","n"],["おちゃ","ชา","n"],["ぎゅうにゅう","นม","n"],["ジュース","น้ำผลไม้","n"],["ビール","เบียร์","n"],["てがみ","จดหมาย","n"],["しゃしん","รูปถ่าย","n"],["みせ","ร้าน","n"],["しゅくだい","การบ้าน","n"],["テニス","เทนนิส","n"],["サッカー","ฟุตบอล","n"],["なに","อะไร","x"],["いっしょに","ด้วยกัน","x"],["ときどき","บางครั้ง","x"],["いつも","เสมอ","x"],["それから","หลังจากนั้น","x"],["いいですね","ดีนะ","x"],["わかりました","เข้าใจแล้ว","x"]],
+fill:[["ดื่มกาแฟ","コーヒー（　）のみます。","を","が","で","に"],["ซื้อหนังสือพิมพ์ที่สถานี","えき（　）しんぶんを かいます。","で","に","へ","を"],["ไปเกียวโตด้วยกันไหม","いっしょに きょうとへ（　）。","いきませんか","いきましょうか","いきました","いきません"],["พักกันหน่อยเถอะ","ちょっと（　）。","やすみましょう","やすみます","やすみました","やすみません"],["วันอาทิตย์ทำอะไร","にちようび（　）を しましたか。","なに","なん","どこ","だれ"],["บางครั้งดื่มเบียร์","（　）ビールを のみます。","ときどき","いっしょに","それから","いつ"],["เล่นเทนนิส","テニスを（　）。","します","のみます","みます","ききます"],["ฟังเพลง","おんがくを（　）。","ききます","みます","よみます","かきます"],["ถ่ายรูป","しゃしんを（　）。","とります","かきます","みます","かいます"],["เจอเพื่อน","ともだち（　）あいます。","に","を","で","へ"]],
+order:[[["まいあさ","パンを","たべます"],"กินขนมปังทุกเช้า"],[["としょかんで","ほんを","よみます"],"อ่านหนังสือที่ห้องสมุด"],[["いっしょに","ひるごはんを","たべませんか"],"กินข้าวกลางวันด้วยกันไหม"],[["ここで","ちょっと","やすみましょう"],"พักตรงนี้กันหน่อย"],[["きのう","なにを","しましたか"],"เมื่อวานทำอะไร"],[["デパートで","くつを","かいました"],"ซื้อรองเท้าที่ห้าง"],[["にわで","しゃしんを","とりました"],"ถ่ายรูปที่สวน"],[["えきで","ともだちに","あいました"],"เจอเพื่อนที่สถานี"]]};
+LESSONS[7]={title:"เครื่องมือ で · ให้และรับ",topic:"あげます・もらいます",
+grammar:[
+{t:"ทำด้วยอะไร",p:["N(เครื่องมือ/วิธี) で V"],e:"で บอกเครื่องมือ วิธีการ หรือภาษาที่ใช้",ex:[["はしで たべます。","กินด้วยตะเกียบ"],["にほんごで レポートを かきます。","เขียนรายงานเป็นภาษาญี่ปุ่น"]]},
+{t:"…ภาษา…ว่าอะไร",p:["「คำ」は ～ごで なんですか"],e:"ถามคำแปลในอีกภาษาหนึ่ง",ex:[["「ありがとう」は えいごで なんですか。…「Thank you」です。","「ありがとう」ภาษาอังกฤษว่าอะไร"]]},
+{t:"ให้ ให้ยืม สอน",p:["N(ผู้รับ) に あげます／かします／おしえます"],e:"に บอกผู้รับ",ex:[["きむらさんに はなを あげました。","ให้ดอกไม้คุณคิมูระ"],["ともだちに にほんごを おしえます。","สอนภาษาญี่ปุ่นให้เพื่อน"]]},
+{t:"ได้รับ ยืม เรียน",p:["N(ผู้ให้) に／から もらいます／かります／ならいます"],e:"ผู้ให้ใช้ に หรือ から ก็ได้",ex:[["やまださんに ほんを かりました。","ยืมหนังสือจากคุณยามาดะ"],["ちちから とけいを もらいました。","ได้นาฬิกาจากพ่อ"]]},
+{t:"ทำแล้วหรือยัง",p:["もう Vました","いいえ、まだです"],e:"ตอบปฏิเสธว่ายังไม่ได้ทำใช้ まだです",ex:[["もう にもつを おくりましたか。…はい、もう おくりました。","ส่งของแล้วหรือยัง … ส่งแล้ว"],["いいえ、まだです。","ยังเลย"]]}],
+mistakes:[["ともだちを はなを あげました","ともだちに はなを あげました","ผู้รับใช้ に"],["いいえ、まだ おくりませんでした","いいえ、まだです","ยังไม่ได้ทำ ตอบ まだです"],["はしを たべます","はしで たべます","เครื่องมือใช้ で"]],
+vocab:[["きります","ตัด","v1"],["おくります","ส่ง","v1"],["あげます","ให้","v2"],["もらいます","ได้รับ","v1"],["かします","ให้ยืม","v1"],["かります","ยืม","v2"],["おしえます","สอน","v2"],["ならいます","เรียน (จากคน)","v1"],["かけます","โทร (ศัพท์)","v2"],["て","มือ","n"],["はし","ตะเกียบ","n"],["スプーン","ช้อน","n"],["ナイフ","มีด","n"],["フォーク","ส้อม","n"],["はさみ","กรรไกร","n"],["パソコン","คอมพิวเตอร์ส่วนตัว","n"],["ケータイ","โทรศัพท์มือถือ","n"],["メール","อีเมล","n"],["けしゴム","ยางลบ","n"],["かみ","กระดาษ","n"],["はな","ดอกไม้","n"],["シャツ","เสื้อเชิ้ต","n"],["プレゼント","ของขวัญ","n"],["にもつ","สัมภาระ","n"],["おかね","เงิน","n"],["きっぷ","ตั๋ว","n"],["ちち","พ่อ (ของตัวเอง)","n"],["はは","แม่ (ของตัวเอง)","n"],["おとうさん","คุณพ่อ (ของผู้อื่น)","n"],["おかあさん","คุณแม่ (ของผู้อื่น)","n"],["もう","แล้ว","x"],["まだ","ยัง","x"],["これから","ต่อจากนี้","x"]],
+fill:[["กินด้วยตะเกียบ","はし（　）たべます。","で","を","に","と"],["ให้ดอกไม้คุณคิมูระ","きむらさん（　）はなを あげました。","に","を","で","が"],["ได้นาฬิกาจากพ่อ","ちち（　）とけいを もらいました。","から","で","を","へ"],["ยืมหนังสือจากคุณยามาดะ","やまださんに ほんを（　）。","かりました","かしました","あげました","おくりました"],["ให้เพื่อนยืมร่ม","ともだちに かさを（　）。","かしました","かりました","もらいました","ならいました"],["ส่งของแล้วหรือยัง","（　）にもつを おくりましたか。","もう","まだ","いつも","これから"],["ยังเลย","いいえ、（　）です。","まだ","もう","これから","ときどき"],["「ありがとう」ภาษาอังกฤษว่าอะไร","「ありがとう」は えいご（　）なんですか。","で","の","に","を"],["เรียนภาษาญี่ปุ่นจากอาจารย์","せんせいに にほんごを（　）。","ならいます","おしえます","かします","あげます"],["ตัดกระดาษด้วยกรรไกร","はさみで かみを（　）。","きります","かきます","かけます","おくります"]],
+order:[[["はしで","ごはんを","たべます"],"กินข้าวด้วยตะเกียบ"],[["ははに","はなを","あげました"],"ให้ดอกไม้แม่"],[["ともだちに","ほんを","かりました"],"ยืมหนังสือจากเพื่อน"],[["もう","レポートを","おくりましたか"],"ส่งรายงานแล้วหรือยัง"],[["パソコンで","メールを","かきます"],"เขียนอีเมลด้วยคอมพิวเตอร์"],[["せんせいに","にほんごを","ならいました"],"เรียนภาษาญี่ปุ่นจากอาจารย์"],[["ちちから","とけいを","もらいました"],"ได้นาฬิกาจากพ่อ"],[["かぞくに","でんわを","かけます"],"โทรหาครอบครัว"]]};
+
+LESSONS[8]={title:"คำคุณศัพท์ い และ な",topic:"Adj.い・Adj.な",forms:["neg"],
+grammar:[
+{t:"คุณศัพท์ な",p:["N は Adj.な  です","N は Adj.な  じゃ ありません"],e:"ก่อน です ไม่ต้องมี な",ex:[["この まちは しずかです。","เมืองนี้เงียบ"],["わたしの へやは きれいじゃ ありません。","ห้องของฉันไม่สะอาด"]]},
+{t:"คุณศัพท์ い",p:["N は Adj.い  です","N は Adj.い  くないです"],e:"ตัด い แล้วเติม くないです",ex:[["ふじさんは たかいです。","ภูเขาไฟฟูจิสูง"],["この ほんは おもしろくないです。","หนังสือเล่มนี้ไม่สนุก"]],n:"いい ปฏิเสธเป็น よくないです"},
+{t:"ขยายคำนาม",p:["Adj.な  な N","Adj.い  N"],e:"な ต้องมี な ก่อนคำนาม ส่วน い วางหน้าคำนามได้เลย",ex:[["ゆうめいな レストラン","ร้านอาหารที่มีชื่อเสียง"],["あたらしい くるま","รถใหม่"]]},
+{t:"มาก / ไม่ค่อย",p:["とても A","あまり A(ปฏิเสธ)"],e:"あまり ใช้กับรูปปฏิเสธ",ex:[["にほんごは とても むずかしいです。","ภาษาญี่ปุ่นยากมาก"],["あまり さむくないです。","ไม่ค่อยหนาว"]]},
+{t:"เป็นอย่างไร / แบบไหน",p:["N は どうですか","どんな N ですか"],e:"どう ถามความรู้สึก どんな ถามลักษณะ ต้องมีคำนามตาม",ex:[["にほんの せいかつは どうですか。","ชีวิตที่ญี่ปุ่นเป็นอย่างไร"],["ならは どんな まちですか。","นาราเป็นเมืองแบบไหน"]]},
+{t:"…แต่… / อันไหน",p:["S1 が、S2","どれ"],e:"が เชื่อมประโยคที่ขัดแย้งกัน どれ ถามจากสามสิ่งขึ้นไป",ex:[["にほんの たべものは おいしいですが、たかいです。","อาหารญี่ปุ่นอร่อยแต่แพง"],["どれが ミラーさんの かさですか。","ร่มของคุณมิลเลอร์คือคันไหน"]]}],
+mistakes:[["きれいくないです","きれいじゃ ありません","きれい เป็นคุณศัพท์ な ทั้งที่ลงท้าย い"],["いくないです","よくないです","いい ผันเป็น よ"],["しずかな です","しずかです","ก่อน です ไม่ต้องมี な"],["あまり たかいです","あまり たかくないです","あまり ใช้กับปฏิเสธ"]],
+vocab:[["ハンサム","หล่อ","na"],["きれい","สวย สะอาด","na"],["しずか","เงียบ","na"],["にぎやか","คึกคัก","na"],["ゆうめい","มีชื่อเสียง","na"],["しんせつ","ใจดี","na"],["げんき","สบายดี แข็งแรง","na"],["ひま","ว่าง","na"],["べんり","สะดวก","na"],["すてき","ยอดเยี่ยม","na"],["おおきい","ใหญ่","i"],["ちいさい","เล็ก","i"],["あたらしい","ใหม่","i"],["ふるい","เก่า","i"],["いい","ดี","i"],["わるい","ไม่ดี","i"],["あつい","ร้อน","i"],["さむい","หนาว (อากาศ)","i"],["つめたい","เย็น (สัมผัส)","i"],["むずかしい","ยาก","i"],["やさしい","ง่าย ใจดี","i"],["たかい","แพง สูง","i"],["やすい","ถูก","i"],["おもしろい","สนุก น่าสนใจ","i"],["おいしい","อร่อย","i"],["いそがしい","ยุ่ง","i"],["たのしい","สนุก","i"],["しろい","ขาว","i"],["くろい","ดำ","i"],["あかい","แดง","i"],["あおい","น้ำเงิน","i"],["さくら","ซากุระ","n"],["やま","ภูเขา","n"],["まち","เมือง","n"],["たべもの","อาหาร","n"],["ところ","สถานที่","n"],["せいかつ","ชีวิตความเป็นอยู่","n"],["どう","อย่างไร","x"],["どんな","…แบบไหน","x"],["どれ","อันไหน","x"],["とても","มาก","x"],["あまり","ไม่ค่อย","x"],["そして","และ","x"]],
+fill:[["เมืองนี้เงียบ","この まちは（　）です。","しずか","しずかな","しずかい","しずかの"],["ภูเขาไฟฟูจิสูง","ふじさんは（　）です。","たかい","たかな","たかく","たかいな"],["หนังสือเล่มนี้ไม่สนุก","この ほんは（　）。","おもしろくないです","おもしろいじゃ ありません","おもしろないです","おもしろくです"],["ห้องไม่สะอาด","へやは（　）。","きれいじゃ ありません","きれくないです","きれいくないです","きれいないです"],["ร้านที่มีชื่อเสียง","（　）レストラン","ゆうめいな","ゆうめい","ゆうめいの","ゆうめいい"],["รถใหม่","（　）くるま","あたらしい","あたらしいな","あたらしいの","あたらしく"],["ไม่ค่อยหนาว","（　）さむくないです。","あまり","とても","いつも","まだ"],["ภาษาญี่ปุ่นยากมาก","にほんごは（　）むずかしいです。","とても","あまり","まだ","もう"],["นาราเป็นเมืองแบบไหน","ならは（　）まちですか。","どんな","どう","どれ","どこ"],["ไม่ดีเลย","この カメラは（　）。","よくないです","いくないです","いいじゃ ありません","よいないです"]],
+order:[[["この","へやは","しずかです"],"ห้องนี้เงียบ"],[["ふじさんは","とても","たかいです"],"ภูเขาไฟฟูจิสูงมาก"],[["きょうは","あまり","さむくないです"],"วันนี้ไม่ค่อยหนาว"],[["ならは","きれいな","まちです"],"นาราเป็นเมืองที่สวย"],[["にほんの","せいかつは","どうですか"],"ชีวิตที่ญี่ปุ่นเป็นอย่างไร"],[["この","カメラは","たかいですが、","いいです"],"กล้องนี้แพงแต่ดี"],[["やまださんは","しんせつな","ひとです"],"คุณยามาดะเป็นคนใจดี"],[["どれが","あなたの","かばんですか"],"กระเป๋าของคุณคือใบไหน"]]};
+
+LESSONS[9]={title:"ชอบ เก่ง เข้าใจ · เพราะว่า",topic:"Nが すきです・～から",
+grammar:[
+{t:"ชอบ ไม่ชอบ เก่ง ไม่เก่ง",p:["N が すき／きらい／じょうず／へた です"],e:"สิ่งที่ชอบหรือเก่งใช้ が ไม่ใช่ を",ex:[["わたしは イタリアりょうりが すきです。","ฉันชอบอาหารอิตาเลียน"],["ミラーさんは りょうりが じょうずです。","คุณมิลเลอร์ทำอาหารเก่ง"]]},
+{t:"เข้าใจ / มี",p:["N が わかります","N が あります"],e:"สิ่งที่เข้าใจหรือมีใช้ が",ex:[["わたしは かんじが わかります。","ฉันเข้าใจคันจิ"],["わたしは くるまが あります。","ฉันมีรถ"]]},
+{t:"…แบบไหน",p:["どんな N が すきですか"],e:"ถามรายละเอียดของสิ่งที่ชอบ",ex:[["どんな スポーツが すきですか。…サッカーが すきです。","ชอบกีฬาแบบไหน … ชอบฟุตบอล"]]},
+{t:"ระดับ",p:["よく／だいたい／すこし／あまり／ぜんぜん"],e:"あまり และ ぜんぜん ใช้กับรูปปฏิเสธ",ex:[["えいごが よく わかります。","เข้าใจภาษาอังกฤษดี"],["かんじが ぜんぜん わかりません。","ไม่เข้าใจคันจิเลย"]]},
+{t:"เพราะว่า / ทำไม",p:["S1 から、S2","どうして ～か"],e:"から ต่อท้ายประโยคที่เป็นเหตุผล",ex:[["じかんが ありませんから、しんぶんを よみません。","ไม่มีเวลา จึงไม่อ่านหนังสือพิมพ์"],["どうして はやく かえりますか。…ようじが ありますから。","ทำไมกลับเร็ว … เพราะมีธุระ"]]}],
+mistakes:[["りょうりを すきです","りょうりが すきです","すき ใช้ が"],["かんじが ぜんぜん わかります","かんじが ぜんぜん わかりません","ぜんぜん ใช้กับปฏิเสธ"],["わたしは へたです うたが","わたしは うたが へたです","เรียง: ผู้พูด は สิ่ง が คุณศัพท์"]],
+vocab:[["わかります","เข้าใจ","v1"],["すき","ชอบ","na"],["きらい","ไม่ชอบ","na"],["じょうず","เก่ง","na"],["へた","ไม่เก่ง","na"],["のみもの","เครื่องดื่ม","n"],["りょうり","อาหาร การทำอาหาร","n"],["スポーツ","กีฬา","n"],["やきゅう","เบสบอล","n"],["ダンス","การเต้น","n"],["りょこう","การท่องเที่ยว","n"],["おんがく","ดนตรี","n"],["うた","เพลง","n"],["え","ภาพวาด","n"],["じ","ตัวอักษร","n"],["かんじ","คันจิ","n"],["ひらがな","ฮิรางานะ","n"],["かたかな","คาตาคานะ","n"],["こまかい おかね","เงินย่อย","n"],["チケット","ตั๋ว","n"],["じかん","เวลา","n"],["ようじ","ธุระ","n"],["やくそく","นัด","n"],["アルバイト","งานพิเศษ","n"],["ごしゅじん","สามี (ของผู้อื่น)","n"],["おっと","สามี (ของตัวเอง)","n"],["おくさん","ภรรยา (ของผู้อื่น)","n"],["つま","ภรรยา (ของตัวเอง)","n"],["こども","เด็ก ลูก","n"],["よく","ดี บ่อย","x"],["だいたい","ส่วนใหญ่","x"],["たくさん","มาก","x"],["すこし","นิดหน่อย","x"],["ぜんぜん","ไม่…เลย","x"],["はやく","เร็ว","x"],["どうして","ทำไม","x"]],
+fill:[["ฉันชอบอาหารญี่ปุ่น","にほんりょうり（　）すきです。","が","を","に","で"],["เข้าใจภาษาอังกฤษดี","えいごが（　）わかります。","よく","ぜんぜん","あまり","どうして"],["ไม่เข้าใจคันจิเลย","かんじが ぜんぜん（　）。","わかりません","わかります","すきです","あります"],["ฉันมีรถ","わたしは くるまが（　）。","あります","わかります","すきです","じょうずです"],["ทำไมกลับเร็ว","（　）はやく かえりますか。","どうして","どんな","どう","なに"],["เพราะมีธุระ","ようじが あります（　）。","から","が","ね","よ"],["ชอบดนตรีแบบไหน","（　）おんがくが すきですか。","どんな","どう","どれ","どちら"],["คุณมิลเลอร์ร้องเพลงเก่ง","ミラーさんは うたが（　）です。","じょうず","へた","きらい","すこし"],["ไม่ค่อยชอบเบียร์","ビールは（　）すきじゃ ありません。","あまり","よく","とても","たくさん"],["มีเงินย่อยไหม","こまかい おかねが（　）か。","あります","わかります","すきです","じょうずです"]],
+order:[[["わたしは","サッカーが","すきです"],"ฉันชอบฟุตบอล"],[["かんじが","すこし","わかります"],"เข้าใจคันจิบ้างนิดหน่อย"],[["どんな","スポーツが","すきですか"],"ชอบกีฬาแบบไหน"],[["きょうは","やくそくが","あります"],"วันนี้มีนัด"],[["じかんが","ありませんから、","いきません"],"ไม่มีเวลา จึงไม่ไป"],[["つまは","りょうりが","じょうずです"],"ภรรยาของผมทำอาหารเก่ง"],[["どうして","はやく","かえりますか"],"ทำไมกลับเร็ว"],[["えいごが","ぜんぜん","わかりません"],"ไม่เข้าใจภาษาอังกฤษเลย"]]};
+
+LESSONS[10]={title:"มี / อยู่ · ตำแหน่ง",topic:"あります・います",
+grammar:[
+{t:"ที่…มี…",p:["N1(สถานที่) に N2 が あります／います"],e:"สิ่งของใช้ あります สิ่งมีชีวิตที่เคลื่อนที่ได้ใช้ います",ex:[["あそこに コンビニが あります。","ที่โน่นมีร้านสะดวกซื้อ"],["にわに ねこが います。","ที่สวนมีแมว"]]},
+{t:"…อยู่ที่…",p:["N1 は N2(สถานที่) に あります／います"],e:"พูดถึงสิ่งที่รู้จักแล้วว่าอยู่ที่ไหน",ex:[["ミラーさんは じむしょに います。","คุณมิลเลอร์อยู่ที่สำนักงาน"],["ゆうびんきょくは えきの まえに あります。","ไปรษณีย์อยู่หน้าสถานี"]]},
+{t:"ตำแหน่ง",p:["N1 の うえ／した／まえ／うしろ／なか／そと／となり／ちかく／あいだ"],e:"สิ่งอ้างอิงมาก่อน の แล้วตามด้วยคำบอกตำแหน่ง",ex:[["つくえの うえに しゃしんが あります。","บนโต๊ะมีรูปถ่าย"],["ぎんこうは はなやの となりです。","ธนาคารอยู่ติดกับร้านดอกไม้"]]},
+{t:"…และ…เป็นต้น",p:["N1 や N2［など］"],e:"ยกตัวอย่างบางส่วน ต่างจาก と ที่ยกครบทุกอย่าง",ex:[["はこの なかに てがみや しゃしんが あります。","ในกล่องมีจดหมายและรูปถ่ายเป็นต้น"]]},
+{t:"มีอะไร มีใคร",p:["なにが ありますか","だれが いますか"],e:"คำถามเป็นประธานใช้ が",ex:[["はこの なかに なにが ありますか。","ในกล่องมีอะไร"],["へやに だれが いますか。","ในห้องมีใคร"]]}],
+mistakes:[["いぬが あります","いぬが います","สัตว์ใช้ います"],["つくえの うえで ほんが あります","つくえの うえに ほんが あります","ที่อยู่ของสิ่งของใช้ に"],["うえの つくえ (บนโต๊ะ)","つくえの うえ","สิ่งอ้างอิงมาก่อน の"]],
+vocab:[["あります","มี อยู่ (สิ่งของ)","v1"],["います","มี อยู่ (คน สัตว์)","v2"],["いろいろ","หลากหลาย","na"],["おとこの ひと","ผู้ชาย","n"],["おんなの ひと","ผู้หญิง","n"],["おとこの こ","เด็กผู้ชาย","n"],["おんなの こ","เด็กผู้หญิง","n"],["いぬ","สุนัข","n"],["ねこ","แมว","n"],["き","ต้นไม้","n"],["もの","สิ่งของ","n"],["はこ","กล่อง","n"],["れいぞうこ","ตู้เย็น","n"],["テーブル","โต๊ะ","n"],["ベッド","เตียง","n"],["たな","ชั้นวางของ","n"],["ドア","ประตู","n"],["まど","หน้าต่าง","n"],["ポスト","ตู้ไปรษณีย์","n"],["ビル","อาคาร","n"],["コンビニ","ร้านสะดวกซื้อ","n"],["こうえん","สวนสาธารณะ","n"],["きっさてん","ร้านกาแฟ","n"],["のりば","ที่ขึ้นรถ","n"],["うえ","ข้างบน","n"],["した","ข้างล่าง","n"],["まえ","ข้างหน้า","n"],["うしろ","ข้างหลัง","n"],["みぎ","ขวา","n"],["ひだり","ซ้าย","n"],["なか","ข้างใน","n"],["そと","ข้างนอก","n"],["となり","ข้างๆ ติดกัน","n"],["ちかく","ใกล้ๆ","n"],["あいだ","ระหว่าง","n"]],
+fill:[["ที่สวนมีแมว","にわに ねこが（　）。","います","あります","いきます","きます"],["บนโต๊ะมีหนังสือ","つくえの うえ（　）ほんが あります。","に","で","を","へ"],["ไปรษณีย์อยู่หน้าสถานี","ゆうびんきょくは えきの（　）に あります。","まえ","うしろ","なか","した"],["ในกล่องมีอะไร","はこの なかに（　）が ありますか。","なに","だれ","どこ","いつ"],["ในห้องมีใคร","へやに（　）が いますか。","だれ","なに","どれ","どこ"],["ในตู้เย็นมีไข่และนมเป็นต้น","たまご（　）ぎゅうにゅうなどが あります。","や","を","も","の"],["ร้านกาแฟอยู่ระหว่างธนาคารกับร้านดอกไม้","きっさてんは ぎんこうと はなやの（　）です。","あいだ","となり","ちかく","まえ"],["คุณมิลเลอร์อยู่ที่ไหน","ミラーさんは どこに（　）か。","います","あります","いきます","です"],["ใต้เตียงมีสุนัข","ベッドの（　）に いぬが います。","した","うえ","まえ","そと"],["ใกล้ๆ บ้านมีสวนสาธารณะ","うちの（　）に こうえんが あります。","ちかく","あいだ","なか","うしろ"]],
+order:[[["にわに","ねこが","います"],"ที่สวนมีแมว"],[["つくえの","うえに","ほんが","あります"],"บนโต๊ะมีหนังสือ"],[["コンビニは","えきの","まえに","あります"],"ร้านสะดวกซื้ออยู่หน้าสถานี"],[["はこの","なかに","なにが","ありますか"],"ในกล่องมีอะไร"],[["へやに","だれが","いますか"],"ในห้องมีใคร"],[["ぎんこうの","となりに","きっさてんが","あります"],"ข้างธนาคารมีร้านกาแฟ"],[["こうえんに","おとこの こが","います"],"ที่สวนสาธารณะมีเด็กผู้ชาย"],[["ドアの","みぎに","スイッチが","あります"],"ทางขวาของประตูมีสวิตช์"]]};
+
+LESSONS[11]={title:"การนับ · ระยะเวลา",topic:"ひとつ・～まい・～じかん",
+grammar:[
+{t:"ลักษณนาม",p:["ひとつ～とお","～にん／～だい／～まい／～かい"],e:"ひとつ～とお นับสิ่งของทั่วไป ～にん นับคน ～だい นับเครื่องจักร ～まい นับของแบน ～かい นับครั้ง",ex:[["りんごを よっつ かいました。","ซื้อแอปเปิ้ล 4 ลูก"],["くるまが 2だい あります。","มีรถ 2 คัน"]],n:"1 คน = ひとり 2 คน = ふたり 4 คน = よにん"},
+{t:"ตำแหน่งของจำนวน",p:["N を (จำนวน) V"],e:"วางจำนวนไว้หลังคำช่วยและก่อนกริยา",ex:[["きってを 5まい ください。","ขอแสตมป์ 5 ดวง"]]},
+{t:"กี่…",p:["いくつ","なん＋ลักษณนาม"],e:"いくつ ถามจำนวนสิ่งของทั่วไป",ex:[["みかんを いくつ かいましたか。…やっつ かいました。","ซื้อส้มกี่ลูก … 8 ลูก"],["きょうだいが なんにん いますか。","มีพี่น้องกี่คน"]]},
+{t:"ความถี่และระยะเวลา",p:["ช่วงเวลา に ～かい V","～じかん かかります"],e:"บอกว่าทำกี่ครั้งในช่วงเวลาหนึ่ง และใช้เวลาเท่าไร",ex:[["1かげつに 2かい えいがを みます。","ดูหนังเดือนละ 2 ครั้ง"],["くにから にほんまで ひこうきで 6じかん かかります。","จากประเทศถึงญี่ปุ่นใช้เวลา 6 ชั่วโมงทางเครื่องบิน"]]},
+{t:"ประมาณ / แค่",p:["～ぐらい","～だけ"],e:"ぐらい ประมาณ だけ เท่านั้น",ex:[["がっこうに がいこくじんの せんせいが 5にんぐらい います。","โรงเรียนมีครูต่างชาติประมาณ 5 คน"],["やすみは にちようびだけです。","วันหยุดมีแค่วันอาทิตย์"]]}],
+mistakes:[["いちにん","ひとり","1 คนอ่าน ひとり"],["5まいを きって ください","きってを 5まい ください","จำนวนอยู่หลังคำช่วย"],["よんにん","よにん","4 คนอ่าน よにん"]],
+vocab:[["かかります","ใช้ (เวลา เงิน)","v1"],["ひとつ","หนึ่งชิ้น","x"],["ふたつ","สองชิ้น","x"],["みっつ","สามชิ้น","x"],["よっつ","สี่ชิ้น","x"],["いつつ","ห้าชิ้น","x"],["とお","สิบชิ้น","x"],["いくつ","กี่ชิ้น","x"],["ひとり","หนึ่งคน","x"],["ふたり","สองคน","x"],["～にん","…คน","x"],["～だい","…คัน …เครื่อง","x"],["～まい","…แผ่น","x"],["～かい","…ครั้ง","x"],["りんご","แอปเปิ้ล","n"],["みかん","ส้ม","n"],["サンドイッチ","แซนด์วิช","n"],["カレー","แกงกะหรี่","n"],["きって","แสตมป์","n"],["はがき","ไปรษณียบัตร","n"],["ふうとう","ซองจดหมาย","n"],["りょうしん","พ่อแม่","n"],["きょうだい","พี่น้อง","n"],["あに","พี่ชาย (ของตัวเอง)","n"],["あね","พี่สาว (ของตัวเอง)","n"],["おとうと","น้องชาย","n"],["いもうと","น้องสาว","n"],["がいこく","ต่างประเทศ","n"],["～じかん","…ชั่วโมง","x"],["～しゅうかん","…สัปดาห์","x"],["～かげつ","…เดือน","x"],["～ぐらい","ประมาณ…","x"],["どのくらい","นานเท่าไร","x"],["ぜんぶで","ทั้งหมด","x"],["みんな","ทุกคน","x"],["～だけ","…เท่านั้น","x"]],
+fill:[["ซื้อแอปเปิ้ล 4 ลูก","りんごを（　）かいました。","よっつ","よにん","よんまい","よんだい"],["มีพี่น้องกี่คน","きょうだいが（　）いますか。","なんにん","いくつ","なんまい","なんだい"],["ขอแสตมป์ 5 ดวง","きってを 5（　）ください。","まい","だい","にん","かい"],["มีรถ 2 คัน","くるまが 2（　）あります。","だい","まい","にん","つ"],["ใช้เวลาประมาณ 1 ชั่วโมง","1じかん（　）かかります。","ぐらい","だけ","まで","から"],["ดูหนังเดือนละ 2 ครั้ง","1かげつ（　）2かい えいがを みます。","に","で","と","を"],["นักเรียนมี 2 คน","がくせいが（　）います。","ふたり","ふたつ","ににん","にまい"],["วันหยุดมีแค่วันอาทิตย์","やすみは にちようび（　）です。","だけ","ぐらい","から","まで"],["เรียนภาษาญี่ปุ่นมานานเท่าไร","（　）にほんごを べんきょうしましたか。","どのくらい","いくつ","なんまい","いくら"],["ทั้งหมด 500 เยน","（　）500えんです。","ぜんぶで","みんなで","ひとりで","だけで"]],
+order:[[["りんごを","みっつ","かいました"],"ซื้อแอปเปิ้ล 3 ลูก"],[["きってを","5まい","ください"],"ขอแสตมป์ 5 ดวง"],[["きょうだいが","なんにん","いますか"],"มีพี่น้องกี่คน"],[["1しゅうかんに","3かい","テニスを","します"],"เล่นเทนนิสสัปดาห์ละ 3 ครั้ง"],[["えきまで","10ぷん","かかります"],"ถึงสถานีใช้เวลา 10 นาที"],[["かいしゃに","くるまが","3だい","あります"],"ที่บริษัทมีรถ 3 คัน"],[["やすみは","にちようびだけ","です"],"วันหยุดมีแค่วันอาทิตย์"],[["にほんに","1ねん","いました"],"อยู่ญี่ปุ่น 1 ปี"]]};
+
+LESSONS[12]={title:"อดีตของคุณศัพท์ · เปรียบเทียบ",topic:"～かったです・より",forms:["past","pastneg"],
+grammar:[
+{t:"อดีตของคำนามและ な",p:["N／Adj.な  でした","N／Adj.な  じゃ ありませんでした"],e:"เปลี่ยน です เป็น でした",ex:[["きのうは あめでした。","เมื่อวานฝนตก"],["きのうの しけんは かんたんじゃ ありませんでした。","ข้อสอบเมื่อวานไม่ง่าย"]]},
+{t:"อดีตของ い",p:["Adj.い  かったです","Adj.い  くなかったです"],e:"ตัด い แล้วเติม かったです",ex:[["きのうは あつかったです。","เมื่อวานร้อน"],["パーティーは あまり たのしくなかったです。","งานเลี้ยงไม่ค่อยสนุก"]],n:"いい → よかったです"},
+{t:"…กว่า…",p:["N1 は N2 より A です"],e:"より ตามหลังสิ่งที่นำมาเทียบ",ex:[["この くるまは あの くるまより おおきいです。","รถคันนี้ใหญ่กว่ารถคันนั้น"]]},
+{t:"อันไหนกว่า",p:["N1 と N2 と どちらが A ですか","N の ほうが A です"],e:"เทียบสองสิ่งใช้ どちら",ex:[["サッカーと やきゅうと どちらが おもしろいですか。…サッカーの ほうが おもしろいです。","ฟุตบอลกับเบสบอลอันไหนสนุกกว่า … ฟุตบอลสนุกกว่า"]]},
+{t:"…ที่สุด",p:["N［の なか］で なに／どこ／だれ／いつ が いちばん A ですか"],e:"เลือกอันดับหนึ่งจากกลุ่ม",ex:[["にほんりょうりで なにが いちばん おいしいですか。…てんぷらが いちばん おいしいです。","อาหารญี่ปุ่นอะไรอร่อยที่สุด … เทมปุระ"],["1ねんで いつが いちばん さむいですか。","ในหนึ่งปีช่วงไหนหนาวที่สุด"]]}],
+mistakes:[["さむいでした","さむかったです","い ผันอดีตเป็น かったです"],["いかったです","よかったです","いい ผันเป็น よ"],["しずかかったです","しずかでした","な ใช้ でした"]],
+vocab:[["かんたん","ง่าย","na"],["ちかい","ใกล้","i"],["とおい","ไกล","i"],["はやい","เร็ว","i"],["おそい","ช้า","i"],["おおい","มาก","i"],["すくない","น้อย","i"],["あたたかい","อุ่น","i"],["すずしい","เย็นสบาย","i"],["あまい","หวาน","i"],["からい","เผ็ด","i"],["おもい","หนัก","i"],["かるい","เบา","i"],["きせつ","ฤดูกาล","n"],["はる","ฤดูใบไม้ผลิ","n"],["なつ","ฤดูร้อน","n"],["あき","ฤดูใบไม้ร่วง","n"],["ふゆ","ฤดูหนาว","n"],["てんき","อากาศ","n"],["あめ","ฝน","n"],["ゆき","หิมะ","n"],["くもり","มีเมฆมาก","n"],["ホテル","โรงแรม","n"],["くうこう","สนามบิน","n"],["うみ","ทะเล","n"],["せかい","โลก","n"],["パーティー","งานเลี้ยง","n"],["おまつり","เทศกาล","n"],["すきやき","สุกียากี้","n"],["さしみ","ซาชิมิ","n"],["てんぷら","เทมปุระ","n"],["ぎゅうにく","เนื้อวัว","n"],["とりにく","เนื้อไก่","n"],["ぶたにく","เนื้อหมู","n"],["どちら","อันไหน (สองสิ่ง)","x"],["どちらも","ทั้งสอง","x"],["いちばん","ที่สุด","x"],["ずっと","…กว่ามาก","x"],["はじめて","เป็นครั้งแรก","x"]],
+fill:[["เมื่อวานร้อน","きのうは（　）。","あつかったです","あついでした","あつくでした","あつかったでした"],["เมื่อวานฝนตก","きのうは あめ（　）。","でした","かったです","です","くなかったです"],["ข้อสอบไม่ง่าย","しけんは（　）。","かんたんじゃ ありませんでした","かんたんくなかったです","かんたんかったです","かんたんでしたじゃ"],["รถคันนี้ใหญ่กว่าคันนั้น","この くるまは あの くるま（　）おおきいです。","より","ほう","から","まで"],["ฟุตบอลกับเบสบอลอันไหนสนุกกว่า","サッカーと やきゅうと（　）が おもしろいですか。","どちら","どれ","なに","どこ"],["ฟุตบอลสนุกกว่า","サッカーの（　）が おもしろいです。","ほう","より","ほど","いちばん"],["อาหารญี่ปุ่นอะไรอร่อยที่สุด","にほんりょうりで なにが（　）おいしいですか。","いちばん","ずっと","より","とても"],["ทริปสนุกมาก","りょこうは とても（　）。","たのしかったです","たのしいでした","たのしかったでした","たのしくでした"],["ชอบทั้งสองอย่าง","（　）すきです。","どちらも","どちら","いちばん","ずっと"],["อากาศไม่ค่อยดี","てんきは あまり（　）。","よくなかったです","いくなかったです","よかったです","よくないでした"]],
+order:[[["きのうは","とても","さむかったです"],"เมื่อวานหนาวมาก"],[["きょうとの","りょこうは","たのしかったです"],"ทริปเกียวโตสนุก"],[["この","くるまは","あの くるまより","おおきいです"],"รถคันนี้ใหญ่กว่าคันนั้น"],[["サッカーと","やきゅうと","どちらが","すきですか"],"ชอบฟุตบอลหรือเบสบอลมากกว่า"],[["なつの","ほうが","すきです"],"ชอบฤดูร้อนมากกว่า"],[["きせつで","いつが","いちばん","すきですか"],"ชอบฤดูไหนที่สุด"],[["しけんは","かんたんじゃ","ありませんでした"],"ข้อสอบไม่ง่าย"],[["とうきょうは","おおさかより","ずっと","おおきいです"],"โตเกียวใหญ่กว่าโอซาก้ามาก"]]};
+
+LESSONS[13]={title:"อยากได้ อยากทำ · ไปเพื่อ",topic:"ほしい・～たい・～に いきます",forms:["tai","takunai"],
+grammar:[
+{t:"อยากได้",p:["N が ほしいです"],e:"ほしい เป็นคุณศัพท์ い ใช้บอกความต้องการของผู้พูด",ex:[["わたしは くるまが ほしいです。","ฉันอยากได้รถ"],["いま なにが いちばん ほしいですか。","ตอนนี้อยากได้อะไรที่สุด"]]},
+{t:"อยากทำ",p:["V(ตัด ます) たいです","V(ตัด ます) たくないです"],e:"たい ผันเหมือนคุณศัพท์ い",ex:[["おきなわへ いきたいです。","อยากไปโอกินาว่า"],["きょうは なにも したくないです。","วันนี้ไม่อยากทำอะไรเลย"]]},
+{t:"ไปเพื่อ…",p:["N(สถานที่) へ V(ตัด ます)／N に いきます／きます／かえります"],e:"บอกจุดประสงค์ของการไป",ex:[["こうべへ インドりょうりを たべに いきます。","ไปโกเบเพื่อกินอาหารอินเดีย"],["デパートへ かいものに いきます。","ไปห้างเพื่อช้อปปิ้ง"]]},
+{t:"ที่ไหนสักแห่ง / อะไรสักอย่าง",p:["どこか","なにか"],e:"どこか และ なにか ใช้ในประโยคบอกเล่าและคำถาม ต่างจาก どこも なにも ที่ใช้กับปฏิเสธ",ex:[["ふゆやすみは どこか いきましたか。","วันหยุดฤดูหนาวได้ไปที่ไหนบ้างไหม"],["のどが かわきましたから、なにか のみたいです。","คอแห้ง อยากดื่มอะไรสักอย่าง"]]}],
+mistakes:[["くるまを ほしいです","くるまが ほしいです","ほしい ใช้ が"],["たべたいでした","たべたかったです","たい ผันเหมือนคุณศัพท์ い"],["かいものを いきます","かいものに いきます","จุดประสงค์ใช้ に"]],
+vocab:[["あそびます","เล่น เที่ยว","v1"],["およぎます","ว่ายน้ำ","v1"],["むかえます","ไปรับ","v2"],["つかれます","เหนื่อย","v2"],["けっこんします","แต่งงาน","v3"],["かいものします","ช้อปปิ้ง","v3"],["しょくじします","ทานอาหาร","v3"],["さんぽします","เดินเล่น","v3"],["たいへん","ลำบาก","na"],["ほしい","อยากได้","i"],["ひろい","กว้าง","i"],["せまい","แคบ","i"],["プール","สระว่ายน้ำ","n"],["かわ","แม่น้ำ","n"],["びじゅつ","ศิลปะ","n"],["つり","การตกปลา","n"],["スキー","สกี","n"],["しゅうまつ","สุดสัปดาห์","n"],["おしょうがつ","ปีใหม่","n"],["～ごろ","ประมาณ… (เวลา)","x"],["なにか","อะไรสักอย่าง","x"],["どこか","ที่ไหนสักแห่ง","x"],["のどが かわきました","คอแห้ง","x"],["おなかが すきました","หิว","x"]],
+fill:[["ฉันอยากได้กล้องใหม่","あたらしい カメラ（　）ほしいです。","が","を","に","で"],["อยากไปโอกินาว่า","おきなわへ（　）です。","いきたい","いきほしい","いくたい","いきますたい"],["ไม่อยากกินอะไรเลย","なにも（　）。","たべたくないです","たべたいじゃ ありません","たべないたいです","たべたいないです"],["ไปห้างเพื่อช้อปปิ้ง","デパートへ かいもの（　）いきます。","に","を","で","へ"],["ไปเพื่อกินอาหารอินเดีย","インドりょうりを（　）に いきます。","たべ","たべます","たべる","たべて"],["อยากดื่มอะไรสักอย่าง","（　）のみたいです。","なにか","なにも","どこか","なに"],["วันหยุดไปไหนมาบ้างไหม","やすみは（　）いきましたか。","どこか","どこも","なにか","なにも"],["ไปรับเพื่อนที่สนามบิน","くうこうへ ともだちを（　）に いきます。","むかえ","むかえます","むかえる","むかえて"],["หิวแล้ว","おなかが（　）。","すきました","かわきました","つかれました","ほしいです"],["อยากได้อะไรที่สุด","なにが いちばん（　）ですか。","ほしい","たい","すきに","ほしく"]],
+order:[[["わたしは","くるまが","ほしいです"],"ฉันอยากได้รถ"],[["なつやすみに","うみへ","いきたいです"],"วันหยุดฤดูร้อนอยากไปทะเล"],[["きょうは","なにも","したくないです"],"วันนี้ไม่อยากทำอะไรเลย"],[["デパートへ","かいものに","いきます"],"ไปห้างเพื่อช้อปปิ้ง"],[["こうえんへ","さんぽに","いきました"],"ไปเดินเล่นที่สวน"],[["くうこうへ","ともだちを","むかえに","いきます"],"ไปรับเพื่อนที่สนามบิน"],[["のどが","かわきましたから、","なにか","のみたいです"],"คอแห้ง อยากดื่มอะไรสักอย่าง"],[["しゅうまつ","どこか","いきましたか"],"สุดสัปดาห์ได้ไปไหนบ้างไหม"]]};
+LESSONS[15]={title:"ขออนุญาต ห้าม · สภาพที่เป็นอยู่",topic:"～ても いいです・～ています",forms:["temoii","tehaikemasen","teiru"],
+grammar:[
+{t:"…ได้ไหม / …ได้",p:["Vて も いいですか","Vて も いいです"],e:"ขออนุญาตหรือให้อนุญาต",ex:[["しゃしんを とっても いいですか。…ええ、いいですよ。","ถ่ายรูปได้ไหม … ได้สิ"],["この ペンを つかっても いいですか。","ใช้ปากกานี้ได้ไหม"]]},
+{t:"ห้าม…",p:["Vて は いけません"],e:"บอกข้อห้าม ใช้กับกฎหรือผู้น้อย",ex:[["ここで たばこを すっては いけません。","ห้ามสูบบุหรี่ที่นี่"],["びじゅつかんで しゃしんを とっては いけません。","ห้ามถ่ายรูปในพิพิธภัณฑ์ศิลปะ"]]},
+{t:"สภาพที่ต่อเนื่อง",p:["Vて います"],e:"บอกสภาพที่เป็นผลจากการกระทำและยังคงอยู่",ex:[["わたしは けっこんして います。","ฉันแต่งงานแล้ว"],["わたしは おおさかに すんで います。","ฉันอาศัยอยู่ที่โอซาก้า"]]},
+{t:"อาชีพ / สิ่งที่ทำเป็นประจำ",p:["Vて います"],e:"บอกอาชีพ หรือกิจกรรมที่ทำต่อเนื่องเป็นประจำ",ex:[["あの かいしゃは コンピューターソフトを つくって います。","บริษัทนั้นผลิตซอฟต์แวร์คอมพิวเตอร์"],["あの みせで ふるい カメラを うって います。","ร้านนั้นขายกล้องเก่า"]]},
+{t:"รู้ / ไม่รู้",p:["しって います","しりません"],e:"รูปปฏิเสธของ しって います คือ しりません",ex:[["やまださんの じゅうしょを しって いますか。…いいえ、しりません。","รู้ที่อยู่คุณยามาดะไหม … ไม่รู้"]]}],
+mistakes:[["いいえ、しって いません","いいえ、しりません","ปฏิเสธใช้ しりません"],["すっても いけません","すっては いけません","ห้ามใช้ ては いけません"],["おおさかに すみます (หมายถึงอยู่ตอนนี้)","おおさかに すんで います","อาศัยอยู่ใช้ ています"]],
+vocab:[["おきます","วาง","v1"],["つくります","ทำ สร้าง","v1"],["うります","ขาย","v1"],["しります","รู้จัก","v1"],["すみます","อาศัยอยู่","v1"],["けんきゅうします","วิจัย","v3"],["しりょう","เอกสาร","n"],["カタログ","แคตตาล็อก","n"],["じこくひょう","ตารางเวลา","n"],["ふく","เสื้อผ้า","n"],["せいひん","ผลิตภัณฑ์","n"],["ソフト","ซอฟต์แวร์","n"],["せんもん","สาขาเฉพาะทาง","n"],["はいしゃ","ทันตแพทย์","n"],["とこや","ร้านตัดผม","n"],["どくしん","โสด","n"],["でんわばんごう","หมายเลขโทรศัพท์","n"],["じゅうしょ","ที่อยู่","n"]],
+fill:[["ถ่ายรูปได้ไหม","しゃしんを とって（　）いいですか。","も","は","が","を"],["ห้ามสูบบุหรี่ที่นี่","ここで たばこを すって（　）いけません。","は","も","が","を"],["ฉันแต่งงานแล้ว","わたしは けっこん（　）。","して います","します","しませんでした","して いきます"],["อาศัยอยู่ที่โอซาก้า","おおさかに（　）います。","すんで","すみて","すまって","すむて"],["รู้ไหม … ไม่รู้","しって いますか。…いいえ、（　）。","しりません","しって いません","しって ありません","しりませんか"],["นั่งได้ไหม","すわっても（　）か。","いいです","いけません","います","あります"],["บริษัทนั้นผลิตรถยนต์","あの かいしゃは くるまを（　）います。","つくって","つくりて","つくて","つくんで"],["วางของตรงนี้ได้ไหม","ここに にもつを（　）も いいですか。","おいて","おきて","おって","おんで"],["ห้ามเข้า","はいっては（　）。","いけません","いいです","います","ください"],["ร้านนี้ขายเสื้อผ้า","この みせは ふくを（　）います。","うって","うりて","うて","うんで"]],
+order:[[["しゃしんを","とっても","いいですか"],"ถ่ายรูปได้ไหม"],[["ここで","たばこを","すっては","いけません"],"ห้ามสูบบุหรี่ที่นี่"],[["わたしは","とうきょうに","すんで","います"],"ฉันอาศัยอยู่ที่โตเกียว"],[["あねは","けっこんして","います"],"พี่สาวแต่งงานแล้ว"],[["この","カタログを","もらっても","いいですか"],"ขอแคตตาล็อกนี้ได้ไหม"],[["やまださんの","でんわばんごうを","しって","いますか"],"รู้เบอร์โทรคุณยามาดะไหม"],[["あの","かいしゃは","ソフトを","つくって","います"],"บริษัทนั้นผลิตซอฟต์แวร์"],[["ここに","すわっても","いいですか"],"นั่งตรงนี้ได้ไหม"]]};
+
+LESSONS[16]={title:"เรียงการกระทำด้วยรูป て",topic:"～て、～て・～てから",forms:["te","adjte"],
+grammar:[
+{t:"ทำ…แล้ว…แล้ว…",p:["Vて、Vて、～"],e:"เรียงการกระทำตามลำดับเวลา กาลของประโยคอยู่ที่กริยาตัวสุดท้าย",ex:[["あさ ジョギングを して、シャワーを あびて、かいしゃへ いきます。","ตอนเช้าวิ่ง อาบน้ำ แล้วไปบริษัท"],["きのう こうべへ いって、えいがを みて、かえりました。","เมื่อวานไปโกเบ ดูหนัง แล้วกลับบ้าน"]]},
+{t:"เชื่อมคุณศัพท์และคำนาม",p:["Adj.い  くて","Adj.な  で／N で"],e:"い ตัด い เติม くて ส่วน な และคำนามเติม で",ex:[["ミラーさんは わかくて、げんきです。","คุณมิลเลอร์อายุน้อยและแข็งแรง"],["ならは しずかで、きれいな まちです。","นาราเป็นเมืองที่เงียบและสวย"]],n:"いい → よくて"},
+{t:"ทำ…เสร็จแล้วค่อย…",p:["Vて から、～"],e:"เน้นว่าต้องทำสิ่งแรกให้เสร็จก่อน",ex:[["しごとが おわってから、のみに いきます。","เลิกงานแล้วค่อยไปดื่ม"],["おかねを いれてから、ボタンを おして ください。","ใส่เงินก่อนแล้วกดปุ่ม"]]},
+{t:"…มีลักษณะ…",p:["N1 は N2 が A"],e:"N1 เป็นหัวเรื่อง N2 เป็นส่วนที่มีลักษณะนั้น",ex:[["おおさかは たべものが おいしいです。","โอซาก้าอาหารอร่อย"],["マリアさんは かみが ながいです。","คุณมาเรียผมยาว"]]},
+{t:"ไปอย่างไร / อันไหน",p:["どうやって","どの N"],e:"どうやって ถามวิธี どの ต้องมีคำนามตาม",ex:[["だいがくまで どうやって いきますか。…えきから 16ばんの バスに のって、だいがくまえで おります。","ไปมหาวิทยาลัยยังไง … ขึ้นรถเมล์สาย 16 จากสถานี แล้วลงหน้ามหาวิทยาลัย"],["どの ひとが ミラーさんですか。","คนไหนคือคุณมิลเลอร์"]]}],
+mistakes:[["わかいで","わかくて","い เชื่อมด้วย くて"],["しずかくて","しずかで","な เชื่อมด้วย で"],["バスを のります","バスに のります","ขึ้นรถใช้ に"],["でんしゃに おります","でんしゃを おります","ลงจากรถใช้ を"]],
+vocab:[["のります","ขึ้น (รถ)","v1"],["おります","ลง (รถ)","v2"],["のりかえます","เปลี่ยน (รถ)","v2"],["あびます","อาบ (น้ำ)","v2"],["いれます","ใส่","v2"],["だします","เอาออก ส่ง","v1"],["おろします","ถอน (เงิน)","v1"],["おします","กด","v1"],["やめます","เลิก","v2"],["わかい","หนุ่มสาว","i"],["ながい","ยาว","i"],["みじかい","สั้น","i"],["あかるい","สว่าง","i"],["くらい","มืด","i"],["からだ","ร่างกาย","n"],["あたま","ศีรษะ","n"],["かみ","ผม","n"],["かお","ใบหน้า","n"],["め","ตา","n"],["みみ","หู","n"],["くち","ปาก","n"],["は","ฟัน","n"],["おなか","ท้อง","n"],["あし","ขา เท้า","n"],["せ","ส่วนสูง","n"],["サービス","บริการ","n"],["ジョギング","วิ่งจ๊อกกิ้ง","n"],["シャワー","ฝักบัว","n"],["みどり","สีเขียว ต้นไม้","n"],["おてら","วัด","n"],["じんじゃ","ศาลเจ้า","n"],["どうやって","ทำอย่างไร","x"],["どの ～","…ไหน","x"]],
+fill:[["ขึ้นรถบัส","バス（　）のります。","に","を","で","へ"],["ลงรถไฟ","でんしゃ（　）おります。","を","に","で","へ"],["เลิกงานแล้วค่อยไปดื่ม","しごとが おわって（　）、のみに いきます。","から","まで","まえに","とき"],["อายุน้อยและแข็งแรง","ミラーさんは（　）、げんきです。","わかくて","わかいで","わかいくて","わかで"],["นาราเงียบและสวย","ならは（　）、きれいです。","しずかで","しずかくて","しずかな","しずかって"],["โอซาก้าอาหารอร่อย","おおさかは たべもの（　）おいしいです。","が","を","で","に"],["ไปมหาวิทยาลัยยังไง","だいがくまで（　）いきますか。","どうやって","どの","どれ","どうして"],["ใส่เงินแล้วกดปุ่ม","おかねを（　）、ボタンを おします。","いれて","いれって","いりて","いれんで"],["คนไหนคือคุณมิลเลอร์","（　）ひとが ミラーさんですか。","どの","どれ","どこ","どんなに"],["ถอนเงินที่ธนาคาร","ぎんこうで おかねを（　）。","おろします","おります","のります","いれません"]],
+order:[[["あさ","シャワーを","あびて","かいしゃへ","いきます"],"ตอนเช้าอาบน้ำแล้วไปบริษัท"],[["しごとが","おわってから","のみに","いきます"],"เลิกงานแล้วไปดื่ม"],[["ならは","しずかで","きれいな","まちです"],"นาราเป็นเมืองที่เงียบและสวย"],[["マリアさんは","かみが","ながいです"],"คุณมาเรียผมยาว"],[["だいがくまで","どうやって","いきますか"],"ไปมหาวิทยาลัยยังไง"],[["えきで","でんしゃを","おりて","バスに","のりかえます"],"ลงรถไฟที่สถานีแล้วเปลี่ยนเป็นรถบัส"],[["この","へやは","ひろくて","あかるいです"],"ห้องนี้กว้างและสว่าง"],[["どの","ひとが","せんせいですか"],"คนไหนคืออาจารย์"]]};
+
+LESSONS[17]={title:"รูป ない · ต้อง ไม่ต้อง",topic:"～ないで ください・～なければ なりません",forms:["nai","naide","nakereba","nakutemo"],
+grammar:[
+{t:"วิธีผันรูป ない",p:["กลุ่ม I：い→あ＋ない","กลุ่ม II：ตัด ます＋ない","กลุ่ม III：しない・こない"],e:"กลุ่ม I เสียง い เปลี่ยนเป็น わ (かいます → かわない)",ex:[["のみます → のまない","ดื่ม → ไม่ดื่ม"],["かいます → かわない","ซื้อ → ไม่ซื้อ"],["たべます → たべない","กิน → ไม่กิน"],["します → しない、きます → こない","ทำ → ไม่ทำ, มา → ไม่มา"]]},
+{t:"กรุณาอย่า…",p:["Vない で ください"],e:"ขอร้องไม่ให้ทำ",ex:[["ここで しゃしんを とらないで ください。","กรุณาอย่าถ่ายรูปที่นี่"],["わたしは げんきですから、しんぱいしないで ください。","ฉันสบายดี ไม่ต้องห่วงนะ"]]},
+{t:"ต้อง…",p:["Vない → Vなければ なりません"],e:"ตัด い ของ ない แล้วเติม ければ なりません",ex:[["くすりを のまなければ なりません。","ต้องกินยา"],["あした しゅっちょうしなければ なりません。","พรุ่งนี้ต้องไปทำงานต่างจังหวัด"]]},
+{t:"ไม่ต้อง…ก็ได้",p:["Vない → Vなくても いいです"],e:"ตัด い ของ ない แล้วเติม くても いいです",ex:[["あした こなくても いいです。","พรุ่งนี้ไม่ต้องมาก็ได้"],["くつを ぬがなくても いいです。","ไม่ต้องถอดรองเท้าก็ได้"]]},
+{t:"ภายใน…",p:["N(เวลา) までに V"],e:"まで = ทำต่อเนื่องจนถึง までに = ทำให้เสร็จก่อนกำหนด",ex:[["かいぎは 5じまでに おわります。","การประชุมจะจบภายใน 5 โมง"],["どようびまでに ほんを かえさなければ なりません。","ต้องคืนหนังสือภายในวันเสาร์"]]}],
+mistakes:[["かいない","かわない","い ผันเป็น わ"],["きない (มา)","こない","きます (มา) ผันเป็น こない"],["5じまで レポートを だします","5じまでに レポートを だします","กำหนดเส้นตายใช้ までに"]],
+vocab:[["おぼえます","จำ","v2"],["わすれます","ลืม","v2"],["なくします","ทำหาย","v1"],["はらいます","จ่าย","v1"],["かえします","คืน","v1"],["でかけます","ออกไปข้างนอก","v2"],["ぬぎます","ถอด (รองเท้า เสื้อ)","v1"],["しんぱいします","กังวล","v3"],["ざんぎょうします","ทำงานล่วงเวลา","v3"],["しゅっちょうします","ไปทำงานต่างถิ่น","v3"],["たいせつ","สำคัญ","na"],["だいじょうぶ","ไม่เป็นไร","na"],["あぶない","อันตราย","i"],["きんえん","ห้ามสูบบุหรี่","n"],["ほけんしょう","บัตรประกันสุขภาพ","n"],["ねつ","ไข้","n"],["びょうき","ความเจ็บป่วย","n"],["くすり","ยา","n"],["おふろ","อ่างอาบน้ำ","n"],["うわぎ","เสื้อนอก","n"],["したぎ","ชุดชั้นใน","n"],["～までに","ภายใน…","x"],["ですから","เพราะฉะนั้น","x"]],
+fill:[["กรุณาอย่าถ่ายรูป","しゃしんを（　）ください。","とらないで","とりないで","とってないで","とらなくて"],["ต้องกินยา","くすりを（　）なりません。","のまなければ","のみなければ","のまないで","のまなくても"],["พรุ่งนี้ไม่ต้องมาก็ได้","あした（　）いいです。","こなくても","きなくても","こないで","くなくても"],["ซื้อ → ไม่ซื้อ","かいます →（　）","かわない","かあない","かいない","かわらない"],["ต้องคืนหนังสือภายในวันเสาร์","どようび（　）ほんを かえさなければ なりません。","までに","まで","から","にまで"],["ไม่ต้องถอดรองเท้าก็ได้","くつを（　）いいです。","ぬがなくても","ぬかなくても","ぬぎなくても","ぬがないで"],["อย่ากังวลนะ","しんぱい（　）ください。","しないで","しなくて","さないで","すないで"],["ต้องจ่ายเงิน","おかねを（　）なりません。","はらわなければ","はらいなければ","はらあなければ","はらわないで"],["อย่าลืมนะ","わすれ（　）ください。","ないで","なくて","なければ","なくても"],["ต้องทำงานล่วงเวลา","ざんぎょう（　）なりません。","しなければ","さなければ","しないで","しなくても"]],
+order:[[["ここで","しゃしんを","とらないで","ください"],"กรุณาอย่าถ่ายรูปที่นี่"],[["まいにち","くすりを","のまなければ","なりません"],"ต้องกินยาทุกวัน"],[["あした","こなくても","いいです"],"พรุ่งนี้ไม่ต้องมาก็ได้"],[["きんようびまでに","レポートを","だして","ください"],"กรุณาส่งรายงานภายในวันศุกร์"],[["くつを","ぬがなくても","いいです"],"ไม่ต้องถอดรองเท้าก็ได้"],[["だいじょうぶですから、","しんぱいしないで","ください"],"ไม่เป็นไร อย่ากังวลนะ"],[["ほけんしょうを","わすれないで","ください"],"อย่าลืมบัตรประกันนะ"],[["こんばん","ざんぎょうしなければ","なりません"],"คืนนี้ต้องทำงานล่วงเวลา"]]};
+
+LESSONS[18]={title:"รูปพจนานุกรม · ทำได้",topic:"～ことが できます・～まえに",forms:["dict","koto"],
+grammar:[
+{t:"วิธีผันรูปพจนานุกรม",p:["กลุ่ม I：い→う","กลุ่ม II：ตัด ます＋る","กลุ่ม III：する・くる"],e:"เป็นรูปที่อยู่ในพจนานุกรม",ex:[["かきます → かく","เขียน"],["たべます → たべる","กิน"],["します → する、きます → くる","ทำ มา"]]},
+{t:"…ได้",p:["N／V辞書形 こと が できます"],e:"บอกความสามารถหรือความเป็นไปได้",ex:[["ミラーさんは かんじを よむ ことが できます。","คุณมิลเลอร์อ่านคันจิได้"],["カードで はらう ことが できます。","จ่ายด้วยบัตรได้"]]},
+{t:"งานอดิเรกคือ…",p:["しゅみは N／V辞書形 こと です"],e:"บอกงานอดิเรกให้ชัดเจนขึ้นด้วยกริยา",ex:[["わたしの しゅみは しゃしんを とる ことです。","งานอดิเรกของฉันคือการถ่ายรูป"]]},
+{t:"ก่อน…",p:["V辞書形／Nの／ระยะเวลา まえに"],e:"กริยาใช้รูปพจนานุกรมเสมอ คำนามใส่ の",ex:[["ねる まえに、にっきを かきます。","ก่อนนอนเขียนไดอารี่"],["しょくじの まえに、てを あらいます。","ก่อนกินข้าวล้างมือ"],["3ねんまえに にほんへ きました。","มาญี่ปุ่นเมื่อ 3 ปีก่อน"]]},
+{t:"ไม่ค่อย…สักที / ให้ได้",p:["なかなか ～ません","ぜひ"],e:"なかなか ใช้กับปฏิเสธ ぜひ ใช้กับความต้องการ",ex:[["にほんでは なかなか うまを みる ことが できません。","ที่ญี่ปุ่นไม่ค่อยได้เห็นม้า"],["ぜひ ほっかいどうへ いきたいです。","อยากไปฮอกไกโดให้ได้"]]}],
+mistakes:[["かきます ことが できます","かく ことが できます","ใช้รูปพจนานุกรมก่อน こと"],["ねます まえに","ねる まえに","ใช้รูปพจนานุกรมก่อน まえに"],["しょくじ まえに","しょくじの まえに","คำนามต้องมี の"]],
+vocab:[["できます","ทำได้","v2"],["あらいます","ล้าง","v1"],["ひきます","เล่น (เครื่องดนตรี)","v1"],["うたいます","ร้องเพลง","v1"],["あつめます","สะสม","v2"],["すてます","ทิ้ง","v2"],["かえます","แลก","v2"],["うんてんします","ขับ (รถ)","v3"],["よやくします","จอง","v3"],["ピアノ","เปียโน","n"],["げんきん","เงินสด","n"],["しゅみ","งานอดิเรก","n"],["にっき","ไดอารี่","n"],["かちょう","หัวหน้าแผนก","n"],["ぶちょう","ผู้จัดการฝ่าย","n"],["しゃちょう","ประธานบริษัท","n"],["どうぶつ","สัตว์","n"],["うま","ม้า","n"],["インターネット","อินเทอร์เน็ต","n"],["なかなか","ไม่ค่อย…สักที","x"],["ぜひ","ให้ได้","x"],["ほんとうですか","จริงหรือ","x"]],
+fill:[["อ่านคันจิได้","かんじを よむ（　）が できます。","こと","の","もの","ところ"],["ก่อนนอนเขียนไดอารี่","（　）まえに、にっきを かきます。","ねる","ねます","ねて","ねた"],["ก่อนกินข้าวล้างมือ","しょくじ（　）まえに、てを あらいます。","の","が","を","に"],["งานอดิเรกคือการร้องเพลง","しゅみは うたを（　）ことです。","うたう","うたいます","うたって","うたった"],["จ่ายด้วยบัตรได้","カードで はらう ことが（　）。","できます","あります","します","わかります"],["มาญี่ปุ่นเมื่อ 3 ปีก่อน","3ねん（　）にほんへ きました。","まえに","まえの","のまえに","から"],["ขับรถเป็นไหม","くるまを（　）ことが できますか。","うんてんする","うんてんします","うんてんして","うんてんすること"],["มา → รูปพจนานุกรม","きます →（　）","くる","きる","こる","きく"],["อยากไปให้ได้","（　）いきたいです。","ぜひ","なかなか","ぜんぜん","あまり"],["ซื้อ → รูปพจนานุกรม","かいます →（　）","かう","かいる","かる","かつ"]],
+order:[[["わたしは","ピアノを","ひく ことが","できます"],"ฉันเล่นเปียโนได้"],[["しゅみは","しゃしんを","とる ことです"],"งานอดิเรกคือการถ่ายรูป"],[["ねる","まえに","にっきを","かきます"],"ก่อนนอนเขียนไดอารี่"],[["しょくじの","まえに","てを","あらいます"],"ก่อนกินข้าวล้างมือ"],[["ここで","げんきんを","かえる ことが","できます"],"แลกเงินสดที่นี่ได้"],[["インターネットで","ホテルを","よやくする ことが","できます"],"จองโรงแรมผ่านอินเทอร์เน็ตได้"],[["3ねんまえに","にほんへ","きました"],"มาญี่ปุ่นเมื่อ 3 ปีก่อน"],[["ぜひ","ほっかいどうへ","いきたいです"],"อยากไปฮอกไกโดให้ได้"]]};
+
+LESSONS[19]={title:"รูป た · เคย… · กลายเป็น",topic:"～た ことが あります・～たり・なります",forms:["ta","takoto","naru"],
+grammar:[
+{t:"วิธีผันรูป た",p:["รูป て → て เปลี่ยนเป็น た・で เปลี่ยนเป็น だ"],e:"ผันเหมือนรูป て ทุกอย่าง",ex:[["かきます → かいた","เขียน → เขียนแล้ว"],["のみます → のんだ","ดื่ม → ดื่มแล้ว"]]},
+{t:"เคย…",p:["Vた こと が あります"],e:"บอกประสบการณ์ ถ้าไม่เคยเลยใช้ いちども ありません",ex:[["うまに のった ことが あります。","เคยขี่ม้า"],["ふじさんに のぼった ことが ありますか。…いいえ、いちども ありません。","เคยปีนภูเขาไฟฟูจิไหม … ไม่เคยเลยสักครั้ง"]]},
+{t:"…บ้าง…บ้าง",p:["Vたり、Vたり します"],e:"ยกตัวอย่างกิจกรรมบางส่วน",ex:[["にちようびは テニスを したり、えいがを みたり します。","วันอาทิตย์เล่นเทนนิสบ้าง ดูหนังบ้าง"]]},
+{t:"กลายเป็น…",p:["Adj.い  く なります","Adj.な ／N に なります"],e:"บอกการเปลี่ยนแปลง",ex:[["さむく なりました。","หนาวขึ้นแล้ว"],["げんきに なりました。","หายดีแล้ว"],["らいねん 25さいに なります。","ปีหน้าจะอายุ 25"]]}],
+mistakes:[["のみた ことが あります","のんだ ことが あります","รูป た ผันเหมือนรูป て"],["さむいに なりました","さむく なりました","い เปลี่ยนเป็น く + なります"],["げんきく なりました","げんきに なりました","な ใช้ に"]],
+vocab:[["のぼります","ปีน","v1"],["とまります","พักค้าง","v1"],["そうじします","ทำความสะอาด","v3"],["せんたくします","ซักผ้า","v3"],["なります","กลายเป็น","v1"],["ねむい","ง่วง","i"],["つよい","แข็งแรง","i"],["よわい","อ่อนแอ","i"],["れんしゅう","การฝึกซ้อม","n"],["ゴルフ","กอล์ฟ","n"],["すもう","ซูโม่","n"],["おちゃ","พิธีชงชา","n"],["ひ","วัน","n"],["ちょうし","สภาพ (ร่างกาย)","n"],["いちど","ครั้งหนึ่ง","x"],["いちども","ไม่เคยเลยสักครั้ง","x"],["だんだん","ค่อยๆ","x"],["もうすぐ","อีกไม่นาน","x"],["おかげさまで","ขอบคุณ (ที่ห่วงใย)","x"]],
+fill:[["เคยขี่ม้า","うまに（　）ことが あります。","のった","のりた","のって","のる"],["เคยไปญี่ปุ่นไหม","にほんへ（　）ことが ありますか。","いった","いきた","いいた","いく"],["ซักผ้าบ้าง ทำความสะอาดบ้าง","せんたくを したり、そうじを（　）します。","したり","して","した","するり"],["หนาวขึ้นแล้ว","（　）なりました。","さむく","さむいに","さむに","さむくて"],["หายดีแล้ว","げんき（　）なりました。","に","く","で","が"],["ไม่เคยเลยสักครั้ง","（　）ありません。","いちども","いちど","だんだん","もうすぐ"],["อีกไม่นานก็ถึงวันหยุดฤดูร้อน","（　）なつやすみですね。","もうすぐ","だんだん","いちども","なかなか"],["ค่อยๆ ร้อนขึ้น","（　）あつく なりました。","だんだん","いちども","もうすぐ","なかなか"],["ดื่ม → รูป た","のみます →（　）","のんだ","のみた","のった","のいだ"],["อยากเป็นหมอ","いしゃ（　）なりたいです。","に","く","が","を"]],
+order:[[["すもうを","みた ことが","あります"],"เคยดูซูโม่"],[["ふじさんに","のぼった ことが","ありますか"],"เคยปีนภูเขาไฟฟูจิไหม"],[["やすみの ひは","テニスを したり、","えいがを みたり","します"],"วันหยุดเล่นเทนนิสบ้าง ดูหนังบ้าง"],[["だんだん","さむく","なりました"],"ค่อยๆ หนาวขึ้น"],[["ちょうしは","よく","なりましたか"],"อาการดีขึ้นไหม"],[["らいねん","25さいに","なります"],"ปีหน้าจะอายุ 25"],[["わたしは","いちども","ゴルフを","した ことが","ありません"],"ฉันไม่เคยเล่นกอล์ฟเลย"],[["へやが","きれいに","なりました"],"ห้องสะอาดขึ้นแล้ว"]]};
+LESSONS[20]={title:"ภาษาแบบกันเอง",topic:"普通形 (รูปธรรมดา)",forms:["dict","nai","ta","nakatta"],
+grammar:[
+{t:"รูปสุภาพกับรูปธรรมดา",p:["です・ます → รูปธรรมดา"],e:"รูปธรรมดาใช้กับเพื่อน ครอบครัว หรือคนสนิท และใช้ในงานเขียนบางแบบ",ex:[["あした とうきょうへ いく。","พรุ่งนี้จะไปโตเกียว"],["まいにち いそがしい。","ทุกวันยุ่ง"]]},
+{t:"รูปธรรมดาของกริยา",p:["いく／いかない／いった／いかなかった"],e:"ปัจจุบัน ปฏิเสธ อดีต อดีตปฏิเสธ",ex:[["きのう どこか いった？…ううん、どこも いかなかった。","เมื่อวานไปไหนมา … เปล่า ไม่ได้ไปไหนเลย"]]},
+{t:"รูปธรรมดาของคุณศัพท์และคำนาม",p:["Adj.い ：あつい／あつくない／あつかった／あつくなかった","Adj.な ・N：ひまだ／ひまじゃない／ひまだった／ひまじゃなかった"],e:"い ไม่ต้องเติม だ ส่วน な และคำนามใช้ だ",ex:[["きょうは ひま？…うん、ひまだよ。","วันนี้ว่างไหม … อือ ว่าง"]]},
+{t:"คำถามแบบกันเอง",p:["～？ (ขึ้นเสียงท้าย)"],e:"ไม่ใช้ か ขึ้นเสียงสูงท้ายประโยค คำนามและ な ตัด だ",ex:[["コーヒー のむ？…うん、のむ。","กินกาแฟไหม … อือ กิน"],["ビザが いる？","ต้องใช้วีซ่าไหม"]]}],
+mistakes:[["ひまだ？","ひま？","คำถามแบบกันเองตัด だ"],["いかないだ","いかない","กริยาไม่ต้องมี だ"],["あついだ","あつい","คุณศัพท์ い ไม่ต้องมี だ"]],
+vocab:[["いります","ต้องใช้","v1"],["しらべます","ตรวจสอบ ค้นหา","v2"],["しゅうりします","ซ่อม","v3"],["ぼく","ผม (ผู้ชาย กันเอง)","n"],["きみ","เธอ","n"],["～くん","คุณ… (เรียกเด็กผู้ชาย)","x"],["うん","อือ (ใช่)","x"],["ううん","เปล่า (ไม่ใช่)","x"],["ことば","คำ ภาษา","n"],["きもの","กิโมโน","n"],["ビザ","วีซ่า","n"],["はじめ","ตอนเริ่ม","n"],["おわり","ตอนจบ","n"],["こっち","ทางนี้","x"],["そっち","ทางนั้น","x"],["あっち","ทางโน้น","x"],["どっち","อันไหน","x"],["みんなで","ทุกคนด้วยกัน","x"],["～けど","…แต่","x"],["おなかが いっぱいです","อิ่ม","x"]],
+fill:[["พรุ่งนี้ไปโตเกียว","あした とうきょうへ（　）。","いく","いきます か","いったか","いかないだ"],["เมื่อวานไม่ได้ไปไหนเลย","きのう どこも（　）。","いかなかった","いかない","いった","いきなかった"],["วันนี้ว่างไหม","きょう（　）？","ひま","ひまだ","ひまか","ひまだか"],["ว่างสิ","うん、ひま（　）よ。","だ","か","の","な"],["วันนี้ร้อน","きょうは（　）。","あつい","あついだ","あつだ","あつかっただ"],["เมื่อวานไม่หนาว","きのうは（　）。","さむくなかった","さむいじゃなかった","さむくないだった","さむかったない"],["ไม่ต้องใช้วีซ่า","ビザは（　）。","いらない","いりない","いらないだ","いるない"],["ดื่มกาแฟไหม","コーヒー（　）？","のむ","のむか","のみ","のんだか"],["ไม่เข้าใจคำนั้น","その ことば、（　）。","わからない","わかりない","わかないだ","わからないだ"],["ไม่ใช่คนญี่ปุ่น","にほんじん（　）。","じゃない","くない","ない","じゃないだ"]],
+order:[[["あした","とうきょうへ","いく"],"พรุ่งนี้ไปโตเกียว"],[["きのう","どこも","いかなかった"],"เมื่อวานไม่ได้ไปไหนเลย"],[["きょうは","すごく","あつい"],"วันนี้ร้อนมาก"],[["ビザは","いらない","けど、","パスポートは いる"],"ไม่ต้องใช้วีซ่า แต่ต้องใช้พาสปอร์ต"],[["こんばん","みんなで","のみに","いかない？"],"คืนนี้ไปดื่มด้วยกันไหม"],[["その","ほん、","もう","よんだ？"],"หนังสือเล่มนั้นอ่านแล้วหรือยัง"],[["きのうは","ひまじゃ","なかった"],"เมื่อวานไม่ว่าง"],[["ぼくは","コーヒーが","すきだ"],"ผมชอบกาแฟ"]]};
+
+LESSONS[21]={title:"คิดว่า… · พูดว่า…",topic:"～と おもいます・～と いいます",forms:["omou","dict","ta"],
+grammar:[
+{t:"คิดว่า…",p:["普通形 と おもいます"],e:"ก่อน と ใช้รูปธรรมดา คำนามและ な ใส่ だ",ex:[["あした あめが ふると おもいます。","คิดว่าพรุ่งนี้ฝนจะตก"],["ミラーさんは もう かえったと おもいます。","คิดว่าคุณมิลเลอร์กลับไปแล้ว"]]},
+{t:"ความคิดเห็นเกี่ยวกับ…",p:["N に ついて どう おもいますか"],e:"ถามความคิดเห็น",ex:[["にほんの こうつうに ついて どう おもいますか。…べんりだと おもいます。","คิดอย่างไรกับการเดินทางในญี่ปุ่น … คิดว่าสะดวก"]]},
+{t:"พูดว่า…",p:["「คำพูด」と いいます","普通形 と いいます"],e:"ยกคำพูดตรงหรือเล่าคำพูดของคนอื่น",ex:[["ねる まえに「おやすみなさい」と いいます。","ก่อนนอนพูดว่า โอยาสุมินาไซ"],["ミラーさんは らいしゅう とうきょうへ しゅっちょうすると いいました。","คุณมิลเลอร์บอกว่าสัปดาห์หน้าจะไปทำงานที่โตเกียว"]]},
+{t:"…ใช่ไหม",p:["普通形 でしょう？"],e:"ขอการยืนยันจากผู้ฟัง ขึ้นเสียงท้าย",ex:[["あしたの パーティーに いくでしょう？","ปาร์ตี้พรุ่งนี้ไปใช่ไหม"]]},
+{t:"มีงาน/เหตุการณ์ที่…",p:["N(สถานที่) で N(เหตุการณ์) が あります"],e:"เหตุการณ์ใช้ で ไม่ใช่ に",ex:[["こうべで しあいが あります。","มีการแข่งขันที่โกเบ"]]}],
+mistakes:[["ひまと おもいます","ひまだと おもいます","คำนามและ な ใส่ だ ก่อน と"],["いきますと おもいます","いくと おもいます","ก่อน と ใช้รูปธรรมดา"],["こうべに しあいが あります","こうべで しあいが あります","เหตุการณ์ใช้ で"]],
+vocab:[["おもいます","คิด","v1"],["いいます","พูด","v1"],["かちます","ชนะ","v1"],["まけます","แพ้","v2"],["うごきます","เคลื่อนไหว ทำงาน","v1"],["やめます","เลิก","v2"],["りゅうがくします","ไปเรียนต่อต่างประเทศ","v3"],["むだ","สิ้นเปลือง","na"],["ふべん","ไม่สะดวก","na"],["すごい","สุดยอด","i"],["おなじ","เหมือนกัน","x"],["しゅしょう","นายกรัฐมนตรี","n"],["せいじ","การเมือง","n"],["ニュース","ข่าว","n"],["スピーチ","สุนทรพจน์","n"],["しあい","การแข่งขัน","n"],["いけん","ความคิดเห็น","n"],["はなし","เรื่องเล่า","n"],["デザイン","การออกแบบ","n"],["こうつう","การจราจร การเดินทาง","n"],["さいきん","ช่วงนี้","x"],["たぶん","อาจจะ","x"],["きっと","แน่นอน","x"],["ほんとうに","จริงๆ","x"],["～に ついて","เกี่ยวกับ…","x"]],
+fill:[["คิดว่าพรุ่งนี้ฝนจะตก","あした あめが（　）と おもいます。","ふる","ふります","ふって","ふるだ"],["คิดว่าสะดวก","べんり（　）と おもいます。","だ","です","な","の"],["คิดว่ากลับไปแล้ว","ミラーさんは もう（　）と おもいます。","かえった","かえりました","かえって","かえるた"],["คิดอย่างไรกับข่าวนี้","この ニュース（　）どう おもいますか。","に ついて","を","で","と"],["ก่อนนอนพูดว่าโอยาสุมิ","ねる まえに「おやすみなさい」（　）いいます。","と","を","に","で"],["ไปใช่ไหม","パーティーに いく（　）？","でしょう","ですか","だか","のですか"],["มีการแข่งขันที่โกเบ","こうべ（　）しあいが あります。","で","に","を","へ"],["คิดว่าไม่มีเวลา","じかんが（　）と おもいます。","ない","ありません","ないだ","なかったです"],["คิดว่าญี่ปุ่นจะชนะแน่นอน","にほんが（　）かつと おもいます。","きっと","あまり","ぜんぜん","いちども"],["บอกว่าจะไปเรียนต่อ","りゅうがくすると（　）。","いいました","いきました","かちました","みました"]],
+order:[[["あした","あめが","ふると","おもいます"],"คิดว่าพรุ่งนี้ฝนจะตก"],[["にほんの","こうつうは","べんりだと","おもいます"],"คิดว่าการเดินทางในญี่ปุ่นสะดวก"],[["この","デザインに","ついて","どう おもいますか"],"คิดอย่างไรกับดีไซน์นี้"],[["ミラーさんは","もう","かえったと","おもいます"],"คิดว่าคุณมิลเลอร์กลับแล้ว"],[["ねる まえに","「おやすみなさい」と","いいます"],"ก่อนนอนพูดว่า โอยาสุมินาไซ"],[["たぶん","にほんが","かつと","おもいます"],"คิดว่าญี่ปุ่นน่าจะชนะ"],[["しゅしょうは","らいげつ","アメリカへ","いくと","いいました"],"นายกฯ บอกว่าเดือนหน้าจะไปอเมริกา"],[["こうべで","サッカーの","しあいが","あります"],"มีการแข่งฟุตบอลที่โกเบ"]]};
+
+LESSONS[22]={title:"ประโยคขยายคำนาม",topic:"V普通形 + N",forms:["dict","ta","nai"],
+grammar:[
+{t:"กริยาขยายคำนาม",p:["V普通形 ＋ N"],e:"วางประโยคขยายไว้หน้าคำนาม ใช้รูปธรรมดา",ex:[["これは ミラーさんが とった しゃしんです。","นี่คือรูปที่คุณมิลเลอร์ถ่าย"],["めがねを かけて いる ひとは だれですか。","คนที่ใส่แว่นคือใคร"]]},
+{t:"ประธานในประโยคขยายใช้ が",p:["N が V ＋ N"],e:"ในประโยคขยาย ประธานใช้ が ไม่ใช่ は",ex:[["わたしが うまれた まちは きょうとです。","เมืองที่ฉันเกิดคือเกียวโต"]]},
+{t:"ขยายด้วยรูปปฏิเสธหรืออดีต",p:["Vない／Vた ＋ N"],e:"เปลี่ยนรูปตามเวลาและความหมาย",ex:[["きのう こなかった ひとは だれですか。","คนที่ไม่ได้มาเมื่อวานคือใคร"],["きのう かった くつを はきます。","ใส่รองเท้าที่ซื้อเมื่อวาน"]]},
+{t:"เวลา นัด ธุระ ที่จะ…",p:["V辞書形 じかん／やくそく／ようじ"],e:"บอกว่าเป็นเวลาหรือนัดสำหรับทำอะไร",ex:[["わたしは あさごはんを たべる じかんが ありません。","ฉันไม่มีเวลากินข้าวเช้า"],["ともだちと えいがを みる やくそくが あります。","มีนัดดูหนังกับเพื่อน"]]}],
+mistakes:[["わたしは うまれた まち","わたしが うまれた まち","ประธานในประโยคขยายใช้ が"],["とりました しゃしん","とった しゃしん","ขยายนามใช้รูปธรรมดา"],["ぼうしを きます","ぼうしを かぶります","หมวกใช้ かぶります"]],
+vocab:[["きます","สวม (เสื้อ)","v2"],["はきます","สวม (รองเท้า กางเกง)","v1"],["かぶります","สวม (หมวก)","v1"],["かけます","สวม (แว่น)","v2"],["うまれます","เกิด","v2"],["コート","เสื้อโค้ท","n"],["セーター","เสื้อสเวตเตอร์","n"],["スーツ","ชุดสูท","n"],["ぼうし","หมวก","n"],["めがね","แว่นตา","n"],["アパート","อพาร์ตเมนต์","n"],["やちん","ค่าเช่าบ้าน","n"],["わしつ","ห้องแบบญี่ปุ่น","n"],["ふとん","ฟูก","n"],["おめでとう ございます","ยินดีด้วย","x"]],
+fill:[["นี่คือรูปที่ฉันถ่าย","これは わたしが（　）しゃしんです。","とった","とりました","とって","とるだ"],["เมืองที่ฉันเกิด","わたし（　）うまれた まち","が","は","を","で"],["คนที่ใส่แว่น","めがねを（　）いる ひと","かけて","きて","はいて","かぶって"],["คนที่สวมหมวก","ぼうしを（　）いる ひと","かぶって","きて","はいて","かけて"],["สวมรองเท้า","くつを（　）。","はきます","きます","かぶります","かけます"],["สวมเสื้อโค้ท","コートを（　）。","きます","はきます","かぶります","かけます"],["ไม่มีเวลากินข้าวเช้า","あさごはんを（　）じかんが ありません。","たべる","たべます","たべて","たべるの"],["มีนัดเจอเพื่อน","ともだちに（　）やくそくが あります。","あう","あいます","あって","あうの"],["คนที่ไม่ได้มาเมื่อวาน","きのう（　）ひと","こなかった","きなかった","こないだった","きませんでした"],["หนังสือที่ยืมจากห้องสมุด","としょかんで（　）ほん","かりた","かりました","かりて","かりたの"]],
+order:[[["これは","わたしが","とった","しゃしんです"],"นี่คือรูปที่ฉันถ่าย"],[["めがねを","かけて いる","ひとは","だれですか"],"คนที่ใส่แว่นคือใคร"],[["わたしが","うまれた","まちは","きょうとです"],"เมืองที่ฉันเกิดคือเกียวโต"],[["あさごはんを","たべる","じかんが","ありません"],"ไม่มีเวลากินข้าวเช้า"],[["きのう","かった","くつを","はきます"],"ใส่รองเท้าที่ซื้อเมื่อวาน"],[["ともだちと","えいがを みる","やくそくが","あります"],"มีนัดดูหนังกับเพื่อน"],[["あかい","ぼうしを","かぶって いる","ひとが","いもうとです"],"คนที่สวมหมวกแดงคือน้องสาว"],[["やちんが","やすい","アパートが","いいです"],"อยากได้อพาร์ตเมนต์ที่ค่าเช่าถูก"]]};
+
+LESSONS[23]={title:"ตอนที่… · ถ้า…แล้วจะ…",topic:"～とき・～と",forms:["dict","ta","to"],
+grammar:[
+{t:"ตอนที่…",p:["V辞書形／Vない／Adj.い ／Adj.な な／Nの ＋ とき、～"],e:"な ต้องมี な คำนามต้องมี の",ex:[["としょかんで ほんを かりる とき、カードが いります。","ตอนยืมหนังสือที่ห้องสมุดต้องใช้บัตร"],["ひまな とき、えいがを みます。","ตอนว่างจะดูหนัง"],["こどもの とき、よく かわで およぎました。","ตอนเด็กว่ายน้ำในแม่น้ำบ่อย"]]},
+{t:"รูปพจนานุกรม とき กับ รูป た とき",p:["V辞書形 とき","Vた とき"],e:"รูปพจนานุกรม = ก่อนการกระทำนั้นเสร็จ รูป た = หลังการกระทำนั้นเสร็จแล้ว",ex:[["くにへ かえる とき、かばんを かいます。","ก่อนกลับประเทศ (ที่ญี่ปุ่น) ซื้อกระเป๋า"],["くにへ かえった とき、かばんを かいます。","กลับถึงประเทศแล้ว (ที่ประเทศ) ซื้อกระเป๋า"]]},
+{t:"ทำ…แล้วจะ…เสมอ",p:["V辞書形 と、～"],e:"ผลที่เกิดขึ้นตามธรรมชาติหรือแน่นอน หลัง と ไม่ใช้คำสั่งหรือความตั้งใจ",ex:[["この ボタンを おすと、おつりが でます。","กดปุ่มนี้แล้วเงินทอนจะออกมา"],["みぎへ まがると、ゆうびんきょくが あります。","เลี้ยวขวาแล้วจะเจอไปรษณีย์"]]},
+{t:"บอกสภาพที่เห็น",p:["N が A／V"],e:"บรรยายสิ่งที่เกิดขึ้นตรงหน้าใช้ が",ex:[["これを まわすと、おとが おおきく なります。","หมุนอันนี้แล้วเสียงจะดังขึ้น"]]}],
+mistakes:[["ひまの とき","ひまな とき","な ใช้ な ก่อน とき"],["こども とき","こどもの とき","คำนามใช้ の ก่อน とき"],["おすと、おつりを だして ください","おすと、おつりが でます","หลัง と ไม่ใช้คำขอร้อง"]],
+vocab:[["ききます","ถาม","v1"],["まわします","หมุน","v1"],["ひきます","ดึง","v1"],["かえます","เปลี่ยน","v2"],["さわります","แตะ","v1"],["でます","ออกมา","v2"],["あるきます","เดิน","v1"],["わたります","ข้าม","v1"],["さびしい","เหงา","i"],["おゆ","น้ำร้อน","n"],["おと","เสียง","n"],["サイズ","ขนาด","n"],["こしょう","เสีย ขัดข้อง","n"],["かど","หัวมุม","n"],["はし","สะพาน","n"],["ちゅうしゃじょう","ที่จอดรถ","n"],["たてもの","อาคาร","n"],["～め","…ที่ (ลำดับ)","x"],["なんかいも","หลายครั้ง","x"]],
+fill:[["ตอนว่างดูหนัง","ひま（　）とき、えいがを みます。","な","の","だ","に"],["ตอนเด็ก","こども（　）とき","の","な","だ","に"],["กดปุ่มนี้แล้วเงินทอนจะออกมา","この ボタンを おす（　）、おつりが でます。","と","まで","ので","か"],["เลี้ยวขวาแล้วจะเจอธนาคาร","みぎへ まがると、ぎんこうが（　）。","あります","います","でます","なります"],["ตอนยืมหนังสือต้องใช้บัตร","ほんを（　）とき、カードが いります。","かりる","かります","かりて","かりるの"],["ตอนเหงาโทรหาครอบครัว","（　）とき、かぞくに でんわを かけます。","さびしい","さびしいな","さびしの","さびしく"],["ข้ามสะพาน","はし（　）わたります。","を","に","で","へ"],["หมุนแล้วเสียงจะดังขึ้น","これを（　）と、おとが おおきく なります。","まわす","まわします","まわして","まわした"],["ถามอาจารย์","せんせい（　）ききます。","に","を","で","と"],["เดินตรงไปเรื่อยๆ","まっすぐ（　）。","あるきます","わたります","まわします","さわります"]],
+order:[[["ひまな","とき、","えいがを","みます"],"ตอนว่างดูหนัง"],[["こどもの","とき、","よく","およぎました"],"ตอนเด็กว่ายน้ำบ่อย"],[["この","ボタンを","おすと、","おつりが","でます"],"กดปุ่มนี้แล้วเงินทอนจะออกมา"],[["はしを","わたると、","えきが","あります"],"ข้ามสะพานแล้วจะเจอสถานี"],[["わからない","とき、","せんせいに","ききます"],"เวลาไม่เข้าใจจะถามอาจารย์"],[["かどを","ひだりへ","まがって","ください"],"เลี้ยวซ้ายที่หัวมุม"],[["ねる","とき、","でんきを","けします"],"ตอนนอนปิดไฟ"],[["これを","まわすと、","おとが","おおきく なります"],"หมุนอันนี้แล้วเสียงจะดังขึ้น"]]};
+
+LESSONS[24]={title:"ให้ฉัน · ทำให้ · ได้รับการทำให้",topic:"くれます・～て あげます／もらいます／くれます",forms:["teageru","temorau","tekureru"],
+grammar:[
+{t:"ให้ (ฉัน)",p:["N(ผู้ให้) は わたしに N を くれます"],e:"ใช้เมื่อผู้รับคือผู้พูดหรือคนในกลุ่มของผู้พูด",ex:[["さとうさんは わたしに クリスマスカードを くれました。","คุณซาโต้ให้การ์ดคริสต์มาสแก่ฉัน"]]},
+{t:"ทำให้ (คนอื่น)",p:["Vて あげます"],e:"ผู้พูดทำสิ่งดีๆ ให้คนอื่น ระวังใช้กับผู้ใหญ่อาจฟังดูไม่สุภาพ",ex:[["わたしは きむらさんに ほんを かして あげました。","ฉันให้คุณคิมูระยืมหนังสือ"]]},
+{t:"ได้รับการทำให้",p:["N(ผู้ทำ) に Vて もらいます"],e:"ผู้พูดเป็นผู้ได้รับประโยชน์ ประธานคือผู้รับ",ex:[["わたしは やまださんに みちを おしえて もらいました。","คุณยามาดะบอกทางให้ฉัน"]]},
+{t:"(คนอื่น) ทำให้ฉัน",p:["N(ผู้ทำ) は（わたしに）Vて くれます"],e:"ประธานคือผู้ทำ ผู้รับคือผู้พูด",ex:[["ははは セーターを おくって くれました。","แม่ส่งเสื้อสเวตเตอร์มาให้ฉัน"],["だれが てつだって くれましたか。…カリナさんが てつだって くれました。","ใครช่วย … คุณคาริน่าช่วย"]]}],
+mistakes:[["ははは わたしに セーターを あげました","ははは わたしに セーターを くれました","ผู้รับคือฉัน ใช้ くれます"],["わたしは ともだちに てつだって くれました","ともだちが てつだって くれました","くれます ประธานคือผู้ให้"],["わたしは ともだちに しゃしんを とって もらいました (หมายถึงฉันถ่ายให้)","わたしは ともだちに しゃしんを とって あげました","ฉันทำให้ใช้ てあげます"]],
+vocab:[["くれます","ให้ (ฉัน)","v2"],["なおします","ซ่อม แก้","v1"],["しょうかいします","แนะนำ","v3"],["あんないします","พาเที่ยว นำทาง","v3"],["せつめいします","อธิบาย","v3"],["てつだいます","ช่วย","v1"],["おじいさん","คุณปู่ คุณตา","n"],["おばあさん","คุณย่า คุณยาย","n"],["じゅんび","การเตรียม","n"],["ひっこし","การย้ายบ้าน","n"],["おかし","ขนม","n"],["ホームステイ","โฮมสเตย์","n"],["ぜんぶ","ทั้งหมด","x"],["じぶんで","ด้วยตัวเอง","x"]],
+fill:[["คุณซาโต้ให้การ์ดฉัน","さとうさんは わたしに カードを（　）。","くれました","あげました","もらいました","かしました"],["แม่ส่งสเวตเตอร์มาให้ฉัน","ははは セーターを おくって（　）。","くれました","あげました","もらいました","いきました"],["ฉันให้เพื่อนยืมร่ม","わたしは ともだちに かさを かして（　）。","あげました","くれました","もらいました","かりました"],["คุณยามาดะบอกทางให้ฉัน","わたしは やまださん（　）みちを おしえて もらいました。","に","が","を","で"],["ใครช่วย","だれ（　）てつだって くれましたか。","が","に","を","で"],["พาเที่ยวเกียวโตให้","きょうとを（　）くれました。","あんないして","あんないし","あんないする","あんないした"],["ซ่อมจักรยานให้น้อง","おとうとの じてんしゃを（　）あげました。","なおして","なおし","なおす","なおした"],["อธิบายให้ฉันฟัง","せんせいは わたしに（　）くれました。","せつめいして","せつめいした","せつめいする","せつめいし"],["คุณปู่ให้ขนมฉัน","おじいさんが おかしを（　）。","くれました","あげました","もらいました","いれました"],["เตรียมด้วยตัวเอง","（　）じゅんびしました。","じぶんで","ぜんぶで","みんなで","ひとりに"]],
+order:[[["さとうさんは","わたしに","ほんを","くれました"],"คุณซาโต้ให้หนังสือฉัน"],[["ははが","セーターを","おくって","くれました"],"แม่ส่งสเวตเตอร์มาให้"],[["わたしは","ともだちに","かさを","かして あげました"],"ฉันให้เพื่อนยืมร่ม"],[["やまださんに","みちを","おしえて","もらいました"],"ได้คุณยามาดะบอกทางให้"],[["だれが","てつだって","くれましたか"],"ใครช่วย"],[["ともだちが","きょうとを","あんないして","くれました"],"เพื่อนพาเที่ยวเกียวโตให้"],[["ちちに","じてんしゃを","なおして","もらいました"],"ให้พ่อซ่อมจักรยานให้"],[["ひっこしの","じゅんびを","てつだって","あげました"],"ช่วยเตรียมย้ายบ้านให้"]]};
+
+LESSONS[25]={title:"ถ้า… · ถึงแม้…",topic:"～たら・～ても",forms:["tara","temo","adjtara","adjtemo"],
+grammar:[
+{t:"ถ้า…",p:["Vた／Adj.い かった／Adj.な だった／Nだった ＋ ら、～"],e:"เงื่อนไขสมมติ ผันจากรูปอดีตธรรมดาแล้วเติม ら",ex:[["おかねが あったら、りょこうします。","ถ้ามีเงินจะไปเที่ยว"],["あめが ふったら、でかけません。","ถ้าฝนตกจะไม่ออกไปข้างนอก"]]},
+{t:"เมื่อ…แล้ว",p:["Vたら、～"],e:"เมื่อสิ่งที่แน่นอนว่าจะเกิดขึ้นเสร็จแล้ว ค่อยทำสิ่งถัดไป",ex:[["10じに なったら、でかけましょう。","ถึง 10 โมงแล้วออกไปกัน"],["うちへ かえったら、すぐ シャワーを あびます。","กลับถึงบ้านแล้วอาบน้ำทันที"]]},
+{t:"ถึงแม้…ก็…",p:["Vて／Adj.い くて／Adj.な で／Nで ＋ も、～"],e:"ผลไม่เป็นไปตามที่คาดจากเงื่อนไข",ex:[["あめが ふっても、でかけます。","ถึงฝนตกก็จะออกไปข้างนอก"],["やすくても、わたしは この くるまを かいません。","ถึงจะถูกฉันก็ไม่ซื้อรถคันนี้"]]},
+{t:"สมมติว่า / ต่อให้…เท่าไร",p:["もし ～たら","いくら ～ても"],e:"もし เน้นการสมมติ いくら เน้นว่าไม่ว่าจะมากแค่ไหน",ex:[["もし 1おくえん あったら、せかいりょこうを したいです。","ถ้ามีเงิน 100 ล้านเยน อยากเที่ยวรอบโลก"],["いくら かんがえても、わかりません。","คิดเท่าไรก็ไม่เข้าใจ"]]}],
+mistakes:[["あめが ふるたら","あめが ふったら","たら ใช้รูป た + ら"],["やすいても","やすくても","い เป็น くても"],["ひまたら","ひまだったら","な ใช้ だったら"]],
+vocab:[["かんがえます","คิด พิจารณา","v2"],["つきます","ถึง","v1"],["たります","เพียงพอ","v2"],["がんばります","พยายาม","v1"],["いなか","ชนบท","n"],["チャンス","โอกาส","n"],["てんきん","ย้ายที่ทำงาน","n"],["こと","เรื่อง","n"],["おく","ร้อยล้าน","x"],["もし","ถ้า สมมติ","x"],["いくら","ต่อให้…เท่าไร","x"],["おせわに なりました","ขอบคุณที่ดูแล","x"]],
+fill:[["ถ้ามีเงินจะไปเที่ยว","おかねが（　）、りょこうします。","あったら","あるたら","あって","あっても"],["ถึงฝนตกก็จะไป","あめが（　）、いきます。","ふっても","ふったら","ふるても","ふりても"],["ถ้าว่างมาเที่ยวบ้านนะ","（　）、うちへ あそびに きて ください。","ひまだったら","ひまったら","ひまかったら","ひまたら"],["ถึงจะถูกก็ไม่ซื้อ","（　）、かいません。","やすくても","やすいでも","やすかったら","やすいても"],["ถึง 10 โมงแล้วออกไปกัน","10じに（　）、でかけましょう。","なったら","なっても","なるたら","なりたら"],["คิดเท่าไรก็ไม่เข้าใจ","（　）かんがえても、わかりません。","いくら","もし","いつ","どう"],["ถ้ามี 100 ล้านเยน","（　）1おくえん あったら","もし","いくら","いつも","たぶん"],["ถ้ามีโอกาสอยากไปญี่ปุ่น","チャンスが（　）、にほんへ いきたいです。","あったら","あっても","あるたら","ありたら"],["ถึงอากาศไม่ดีก็จะไป","てんきが よく（　）、いきます。","なくても","なかったら","ないでも","なくて"],["ถึงสถานีแล้วโทรมานะ","えきに（　）、でんわして ください。","ついたら","ついても","つくたら","つきたら"]],
+order:[[["おかねが","あったら、","りょこうしたいです"],"ถ้ามีเงินอยากไปเที่ยว"],[["あめが","ふっても、","でかけます"],"ถึงฝนตกก็จะออกไป"],[["えきに","ついたら、","でんわして","ください"],"ถึงสถานีแล้วโทรมานะ"],[["いくら","かんがえても、","わかりません"],"คิดเท่าไรก็ไม่เข้าใจ"],[["もし","1おくえん","あったら、","なにを したいですか"],"ถ้ามี 100 ล้านเยนอยากทำอะไร"],[["ひまだったら、","いっしょに","いきませんか"],"ถ้าว่างไปด้วยกันไหม"],[["やすくても、","この","くるまは","かいません"],"ถึงจะถูกก็ไม่ซื้อรถคันนี้"],[["うちへ","かえったら、","すぐ","ねます"],"กลับถึงบ้านแล้วนอนทันที"]]};
+
+/* grammar style patch: Adj. notation + step-by-step conversions */
+const GP=(n,i,o)=>Object.assign(LESSONS[n].grammar[i],o);
+GP(4,1,{s:[["V","ます → ません / ました / ませんでした","たべます → たべません → たべました → たべませんでした","กิน → ไม่กิน → กินแล้ว → ไม่ได้กิน"]],n:"ません ไม่ได้แปลว่าอดีต ถ้าจะบอกว่า 'ไม่ได้ทำ' ในอดีตต้องใช้ ませんでした"});
+GP(6,3,{p:["Vます（ตัด ます）＋ ませんか"],s:[["V","ตัด ます เติม ませんか","いきます → いき → いきませんか","ไปด้วยกันไหม"]]});
+GP(6,4,{p:["Vます（ตัด ます）＋ ましょう"],s:[["V","ตัด ます เติม ましょう","やすみます → やすみ → やすみましょう","พักกันเถอะ"]],n:"ませんか ให้อีกฝ่ายเลือก ส่วน ましょう ชวนแบบตัดสินใจไปแล้ว"});
+GP(8,0,{p:["N は Adj.な です","N は Adj.な じゃ ありません"],s:[["Adj.な","บอกเล่า + です / ปฏิเสธ + じゃ ありません","しずか → しずかです → しずかじゃ ありません","เงียบ → ไม่เงียบ"]],n:"ก่อน です ไม่ต้องมี な และ きれい ถึงลงท้าย い ก็เป็น Adj.な"});
+GP(8,1,{p:["N は Adj.い です","N は Adj.い（ตัด い）＋ くないです"],s:[["Adj.い","บอกเล่า + です / ปฏิเสธ ตัด い เติม くないです","たかい → たかいです → たか → たかくないです","แพง → ไม่แพง"],["Adj.い (いい)","ข้อยกเว้น いい ผันจาก よい","いい → よくないです","ไม่ดี"]],n:"ห้ามใช้ じゃ ありません กับ Adj.い (たかいじゃ ありません ผิด)"});
+GP(8,2,{p:["Adj.な ＋ な ＋ N","Adj.い ＋ N"],s:[["Adj.な","เติม な แล้วตามด้วยคำนาม","ゆうめい → ゆうめいな レストラン","ร้านที่มีชื่อเสียง"],["Adj.い","วางหน้าคำนามได้เลย","あたらしい → あたらしい くるま","รถใหม่"]]});
+GP(12,0,{p:["N／Adj.な ＋ でした","N／Adj.な ＋ じゃ ありませんでした"],s:[["N","です → でした","あめ → あめでした","(เมื่อวาน) ฝนตก"],["Adj.な","です → じゃ ありませんでした","かんたん → かんたんじゃ ありませんでした","ไม่ง่าย"]]});
+GP(12,1,{p:["Adj.い（ตัด い）＋ かったです","Adj.い（ตัด い）＋ くなかったです"],s:[["Adj.い","อดีต: ตัด い เติม かったです","あつい → あつ → あつかったです","ร้อน (ที่ผ่านมา)"],["Adj.い","อดีตปฏิเสธ: ตัด い เติม くなかったです","たのしい → たのし → たのしくなかったです","ไม่สนุก"],["Adj.い (いい)","ข้อยกเว้น","いい → よかったです","ดี"]],n:"Adj.い ห้ามใช้ でした (あついでした ผิด)"});
+GP(13,1,{p:["Vます（ตัด ます）＋ たいです","Vます（ตัด ます）＋ たくないです"],s:[["V","ตัด ます เติม たいです","いきます → いき → いきたいです","อยากไป"],["V","ปฏิเสธ: ตัด ます เติม たくないです","たべます → たべ → たべたくないです","ไม่อยากกิน"]],n:"たい ผันเหมือน Adj.い เช่น อดีต たかったです"});
+GP(13,2,{p:["N(สถานที่) へ Vます（ตัด ます）に いきます","N(สถานที่) へ N に いきます"],s:[["V","ตัด ます เติม に","たべます → たべ → たべに いきます","ไปเพื่อกิน"],["N (กิจกรรม)","เติม に ได้เลย","かいもの → かいものに いきます","ไปช้อปปิ้ง"]]});
+GP(15,0,{p:["Vて ＋ も いいですか"],s:[["V","รูป て + も いいですか","とります → とって → とっても いいですか","ถ่ายได้ไหม"]]});
+GP(15,1,{p:["Vて ＋ は いけません"],s:[["V","รูป て + は いけません","すいます → すって → すっては いけません","ห้ามสูบ"]],n:"ても いいです = ได้ ส่วน ては いけません = ห้าม อย่าสลับ も กับ は"});
+GP(16,1,{p:["Adj.い（ตัด い）＋ くて","Adj.な ＋ で","N ＋ で"],s:[["Adj.い","ตัด い เติม くて","わかい → わか → わかくて","อายุน้อยและ…"],["Adj.な","เติม で","しずか → しずかで","เงียบและ…"],["N","เติม で","がくせい → がくせいで","เป็นนักเรียนและ…"],["Adj.い (いい)","ข้อยกเว้น","いい → よくて","ดีและ…"]]});
+GP(16,2,{p:["Vて ＋ から、～"],s:[["V","รูป て + から","おわります → おわって → おわってから","หลังจากเสร็จแล้ว"]]});
+GP(17,0,{s:[["V กลุ่ม I","เสียงหน้า ます แถว い → แถว あ + ない (い เปลี่ยนเป็น わ)","のみます → のま → のまない","ไม่ดื่ม"],["V กลุ่ม II","ตัด ます + ない","たべます → たべ → たべない","ไม่กิน"],["V กลุ่ม III","จำเป็นคำ","します → しない ・ きます → こない","ไม่ทำ ・ ไม่มา"]],n:"かいます → かわない ไม่ใช่ かあない"});
+GP(17,1,{p:["Vない ＋ で ください"],s:[["V","รูป ない + で ください","とります → とらない → とらないで ください","กรุณาอย่าถ่าย"]]});
+GP(17,2,{p:["Vない（ตัด い）＋ ければ なりません"],s:[["V","รูป ない → ตัด い → เติม ければ なりません","のみます → のまない → のまなければ なりません","ต้องดื่ม (ยา)"]]});
+GP(17,3,{p:["Vない（ตัด い）＋ くても いいです"],s:[["V","รูป ない → ตัด い → เติม くても いいです","きます → こない → こなくても いいです","ไม่ต้องมาก็ได้"]]});
+GP(18,0,{s:[["V กลุ่ม I","เสียงหน้า ます แถว い → แถว う","かきます → かき → かく","เขียน"],["V กลุ่ม II","ตัด ます + る","たべます → たべ → たべる","กิน"],["V กลุ่ม III","จำเป็นคำ","します → する ・ きます → くる","ทำ ・ มา"]]});
+GP(18,1,{p:["N ＋ が できます","V辞書形 ＋ こと が できます"],s:[["N","N + が できます","にほんご → にほんごが できます","ภาษาญี่ปุ่นได้"],["V","รูปพจนานุกรม + ことが できます","よみます → よむ → よむ ことが できます","อ่านได้"]]});
+GP(18,3,{p:["V辞書形 ＋ まえに","N ＋ の まえに","ระยะเวลา ＋ まえに"],s:[["V","รูปพจนานุกรม + まえに","ねます → ねる → ねる まえに","ก่อนนอน"],["N","N + の まえに","しょくじ → しょくじの まえに","ก่อนกินข้าว"],["ระยะเวลา","เติม まえに ได้เลย","3ねん → 3ねんまえに","เมื่อ 3 ปีก่อน"]]});
+GP(19,0,{s:[["V","เอารูป て มาเปลี่ยน て → た ・ で → だ","かきます → かいて → かいた","เขียน (แล้ว)"],["V","ตัวอย่างที่ลงท้าย で","のみます → のんで → のんだ","ดื่ม (แล้ว)"]]});
+GP(19,1,{p:["Vた ＋ こと が あります"],s:[["V","รูป た + ことが あります","のります → のった → のった ことが あります","เคยขี่"]]});
+GP(19,2,{p:["Vた ＋ り、Vた ＋ り します"]});
+GP(19,3,{p:["Adj.い（ตัด い）＋ く なります","Adj.な ＋ に なります","N ＋ に なります"],s:[["Adj.い","ตัด い เติม く なります","さむい → さむ → さむく なります","หนาวขึ้น"],["Adj.な","เติม に なります","げんき → げんきに なります","หายดี แข็งแรงขึ้น"],["N","เติม に なります","25さい → 25さいに なります","อายุ 25"]],n:"Adj.な ห้ามใช้ く (げんきく ผิด)"});
+GP(20,2,{p:["Adj.い：あつい／あつくない／あつかった／あつくなかった","Adj.な・N：ひまだ／ひまじゃない／ひまだった／ひまじゃなかった"],s:[["Adj.い","ตัด です ทิ้งได้เลย ไม่ต้องเติม だ","あついです → あつい","ร้อน"],["Adj.な","です → だ","ひまです → ひまだ","ว่าง"],["N","です → だ","あめです → あめだ","ฝนตก"]]});
+GP(21,0,{s:[["V","รูปธรรมดา + と おもいます","ふります → ふる → ふると おもいます","คิดว่า (ฝน) จะตก"],["Adj.い","รูปธรรมดา + と おもいます","たかい → たかいと おもいます","คิดว่าแพง"],["Adj.な","เติม だ + と おもいます","べんり → べんりだと おもいます","คิดว่าสะดวก"],["N","เติม だ + と おもいます","あめ → あめだと おもいます","คิดว่าเป็นฝน"]]});
+GP(22,0,{s:[["V","รูปธรรมดา + คำนาม","とりました → とった → とった しゃしん","รูปที่ถ่าย"]]});
+GP(23,0,{p:["V辞書形／Vない ＋ とき","Adj.い ＋ とき","Adj.な ＋ な ＋ とき","N ＋ の ＋ とき"],s:[["V","รูปพจนานุกรม + とき","かります → かりる → かりる とき","ตอนยืม"],["Adj.い","วางหน้า とき ได้เลย","さびしい → さびしい とき","ตอนเหงา"],["Adj.な","เติม な + とき","ひま → ひまな とき","ตอนว่าง"],["N","เติม の + とき","こども → こどもの とき","ตอนเด็ก"]]});
+GP(23,2,{p:["V辞書形 ＋ と、～"],s:[["V","รูปพจนานุกรม + と","おします → おす → おすと","พอกด…"]]});
+GP(25,0,{t:"ถ้า… / เมื่อ…แล้ว",p:["Vた ＋ ら","Adj.い（ตัด い）＋ かった ＋ ら","Adj.な ＋ だった ＋ ら","N ＋ だった ＋ ら"],e:"ผันเป็นรูปอดีตแบบธรรมดาก่อน แล้วเติม ら",
+  s:[["V","รูป た + ら","ふります → ふった → ふったら","ถ้าฝนตก"],["Adj.い","ตัด い เติม かった + ら","やすい → やすかった → やすかったら","ถ้าถูก"],["Adj.な","เติม だった + ら","ひま → ひまだった → ひまだったら","ถ้าว่าง"],["N","เติม だった + ら","あめ → あめだった → あめだったら","ถ้าเป็นวันฝนตก"]],
+  m:[["ถ้า… (ยังไม่แน่ว่าจะเกิด)","おかねが あったら、りょこうします。","ถ้ามีเงินจะไปเที่ยว"],["เมื่อ…แล้ว (แน่ว่าจะเกิด แล้วทำต่อ)","うちへ かえったら、ねます。","กลับถึงบ้านแล้วจะนอน"]],
+  n:"たら ผันจากรูปอดีต แต่ไม่ได้แปลว่าเรื่องในอดีต แค่ยืมรูปมาสร้างเงื่อนไข"});
+GP(25,2,{p:["Vて ＋ も","Adj.い（ตัด い）＋ くて ＋ も","Adj.な ＋ で ＋ も","N ＋ で ＋ も"],s:[["V","รูป て + も","ふります → ふって → ふっても","ถึงฝนตก"],["Adj.い","ตัด い เติม くて + も","やすい → やすくて → やすくても","ถึงจะถูก"],["Adj.な","เติม で + も","ひま → ひまで → ひまでも","ถึงจะว่าง"],["N","เติม で + も","あめ → あめで → あめでも","ถึงจะเป็นวันฝนตก"]],n:"たら = ถ้า (ผลตามเงื่อนไข) ส่วน ても = ถึงแม้ (ผลตรงข้ามกับที่คาด)"});
+
+/* legend */
+const SYMS=[["N","คำนาม","ほん・がくせい"],["V","คำกริยา","たべます・いきます"],["Adj.い","คำคุณศัพท์ い (ลงท้ายด้วย い)","たかい・おいしい"],["Adj.な","คำคุณศัพท์ な (ต้องมี な ก่อนคำนาม)","しずか・きれい"],["S","ประโยค","あめが ふります"],["Vます","กริยารูปสุภาพ ます","たべます"],["Vて","กริยารูป て","たべて"],["Vた","กริยารูป た","たべた"],["Vない","กริยารูป ない","たべない"],["V辞書形","กริยารูปพจนานุกรม","たべる"],["普通形","รูปธรรมดา (ไม่สุภาพ)","たべる・たべない・たべた"]];
+const symTest={N:/N(?![A-Za-z])/,V:/V(?![ますてたな辞])/,"Adj.い":/Adj\.い/,"Adj.な":/Adj\.な/,S:/S\d?(?![A-Za-z])/,"Vます":/Vます/,"Vて":/Vて/,"Vた":/Vた/,"Vない":/Vない/,"V辞書形":/V辞書形/,"普通形":/普通形/};
+const symChip=k=>`<span class="sym">${k}</span>`;
+function symsIn(ps){const t=ps.join(" ");return SYMS.filter(([k])=>symTest[k].test(t))}
+function legendCard(){return`<details class="card legend" open><summary><b>สัญลักษณ์ในสูตร</b> <span class="mut sm">แตะเพื่อซ่อน/แสดง</span></summary>
+  <div class="lgd">${SYMS.map(([k,th,ex])=>`<div>${symChip(k)}<span><b>${th}</b><br><span class="mut sm jp">เช่น ${ex}</span></span></div>`).join("")}</div></details>`}
+function gpBody(g){
+  const sy=symsIn(g.p);
+  return `${g.p.map(p=>`<p class="pat" style="font-size:20px">${esc(p)}</p>`).join("")}
+    ${sy.length?`<p class="symline">${sy.map(([k,th])=>`<span class="sp">${symChip(k)}<span>${th}</span></span>`).join("")}</p>`:""}
+    <p>${esc(g.e)}</p>
+    ${g.s?`<div class="steps"><p class="sm" style="font-weight:700">วิธีผันทีละประเภท</p>${g.s.map(([k,how,chain,th])=>{const last=chain.split("→").pop().split("・").pop().trim();return`<div class="step"><div class="row">${symChip(k)}<span class="sm">${esc(how)}</span></div><div class="srow">${say(last)}<p class="jp chain">${esc(chain)}</p></div><p class="mut sm">${esc(th)}</p></div>`}).join("")}</div>`:""}
+    ${g.m?`<div class="stack" style="gap:6px"><p class="sm" style="font-weight:700">ความหมาย</p><ol class="means">${g.m.map(([t,j,th])=>`<li><b>${esc(t)}</b><div class="srow">${say(j)}<p class="jp" style="font-weight:700">${esc(j)}</p></div><span class="mut sm">${esc(th)}</span></li>`).join("")}</ol></div>`:""}
+    <p class="sm" style="font-weight:700">ตัวอย่างประโยค</p>
+    ${exList(g.ex)}
+    ${g.n?`<p class="dash warn2"><b>⚠ ระวัง</b> ${esc(g.n)}</p>`:""}`;
+}
+/* ---------- lessons engine ---------- */
+const ROW={い:["わ","う"],き:["か","く"],ぎ:["が","ぐ"],し:["さ","す"],ち:["た","つ"],に:["な","ぬ"],び:["ば","ぶ"],み:["ま","む"],り:["ら","る"]};
+const taOf=te=>te.replace(/て$/,"た").replace(/で$/,"だ");
+function vb(v,g,mut){
+  g=g||v.group;const m=v.masu,stem=m.slice(0,-2),last=stem.slice(-1),head=stem.slice(0,-1);let b;
+  if(g==="III"){
+    if(m.endsWith("します")){const p=m.slice(0,-3);b={te:p+"して",nai:p+"しない",dict:p+"する"}}
+    else if(m==="きます")b={te:"きて",nai:"こない",dict:"くる"};else return null;
+  }else if(g==="II")b={te:stem+"て",nai:stem+"ない",dict:stem+"る"};
+  else{const r=ROW[last];if(!r)return null;b={te:(m==="いきます"&&!mut)?"いって":head+I_TO[last],nai:head+r[0]+"ない",dict:head+r[1]}}
+  b.stem=stem;b.ta=taOf(b.te);return b;
+}
+const VF={
+ masen:["〜ません","รูปปฏิเสธ",b=>b.stem+"ません"],
+ mashita:["〜ました","รูปอดีต",b=>b.stem+"ました"],
+ masendeshita:["〜ませんでした","อดีตปฏิเสธ",b=>b.stem+"ませんでした"],
+ masenka:["〜ませんか","ชวน …ไหม",b=>b.stem+"ませんか"],
+ mashou:["〜ましょう","…กันเถอะ",b=>b.stem+"ましょう"],
+ tai:["〜たいです","อยาก…",b=>b.stem+"たいです"],
+ takunai:["〜たくないです","ไม่อยาก…",b=>b.stem+"たくないです"],
+ te:["て形","รูป て",b=>b.te],
+ ta:["た形","รูป た",b=>b.ta],
+ nai:["ない形","รูป ない",b=>b.nai],
+ dict:["辞書形","รูปพจนานุกรม",b=>b.dict],
+ nakatta:["〜なかった","อดีตปฏิเสธแบบธรรมดา",b=>b.nai.slice(0,-1)+"かった"],
+ naide:["〜ないで ください","กรุณาอย่า…",b=>b.nai+"で ください"],
+ nakereba:["〜なければ なりません","ต้อง…",b=>b.nai.slice(0,-1)+"ければ なりません"],
+ nakutemo:["〜なくても いいです","ไม่ต้อง…ก็ได้",b=>b.nai.slice(0,-1)+"くても いいです"],
+ koto:["〜ことが できます","…ได้",b=>b.dict+" ことが できます"],
+ takoto:["〜た ことが あります","เคย…",b=>b.ta+" ことが あります"],
+ temoii:["〜ても いいです","…ได้ (อนุญาต)",b=>b.te+"も いいです"],
+ tehaikemasen:["〜ては いけません","ห้าม…",b=>b.te+"は いけません"],
+ teiru:["〜て います","กำลัง… / สภาพ",b=>b.te+" います"],
+ teageru:["〜て あげます","ทำให้ (คนอื่น)",b=>b.te+" あげます"],
+ temorau:["〜て もらいます","ได้รับการทำให้",b=>b.te+" もらいます"],
+ tekureru:["〜て くれます","(เขา) ทำให้ฉัน",b=>b.te+" くれます"],
+ tara:["〜たら","ถ้า…",b=>b.ta+"ら"],
+ temo:["〜ても","ถึงแม้…",b=>b.te+"も"],
+ omou:["〜と おもいます","คิดว่า…",b=>b.dict+"と おもいます"],
+ to:["〜と、","ถ้า…แล้วจะ…",b=>b.dict+"と"]};
+const adjS=a=>a.w==="いい"?"よ":a.w.slice(0,-1);
+const AF={
+ neg:["〜くないです／〜じゃ ありません","รูปปฏิเสธ",a=>a.t==="i"?adjS(a)+"くないです":a.w+"じゃ ありません"],
+ past:["〜かったです／〜でした","รูปอดีต",a=>a.t==="i"?adjS(a)+"かったです":a.w+"でした"],
+ pastneg:["〜くなかったです／〜じゃ ありませんでした","อดีตปฏิเสธ",a=>a.t==="i"?adjS(a)+"くなかったです":a.w+"じゃ ありませんでした"],
+ adjte:["〜くて／〜で","รูปเชื่อม",a=>a.t==="i"?adjS(a)+"くて":a.w+"で"],
+ naru:["〜く なります／〜に なります","กลายเป็น…",a=>a.t==="i"?adjS(a)+"く なります":a.w+"に なります"],
+ adjtara:["〜かったら／〜だったら","ถ้า…",a=>a.t==="i"?adjS(a)+"かったら":a.w+"だったら"],
+ adjtemo:["〜くても／〜でも","ถึงแม้…",a=>a.t==="i"?adjS(a)+"くても":a.w+"でも"]};
+const isAF=k=>!!AF[k];
+const formLabel=k=>(VF[k]||AF[k])[0],formTh=k=>(VF[k]||AF[k])[1];
+function conj(it,k){return isAF(k)?AF[k][2](it):VF[k][2](vb(it))}
+function wrongsOf(it,k,L){
+  const right=conj(it,k),out=[];
+  if(isAF(k)){
+    const flip=it.t==="i"?{w:it.w,t:"na"}:{w:it.w,t:"i"};
+    out.push(AF[k][2](flip));if(it.w==="いい")out.push(AF[k][2]({w:"いい",t:"i",raw:1}).replace(/^よ/,"い"));
+    (L.forms||[]).filter(x=>isAF(x)&&x!==k).forEach(x=>out.push(AF[x][2](it)));
+    Object.keys(AF).filter(x=>x!==k).forEach(x=>out.push(AF[x][2](it)));
+  }else{
+    const f=VF[k][2],base=vb(it),stem=base.stem,head=stem.slice(0,-1),last=stem.slice(-1);
+    const tryG=g=>{const b=vb(it,g,true);if(b)out.push(f(b))};
+    if(it.group==="I")tryG("II");if(it.group==="II"&&ROW[last])tryG("I");if(it.group==="III")tryG("II");
+    if(it.masu==="いきます")out.push(f({...base,te:"いいて",ta:"いいた"}));
+    if(it.group!=="III"&&ROW[last]){
+      ["って","んで","いて","いで","して"].forEach(e=>{const te=head+e;if(te!==base.te)out.push(f({...base,te,ta:taOf(te)}))});
+      if(head)out.push(f({...base,nai:head+"あない"}));out.push(f({...base,nai:stem+"ない",dict:stem+"る"}));
+    }
+    if(it.group==="II"){out.push(f({...base,nai:stem+"らない",dict:stem+"う",te:stem+"って",ta:stem+"った"}),f({...base,te:stem+"んで",ta:stem+"んだ",nai:stem+"まない",dict:stem+"む"}))}
+    out.push(f({...base,te:base.ta,ta:base.te,dict:base.nai,nai:base.dict}));
+    out.push(f({...base,te:it.masu+"て",ta:it.masu+"た",dict:it.masu,nai:it.masu+"ない"}));
+    if(["te","ta","nai","dict"].includes(k))out.push(base.te,base.ta,base.nai,base.dict);
+    if(it.group==="III"&&it.masu==="きます")out.push(f({...base,nai:"きない",dict:"きる",te:"きって",ta:"きった"}));
+    if(it.group==="III"&&it.masu.endsWith("します")){const p=it.masu.slice(0,-3);out.push(f({...base,nai:p+"さない",dict:p+"す",te:p+"しって",ta:p+"しった"}))}
+    if(["masen","mashita","masendeshita","masenka","mashou","tai","takunai"].includes(k))out.push(it.masu+"でした",stem+"ました"+(k==="mashita"?"でした":""),stem+"ます",stem+"たいでした",stem+"ませんか".replace(k==="masenka"?"ませんか":"#","ましょうか"));
+    (L.forms||[]).filter(x=>!isAF(x)&&x!==k).forEach(x=>out.push(VF[x][2](base)));
+  }
+  return [...new Set(out)].filter(x=>x&&x!==right);
+}
+const POSG={v1:"I",v2:"II",v3:"III"};
+const LTITLE=n=>n===14?"รูป て ให้จำด้วย 3 สี":LESSONS[n].title;
+function itemsUpTo(n){
+  const vs=[],as=[];
+  for(let k=1;k<=n;k++){
+    if(k===14){VERBS.filter(v=>!v.review).forEach(v=>vs.push({masu:v.masu,th:v.th,group:v.group,lesson:14}));continue}
+    const L=LESSONS[k];if(!L)continue;
+    L.vocab.forEach(([jp,th,p])=>{if(/[～ 　？]/.test(jp))return;
+      if(POSG[p]){if(jp!=="あります")vs.push({masu:jp,th,group:POSG[p],lesson:k})}
+      else if(p==="i"||p==="na")as.push({w:jp,th,t:p,lesson:k})});
+  }
+  return{vs,as};
+}
+function poolFor(list,level,n){
+  if(level==="easy"){let p=list.filter(x=>x.lesson===curL);if(p.length<n)p=p.concat(list.filter(x=>x.lesson<curL&&x.lesson>=curL-3));if(p.length<n)p=list.slice();return shuffle(p)}
+  if(level==="mid"){let p=list.filter(x=>x.lesson>=curL-4);if(p.length<n)p=list.slice();return shuffle(p)}
+  const tr=shuffle(list.filter(x=>TRAPS.has(x.masu||"")||x.w==="いい"||(x.t==="na"&&/い$/.test(x.w))));
+  return [...new Set([...tr.slice(0,Math.ceil(n/2)),...shuffle(list)])];
+}
+const G_NAMES={A:"ผันรูป",D:"เลือกรูปที่ถูก",B:"เติมไวยากรณ์",G:"เรียงประโยค",H:"ความหมายคำศัพท์",F:"ฟังคำศัพท์"};
+const G_DESC={A:"พิมพ์รูปที่ผันแล้วเอง ตามรูปที่บทนี้สอน",D:"มีรูปที่ผันผิดปนอยู่ เลือกอันที่ถูก",B:"เลือกคำที่เติมแล้วประโยคถูกและตรงความหมาย",G:"แตะคำเรียงให้เป็นประโยคที่ถูก",H:"จับคู่คำญี่ปุ่นกับความหมายไทย",F:"ฟังเสียงคำศัพท์แล้วเลือกความหมาย ระดับยากพิมพ์คำที่ได้ยิน"};
+function drillMeta(n){
+  if(n===14)return{names:DRILL,desc:DRILL_DESC,newd:NEWD};
+  const L=LESSONS[n],keys=L.forms?["A","D","B","G","H","F"]:["B","G","H","F"],names={},desc={};
+  keys.forEach(k=>{names[k]=G_NAMES[k];desc[k]=G_DESC[k]});
+  if(L.forms)names.A="ผันรูป "+formLabel(L.forms[0]).split("／")[0];
+  return{names,desc,newd:new Set()};
+}
+let curL=+store.get("lesson",14);if(curL!==14&&!LESSONS[curL])curL=14;
+let DM=drillMeta(curL);
+const dname=s=>s.dname||(drillMeta(s.lesson||14).names[s.drill])||s.drill||"A·B·C รวม";
+const sesL=s=>s.lesson||14;
+function genG(d,level){
+  const L=LESSONS[curL],LV=LEVELS[level],n=LV.n,k=LV.opts;
+  if(d==="A"||d==="D"){
+    const {vs,as}=itemsUpTo(curL),fs=L.forms,vf=fs.filter(x=>!isAF(x)),af=fs.filter(isAF);
+    const pv=poolFor(vs,level,n),pa=poolFor(as,level,n);let iv=0,ia=0;const out=[];
+    for(let j=0;j<n;j++){
+      let fk=fs[j%fs.length];if(isAF(fk)&&!pa.length)fk=vf[0];if(!isAF(fk)&&!pv.length)fk=af[0];if(!fk)break;
+      const it=isAF(fk)?pa[ia++%pa.length]:pv[iv++%pv.length];const base=isAF(fk)?it.w:it.masu,ans=conj(it,fk);
+      const hintHtml=isAF(fk)?`<span class="pill mid">Adj. ${it.t==="i"?"い":"な"}</span>`:"";
+      const q={q:`${base} → ${formLabel(fk)}`,th:it.th,say:base,main:base,sub:`${it.th} · ${formTh(fk)}`,label:level==="hard"?"":formLabel(fk),group:isAF(fk)?null:it.group,hintHtml,hint:level==="easy"?"show":level==="mid"?"button":"none"};
+      if(d==="A")out.push({...q,kind:"type",answer:ans,ph:"พิมพ์รูปที่ผันแล้ว"});
+      else{const w=wrongsOf(it,fk,L);out.push({...q,kind:"choice",hint:"none",sub:`${it.th} · ${formTh(fk)} คือข้อไหน`,...optsOf(ans,w.slice(0,level==="easy"?3:6),k),sayDoneOpt:true})}
+    }
+    return shuffle(out);
+  }
+  if(d==="B")return shuffle(L.fill).slice(0,n).map(([th,prompt,a,...ds])=>({kind:"choice",q:prompt,th,top:th,main:prompt,...optsOf(a,ds,k),sayDone:prompt.replace("（　）",a)}));
+  if(d==="G"){const all=L.order;return shuffle(all).slice(0,Math.min(n,all.length)).map(([ch,th,dis])=>{
+      let extra=null;if(level==="hard"){extra=dis||shuffle(all.flatMap(o=>o[0]).filter(c=>!ch.includes(c)))[0]}
+      return{kind:"order",q:ch.join(" "),th,top:th,chunks:ch,bank:shuffle(extra?[...ch,extra]:ch),answer:ch.join(" ")}})}
+  const voc=L.vocab.filter(([jp])=>!/[～？]/.test(jp)).map(([jp,th])=>({jp,th}));
+  if(d==="H")return shuffle(voc).slice(0,n).map(it=>{const rev=level==="hard"&&Math.random()<.5,others=voc.filter(x=>x!==it);
+    return rev?{kind:"choice",q:it.jp,th:it.th,main:it.th,mainTh:true,sub:"คำนี้ภาษาญี่ปุ่นคือข้อไหน",...optsOf(it.jp,others.map(x=>x.jp),k),sayDone:it.jp}
+      :{kind:"choice",q:it.jp,th:it.th,say:it.jp,main:it.jp,sub:"แปลว่าอะไร",thOpts:true,...optsOf(it.th,others.map(x=>x.th),k)}});
+  if(d==="F")return shuffle(voc).slice(0,n).map(it=>level==="hard"
+    ?{kind:"type",listen:it.jp,q:it.jp,th:it.th,main:it.jp,sub:"พิมพ์คำที่ได้ยิน (ฮิรางานะ/คาตาคานะ)",answer:it.jp,ph:"คำที่ได้ยิน"}
+    :{kind:"choice",listen:it.jp,q:it.jp,th:it.th,main:it.jp,sub:"ฟังแล้วเลือกความหมาย",thOpts:true,...optsOf(it.th,voc.filter(x=>x!==it).map(x=>x.th),k)});
+  return[];
+}
+function setLesson(n,init){
+  curL=n;store.set("lesson",n);DM=drillMeta(n);
+  if(!DM.names[cur.drill])cur.drill=Object.keys(DM.names)[0];
+  if(rec)cancelRec();lastResult=null;newSet();
+  $("#p-vocab").innerHTML="";vq="";vkind="all";vmem="all";
+  $("#lh").textContent=`第${n}課`;$("#lsub").textContent=LTITLE(n);
+  $("#ldesc").textContent=n===14?"แดง น้ำเงิน เหลือง คู่กับเลขกลุ่มเสมอ อ่านจากคำได้แม้แยกสีไม่ออก":(LESSONS[n].topic||"");
+  $("#lprev").disabled=n<=1;$("#lnext").disabled=n>=25;
+  renderLessonGrid();$("#lessons").hidden=true;$("#lsel").setAttribute("aria-expanded","false");
+  if(!init)setTab(tab);
+}
+function renderLessonGrid(){
+  $("#lgrid").innerHTML=Array.from({length:25},(_,i)=>i+1).map(n=>{const c=hist.filter(s=>sesL(s)===n).length;
+    return`<button class="lb" data-act="lesson" data-v="${n}" aria-pressed="${n===curL}"><b>${n}</b><span>${esc(LTITLE(n))}</span>${c?`<em>${c} ครั้ง</em>`:""}</button>`}).join("");
+}
+/* generic grammar page */
+function renderGrammar(){if(curL===14)return renderGrammar14();
+  const L=LESSONS[curL];
+  $("#p-grammar").innerHTML=`
+  ${legendCard()}
+  <section class="card stack">
+   <div class="row between"><div><p class="mut sm" style="font-weight:600">第${curL}課 · ${esc(L.topic)}</p><h2 style="font-size:22px">${esc(L.title)}</h2></div></div>
+   <nav class="jumps" aria-label="หัวข้อในบทนี้">${L.grammar.map((g,i)=>`<a href="#gp${i+1}">${i+1}. ${esc(g.t)}</a>`).join("")}${L.forms?`<a href="#gmix">ลองผัน</a>`:""}<a href="#gtraps">จุดพลาด</a></nav>
+  </section>
+  ${L.grammar.map((g,i)=>`<section class="card stack" id="gp${i+1}">
+    <h2><span class="n">${i+1}</span>${esc(g.t)}</h2>
+    ${gpBody(g)}
+  </section>`).join("")}
+  ${L.forms?`<section class="card stack" id="gmix"><h2>ลองผันทีละคำ</h2><p class="mut">เลือกคำจากบทนี้ แล้วดูรูปที่ผันแล้วทุกแบบที่บทนี้สอน</p>
+    <div class="row"><select id="gmixSel" aria-label="เลือกคำ"></select></div><div id="gmixOut" class="grid2"></div></section>`:""}
+  <section class="card stack" id="gtraps"><h2><span class="n">!</span>จุดที่มักพลาด</h2>
+   <ul class="ex">${L.mistakes.map(([b,g,w])=>`<li style="display:grid;gap:4px"><p class="mut"><b>ผิด </b><span class="jp" style="text-decoration:line-through">${esc(b)}</span></p><p class="row"><b>ถูก</b><span class="jp" style="font-weight:700;font-size:18px">${esc(g)}</span>${say(g)}</p><p class="mut">${esc(w)}</p></li>`).join("")}</ul>
+  </section>`;
+  if(L.forms){
+    const {vs,as}=itemsUpTo(curL),hasV=L.forms.some(k=>!isAF(k)),hasA=L.forms.some(isAF);
+    let items=[...(hasV?vs.filter(v=>v.lesson===curL):[]),...(hasA?as.filter(a=>a.lesson===curL):[])];
+    if(items.length<4)items=[...(hasV?vs:[]),...(hasA?as:[])].reverse().slice(0,30);
+    gmixItems=items;
+    $("#gmixSel").innerHTML=items.map((it,i)=>`<option value="${i}">${esc(it.masu||it.w)} · ${esc(it.th)}</option>`).join("");
+    renderGMix(0);
+  }
+}
+let gmixItems=[];
+function renderGMix(i){const it=gmixItems[i];if(!it)return;const L=LESSONS[curL];
+  const fs=L.forms.filter(k=>isAF(k)===!!it.w);
+  $("#gmixOut").innerHTML=`<div class="inner" style="grid-column:1/-1"><div class="row">${it.masu?gb(it.group):`<span class="pill mid">Adj. ${it.t==="i"?"い":"な"}</span>`}<b>${esc(it.th)}</b></div><p class="jp" style="font-size:26px;font-weight:700">${esc(it.masu||it.w)}</p></div>`+
+    fs.map(k=>{const f=conj(it,k);return`<div class="inner"><p class="sm" style="font-weight:600">${esc(formLabel(k))} · ${esc(formTh(k))}</p><div class="row"><p class="jp" style="font-weight:700;font-size:19px">${esc(f)}</p>${say(f)}</div></div>`}).join("");
+}
+/* generic + L14 vocab page */
+function vocabEntries(){
+  if(curL===14)return[...VERBS.map(v=>({id:"v:"+v.masu,jp:v.masu,th:v.th,kind:"verb",group:v.group,te:v.te,review:v.review})),...NOUNS.map(([jp,th])=>({id:"n:"+jp,jp,th,kind:"noun"})),...PHRASES.map(([jp,th])=>({id:"p:"+jp,jp,th,kind:"phrase"}))];
+  return LESSONS[curL].vocab.map(([jp,th,p])=>({id:curL+":"+jp,jp,th,kind:POSG[p]?"verb":p==="i"||p==="na"?"adj":p==="n"?"noun":"phrase",group:POSG[p],at:p}));
+}
+function renderVocab(){
+  const E=vocabEntries(),pool=E.length,q=vq.trim().toLowerCase(),kc=E.filter(e=>known.has(e.id)).length;
+  const hit=e=>!q||e.jp.toLowerCase().includes(q)||e.th.toLowerCase().includes(q)||(e.te||"").includes(q);
+  const mem=e=>vmem==="all"||(vmem==="known"?known.has(e.id):!known.has(e.id));
+  const kb=e=>`<button class="kb" data-act="known" data-v="${esc(e.id)}" aria-pressed="${known.has(e.id)}" aria-label="${known.has(e.id)?"เอา "+esc(e.jp)+" ออกจากคำที่จำแล้ว":"จำ "+esc(e.jp)+" แล้ว"}">${known.has(e.id)?"จำแล้ว ✓":"ยังไม่จำ"}</button>`;
+  const card=e=>`<article class="word">${say(e.jp)}<div><p class="j" lang="ja">${esc(e.jp)}</p>${e.te?`<p class="jp ink${GROUP[e.group].k}" style="font-weight:700">→ ${e.te}</p>`:""}<p class="mut">${esc(e.th)}</p><div class="row" style="margin-top:6px">${e.group?gb(e.group):e.kind==="adj"?`<span class="pill mid">Adj. ${e.at==="i"?"い":"な"}</span>`:`<span class="pill mid">${e.kind==="noun"?"คำนาม":"สำนวน"}</span>`}${kb(e)}</div></div></article>`;
+  const kinds=[["all","ทั้งหมด"],["verb","คำกริยา"],...(E.some(e=>e.kind==="adj")?[["adj","คุณศัพท์"]]:[]),["noun","คำนาม"],["phrase","สำนวน"]];
+  const show=k=>vkind==="all"||vkind===k;
+  const sec=(k,title)=>{const xs=E.filter(e=>e.kind===k&&hit(e)&&mem(e));if(!show(k)||!xs.length)return"";
+    const a=xs.filter(e=>!e.review),b=xs.filter(e=>e.review);
+    return`<section class="stack"><h2 style="font-size:20px">${title}</h2><div class="vgrid">${a.map(card).join("")}</div>${b.length?`<h3 class="mut sm">คำเก่า ที่บทนี้เอาไปผันเป็นรูป て</h3><div class="vgrid">${b.map(card).join("")}</div>`:""}</section>`};
+  const body=[sec("verb","คำกริยา"),sec("adj","คำคุณศัพท์"),sec("noun","คำนาม"),sec("phrase","คำอื่นๆ และสำนวน")].join("");
+  const fb=(act,cur,list)=>list.map(([k,l])=>`<button class="btn ${cur===k?"solid":""}" data-act="${act}" data-v="${k}" aria-pressed="${cur===k}">${l}</button>`).join("");
+  if(!$("#vbody")){
+    $("#p-vocab").innerHTML=`
+    <div class="stack">${E.some(e=>e.group)?legend():""}<p class="mut">คำศัพท์บทที่ ${curL} · คำกริยามีสีตามกลุ่ม กดปุ่มเพื่อทำเครื่องหมายว่าจำแล้ว</p><p style="font-weight:700" id="vcount"></p><span class="meter" id="vmeter"><i></i></span></div>
+    <div class="stack">
+     <label class="stack" style="gap:4px"><span class="sm" style="font-weight:600">ค้นหา</span><input type="search" id="vsearch" placeholder="พิมพ์คำญี่ปุ่นหรือคำแปล" autocomplete="off"></label>
+     <div class="row" id="vkinds"></div><div class="row" id="vmems"></div>
+    </div>
+    <div class="stack" id="vbody" style="gap:22px"></div>`;
+    $("#vsearch").addEventListener("input",e=>{vq=e.target.value;renderVocab()});
+  }
+  $("#vcount").textContent=`จำแล้ว ${kc} จาก ${pool}`;$("#vmeter i").style.width=pct(kc,pool)+"%";
+  $("#vkinds").innerHTML=fb("kind",vkind,kinds);$("#vmems").innerHTML=fb("mem",vmem,[["all","ทุกสถานะ"],["new","ยังไม่จำ"],["known","จำแล้ว"]]);
+  $("#vbody").innerHTML=body||`<div class="empty"><b>ไม่พบคำนี้</b><p class="mut">ลองคำสั้นลง หรือล้างช่องค้นหา</p><button class="btn" data-act="vclear">ล้างคำค้น</button></div>`;
+}
+/* home */
+function renderHome(){
+  const E=vocabEntries(),kc=E.filter(e=>known.has(e.id)).length;
+  const n=hist.length,sc=hist.map(sesScore);
+  const allOk=sc.reduce((a,s)=>a+s.ok,0),allT=sc.reduce((a,s)=>a+s.total,0);
+  const last=sc[n-1],prev=sc[n-2],best=n?Math.max(...sc.map(s=>s.p)):0;
+  const time=hist.reduce((a,s)=>a+(s.end-s.start),0),delta=last&&prev?last.p-prev.p:null;
+  const mine=hist.filter(s=>sesL(s)===curL);
+  const by={};Object.keys(DM.names).forEach(d=>by[d]=[0,0]);mine.forEach(s=>s.items.forEach(i=>{if(!by[i.d])return;by[i.d][1]++;if(i.firstOk)by[i.d][0]++}));
+  const byL={easy:[0,0],mid:[0,0],hard:[0,0]};hist.forEach(s=>{if(!s.level)return;const c=sesScore(s);byL[s.level][0]+=c.ok;byL[s.level][1]+=c.total});
+  const lessonsDone=new Set(hist.map(sesL));
+  const perL=[...lessonsDone].sort((a,b)=>a-b).map(l=>{const ss=hist.filter(s=>sesL(s)===l).map(sesScore);return{l,c:ss.length,ok:ss.reduce((a,s)=>a+s.ok,0),t:ss.reduce((a,s)=>a+s.total,0)}});
+  const miss={};hist.forEach(s=>s.items.forEach(i=>{const k=sesL(s)+"|"+i.d+"|"+i.q;miss[k]=miss[k]||{l:sesL(s),q:i.q,exp:i.expected,m:0,t:0};miss[k].t++;if(!i.firstOk)miss[k].m++}));
+  const top=Object.values(miss).filter(x=>x.m>0).sort((a,b)=>b.m-a.m||b.m/b.t-a.m/a.t).slice(0,5);
+  const kpi=(l,v,d)=>`<div class="kpi"><span class="l">${l}</span><span class="v">${v}</span>${d?`<span class="d">${d}</span>`:""}</div>`;
+  const meterRow=(label,a,click)=>`<div class="dr"${click||""}><div class="row"><span>${label}</span><b style="font-variant-numeric:tabular-nums">${a[1]?pct(...a)+"%":"–"}</b></div><span class="meter"><i style="width:${pct(...a)}%"></i></span></div>`;
+  $("#p-home").innerHTML=`
+  <div class="hero">
+   <h2 style="font-size:22px">ภาพรวมการฝึก</h2>
+   <div class="kpis">
+    ${kpi("ฝึกไปแล้ว",`${n} <small>ครั้ง</small>`,n?`<span class="mut">ล่าสุด ${fmtDate(hist[n-1].end)}</span>`:"")}
+    ${kpi("ความแม่นยำเฉลี่ย",n?`${pct(allOk,allT)}<small>%</small>`:"–",n?`<span class="mut">ถูกครั้งแรก ${allOk} จาก ${allT} ข้อ</span>`:"")}
+    ${kpi("ครั้งล่าสุด",last?`${last.p}<small>%</small>`:"–",delta===null?"":delta>=0?`<span class="up">▲ ${delta} จากครั้งก่อน</span>`:`<span class="down">▼ ${-delta} จากครั้งก่อน</span>`)}
+    ${kpi("คะแนนดีที่สุด",n?`${best}<small>%</small>`:"–")}
+    ${kpi(`คำศัพท์บทที่ ${curL} ที่จำแล้ว`,`${kc}<small> / ${E.length}</small>`,`<span class="meter"><i style="width:${pct(kc,E.length)}%"></i></span>`)}
+    ${kpi("เวลาฝึกรวม",n?fmtDur(time):"–")}
+    ${kpi("ฝึกต่อเนื่อง",`${streak()} <small>วัน</small>`)}
+    ${kpi("บทที่ฝึกแล้ว",`${lessonsDone.size}<small> / 25 บท</small>`,`<span class="mut">ทำไปทั้งหมด ${allT} ข้อ</span>`)}
+   </div>
+  </div>
+  ${n?`
+  <section class="card stack">
+   <div class="row between"><h2 style="font-size:20px">คะแนนแต่ละครั้ง</h2><span class="mut sm">% ถูกตั้งแต่ครั้งแรก · ${Math.min(n,12)} ครั้งล่าสุด</span></div>
+   <div class="chartbox" id="chart"></div>
+  </section>
+  <div class="grid2">
+   <section class="card stack">
+    <h2 style="font-size:20px">แม่นยำตามแบบฝึก · บทที่ ${curL}</h2>
+    ${Object.keys(DM.names).map(d=>meterRow(`${d} · ${DM.names[d]}`,by[d])).join("")}
+    <h3 style="font-size:16px;margin-top:8px">แม่นยำตามระดับ (ทุกบท)</h3>
+    ${Object.entries(LEVELS).map(([k,L])=>meterRow(L.label,byL[k])).join("")}
+   </section>
+   <section class="card stack">
+    <h2 style="font-size:20px">ผลรายบท</h2>
+    ${perL.map(x=>`<button class="lrow" data-act="lesson" data-v="${x.l}"><span>บทที่ ${x.l} · ${esc(LTITLE(x.l))} <span class="mut sm">(${x.c} ครั้ง)</span></span><b>${pct(x.ok,x.t)}%</b><span class="meter"><i style="width:${pct(x.ok,x.t)}%"></i></span></button>`).join("")}
+    <h3 style="font-size:16px;margin-top:8px">ข้อที่ผิดบ่อย</h3>
+    ${top.length?`<ul class="miss">${top.map(x=>`<li><div><span class="jp" style="font-weight:700;font-size:17px">${esc(x.q)}</span><br><span class="mut sm">บทที่ ${x.l} · เฉลย <span class="jp">${esc(x.exp)}</span></span></div><span class="pill ng">ผิด ${x.m}/${x.t}</span></li>`).join("")}</ul>`:`<p class="mut">ยังไม่มีข้อที่ตอบผิด</p>`}
+   </section>
+  </div>`:`
+  <div class="empty">
+   <h2 style="font-size:20px">ยังไม่มีประวัติการฝึก</h2>
+   <p class="mut">เลือกบทที่ต้องการ ไปที่หน้าแบบฝึก กด “เริ่มบันทึก” แล้วทำให้ครบ ผลจะถูกเก็บและแสดงตรงนี้</p>
+   <button class="btn solid" data-act="go-rec">เริ่มฝึกบทที่ ${curL}</button>
+  </div>`}
+  <div class="row">
+   <button class="btn solid" data-act="go-rec">ฝึกบทที่ ${curL} รอบใหม่</button>
+   <button class="btn" data-act="tab" data-v="grammar">ทบทวนไวยากรณ์</button>
+   <button class="btn" data-act="tab" data-v="hist">ดูประวัติ</button>
+  </div>`;
+  if(n)drawChart();
+}
+/* history */
+let histAll=false;
+function renderHistory(){
+  const list=[...hist].reverse().filter(s=>histAll||sesL(s)===curL);
+  const verdict=i=>i.firstOk?`<span class="pill ok">✓ ถูก</span>`:i.finalOk?`<span class="pill mid">✗→✓ ถูกครั้งที่ ${i.tries}</span>`:i.revealed?`<span class="pill ng">✗ ดูเฉลย</span>`:`<span class="pill ng">✗ ผิด</span>`;
+  $("#p-hist").innerHTML=`
+  <div class="row between">
+   <div><h2 style="font-size:22px">ประวัติการฝึก</h2><p class="mut">${histAll?"ทุกบท":"บทที่ "+curL} · ${list.length} ครั้ง · แตะแต่ละครั้งเพื่อดูทุกข้อ</p></div>
+   <div class="row"><button class="btn ${histAll?"":"solid"}" data-act="hist-scope" data-v="0" aria-pressed="${!histAll}">บทนี้</button><button class="btn ${histAll?"solid":""}" data-act="hist-scope" data-v="1" aria-pressed="${histAll}">ทุกบท</button>
+   ${hist.length?`<button class="btn ${histWrong?"solid":""}" data-act="hist-wrong" aria-pressed="${histWrong}">เฉพาะข้อที่ผิด</button>${confirmClear?`<button class="btn danger" data-act="hist-clear-yes">ยืนยันลบทั้งหมด</button><button class="btn" data-act="hist-clear-no">ไม่ลบ</button>`:`<button class="btn danger" data-act="hist-clear">ลบประวัติ</button>`}`:""}</div>
+  </div>
+  ${list.length?list.map((s,idx)=>{const sc=sesScore(s);const rows=s.items.filter(i=>!histWrong||!i.firstOk);const ds=[...new Set(s.items.map(i=>i.d))];const dm=drillMeta(sesL(s));return`
+   <details class="ses" ${idx===0?"open":""}>
+    <summary>
+     <div><b>ครั้งที่ ${s.n}</b> <span class="sm">· บทที่ ${sesL(s)} · ${s.drill?`${s.drill} ${esc(dname(s))}`:"A·B·C รวม"}</span>${s.level?` <span class="pill mid">${LEVELS[s.level].label}</span>`:""}<br><span class="mut sm">${fmtDate(s.end)} · ${fmtDur(s.end-s.start)}</span></div>
+     <div class="row"><span class="pill ${sc.p>=80?"ok":sc.p>=50?"mid":"ng"}">${sc.p}%</span><span class="sm" style="font-variant-numeric:tabular-nums">ถูก ${sc.ok}/${sc.total}${s.total&&sc.total<s.total?` · ทำ ${sc.total} จาก ${s.total}`:""}</span></div>
+    </summary>
+    <div class="body">
+     ${ds.map(d=>{const r=rows.filter(i=>i.d===d);if(!r.length)return"";const all=s.items.filter(i=>i.d===d);return`
+      <div class="stack" style="gap:6px">
+       ${ds.length>1?`<p style="font-weight:700">${d} · ${esc(dm.names[d]||"")} <span class="mut sm">ถูก ${all.filter(i=>i.firstOk).length}/${all.length}</span></p>`:""}
+       <div class="tbl"><table><thead><tr><th>#</th><th>โจทย์</th><th>คำตอบแรก</th><th>เฉลย</th><th>ผล</th></tr></thead><tbody>
+        ${r.map(i=>`<tr><td style="font-variant-numeric:tabular-nums">${i.i+1}</td><td><span class="jp" style="font-weight:700">${esc(i.q)}</span><br><span class="mut sm">${esc(i.th)}</span></td><td class="jp">${esc(i.first)}</td><td class="jp">${esc(i.expected)}</td><td>${verdict(i)}</td></tr>`).join("")}
+       </tbody></table></div>
+      </div>`}).join("")||`<p class="mut">ครั้งนี้ไม่มีข้อที่ผิด</p>`}
+    </div>
+   </details>`}).join(""):`
+   <div class="empty"><h2 style="font-size:20px">ยังไม่มีประวัติ${histAll?"":"ของบทนี้"}</h2><p class="mut">กด “เริ่มบันทึก” ในหน้าแบบฝึก ทำครบทุกข้อหรือกด “จบและบันทึก” ผลจะมาอยู่ที่นี่ ทุกข้อพร้อมคำตอบของคุณ</p><button class="btn solid" data-act="go-rec">เริ่มฝึกและบันทึกผล</button></div>`}`;
+}
+
+/* collapsible grammar topics */
+let gClosed={};try{gClosed=JSON.parse(localStorage.getItem("telab14.gclosed")||"{}")||{}}catch(e){}
+function saveG(){try{localStorage.setItem("telab14.gclosed",JSON.stringify(gClosed))}catch(e){}}
+function setG(sec,open){sec.classList.toggle("closed",!open);sec.querySelector(".ghead").setAttribute("aria-expanded",open);sec.querySelector(".gbody").hidden=!open;const key=curL+":"+sec.id;if(open)delete gClosed[key];else gClosed[key]=1}
+function decorateGrammar(){
+  const root=$("#p-grammar");let k=0;
+  root.querySelectorAll(":scope > section.card").forEach(sec=>{
+    const h=sec.firstElementChild;if(!h||h.tagName!=="H2")return;
+    if(!sec.id)sec.id="gs"+(k++);
+    const btn=document.createElement("button");btn.type="button";btn.className="ghead";btn.dataset.act="gtoggle";
+    btn.innerHTML=`<span class="gtitle">${h.innerHTML}</span><span class="chev" aria-hidden="true">▾</span>`;
+    const body=document.createElement("div");body.className="gbody";
+    while(h.nextSibling)body.appendChild(h.nextSibling);
+    const foot=document.createElement("button");foot.type="button";foot.className="gfoot";foot.dataset.act="gtoggle";foot.dataset.v="foot";foot.textContent="ย่อหัวข้อนี้ ▴";body.appendChild(foot);
+    h.replaceWith(btn);sec.appendChild(body);sec.className="gsec";
+    setG(sec,!gClosed[curL+":"+sec.id]);
+  });
+  const first=root.querySelector(".gsec");
+  if(first){const bar=document.createElement("div");bar.className="gbar";bar.innerHTML='<b>หัวข้อไวยากรณ์</b><div class="row"><button class="btn" data-act="gall" data-v="0">ย่อทั้งหมด</button><button class="btn" data-act="gall" data-v="1">ขยายทั้งหมด</button></div>';first.before(bar)}
+}
+{const _rg=renderGrammar;renderGrammar=function(){_rg();decorateGrammar()}}
+/* ---------- events ---------- */
+document.addEventListener("click",e=>{
+  const sb=e.target.closest("[data-say]");if(sb){speak(sb.dataset.say);return}
+  const ja=e.target.closest('#p-grammar a[href^="#"]');if(ja){const sec=document.getElementById(ja.getAttribute("href").slice(1));if(sec&&sec.classList.contains("closed")){setG(sec,true);saveG()}}
+  const t=e.target.closest("[data-act]");if(!t)return;
+  const a=t.dataset.act,v=t.dataset.v,i=+t.dataset.i;
+  switch(a){
+   case "tab":setTab(v);break;
+   case "gtoggle":{const sec=t.closest(".gsec");const open=sec.classList.contains("closed");setG(sec,open);saveG();if(!open&&v==="foot")sec.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});break}
+   case "gall":document.querySelectorAll("#p-grammar .gsec").forEach(sec=>setG(sec,v==="1"));saveG();break;
+   case "lesson":setLesson(+v);window.scrollTo({top:0});break;
+   case "lstep":{const n=curL+(+v);if(n>=1&&n<=25)setLesson(n);break}
+   case "lpick":{const p=$("#lessons"),o=p.hidden;p.hidden=!o;t.setAttribute("aria-expanded",o);break}
+   case "hist-scope":histAll=v==="1";renderHistory();break;
+   case "settings":{const p=$("#settings"),o=p.hidden;p.hidden=!o;t.setAttribute("aria-expanded",o);break}
+   case "skin":applySkin(v);break;
+   case "font":applyFont(v);break;
+   case "top":window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});break;
+   case "mix":mixIdx=(mixIdx+(+v)+VERBS.length)%VERBS.length;$("#mixSel").value=mixIdx;renderMix();break;
+   case "known":known.has(v)?known.delete(v):known.add(v);store.set("known",[...known]);renderVocab();break;
+   case "kind":vkind=v;renderVocab();break;
+   case "mem":vmem=v;renderVocab();break;
+   case "vclear":vq="";$("#vsearch").value="";renderVocab();break;
+   case "drill":cur.drill=v;setPref();newSet();lastResult=null;renderPractice();break;
+   case "level":cur.level=v;setPref();newSet();lastResult=null;renderPractice();break;
+   case "rand":{const ks=Object.keys(DM.names).filter(d=>d!==cur.drill);cur.drill=ks[Math.floor(Math.random()*ks.length)];setPref();newSet();lastResult=null;renderPractice();const c=$("#drillCard");if(c)c.scrollIntoView({block:"start",behavior:"smooth"});break}
+   case "reroll":newSet();renderPractice();break;
+   case "q-hint":cur.qs[i].hintOn=true;renderPractice();break;
+   case "q-reveal":reveal(i);break;
+   case "q-pick":choose(i,+t.dataset.k);break;
+   case "o-add":{const q=cur.qs[i];if(!isDone(q)){q.picked.push(+t.dataset.k);if(q.st==="bad")q.st="idle";renderPractice()}break}
+   case "o-un":{const q=cur.qs[i];if(!isDone(q)){q.picked=q.picked.filter(j=>j!==+t.dataset.k);if(q.st==="bad")q.st="idle";renderPractice()}break}
+   case "o-clear":{const q=cur.qs[i];if(!isDone(q)){q.picked=[];if(q.st==="bad")q.st="idle";renderPractice()}break}
+   case "o-check":checkOrder(i);break;
+   case "rec-start":startRec();break;
+   case "rec-end":finishRec();break;
+   case "rec-cancel":cancelRec();break;
+   case "go-rec":setTab("practice");startRec();break;
+   case "hist-wrong":histWrong=!histWrong;renderHistory();break;
+   case "hist-clear":confirmClear=true;renderHistory();break;
+   case "hist-clear-no":confirmClear=false;renderHistory();break;
+   case "hist-clear-yes":hist=[];store.set("hist",hist);confirmClear=false;lastResult=null;renderHistory();break;
+  }
+});
+document.addEventListener("input",e=>{const t=e.target;if(t.dataset.qin!=null)cur.qs[+t.dataset.qin].val=t.value});
+document.addEventListener("change",e=>{if(e.target.id==="mixSel"){mixIdx=+e.target.value;renderMix()}if(e.target.id==="gmixSel")renderGMix(+e.target.value)});
+document.addEventListener("submit",e=>{const f=e.target;if(f.dataset.form!=="q")return;e.preventDefault();answerType(+f.dataset.i)});
+const topBtn=$("#top");addEventListener("scroll",()=>topBtn.classList.toggle("show",scrollY>400),{passive:true});
+
+setLesson(curL,true);
+setTab(["home","grammar","vocab","practice","hist"].includes(tab)?tab:"home",true);
+</script>
+
+</body>
+</html>

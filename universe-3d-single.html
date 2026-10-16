@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>3D Universe Topic Mapping</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #020617; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    #canvas-container { position: absolute; inset: 0; }
+    canvas { display: block; }
+
+    .ui-layer { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+    .ui-layer > * { pointer-events: auto; }
+
+    .glass {
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    #controls {
+      position: fixed; top: 12px; left: 12px; width: 300px; z-index: 20;
+      display: flex; flex-direction: column; gap: 8px;
+      max-height: calc(100vh - 24px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      -webkit-overflow-scrolling: touch;
+    }
+    #controls.collapsed {
+      transform: translateX(calc(-100% - 12px));
+      opacity: 0;
+      pointer-events: none;
+    }
+    /* Floating toggle button - always visible */
+    #menu-toggle {
+      position: fixed; top: 12px; left: 12px; z-index: 25;
+      width: 44px; height: 44px; border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.25);
+      background: rgba(15,23,42,0.85);
+      backdrop-filter: blur(12px);
+      color: #e2e8f0; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+      transition: background 0.2s;
+    }
+    #menu-toggle:hover { background: rgba(30,41,59,0.95); }
+    #menu-toggle .icon-close { display: none; }
+    #menu-toggle.open .icon-menu { display: none; }
+    #menu-toggle.open .icon-close { display: block; }
+    #menu-toggle.open { left: 320px; } /* sit next to open panel on desktop */
+
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; user-select: none;
+    }
+    .panel-header .chevron {
+      transition: transform 0.25s; color: #94a3b8; flex-shrink: 0;
+    }
+    .panel-header.collapsed .chevron { transform: rotate(-90deg); }
+    .panel-body { overflow: hidden; max-height: 500px; transition: max-height 0.3s ease, opacity 0.25s; }
+    .panel-body.collapsed { max-height: 0 !important; opacity: 0; margin: 0 !important; padding: 0 !important; }
+
+    .topic-list { margin-top: 6px; max-height: 200px; overflow-y: auto; }
+
+    .panel { border-radius: 14px; padding: 12px; }
+    .title { font-size: 14px; font-weight: 600; color: #fff; }
+    .subtitle { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+    .btn {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+      padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(100,116,139,0.4);
+      background: rgba(30,41,59,0.6); color: #e2e8f0; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; margin-top: 6px;
+    }
+    .btn:hover { background: rgba(51,65,85,0.8); border-color: rgba(148,163,184,0.5); }
+    .btn.active { background: rgba(8,145,178,0.25); border-color: rgba(34,211,238,0.5); color: #a5f3fc; }
+    .btn svg { flex-shrink: 0; }
+    .hint { font-size: 10px; color: #64748b; line-height: 1.4; padding: 0 2px; }
+
+    .search-wrap { position: relative; margin-top: 6px; }
+    .search-input {
+      width: 100%; padding: 9px 34px 9px 12px; border-radius: 10px;
+      border: 1px solid rgba(100,116,139,0.5); background: rgba(15,23,42,0.7);
+      color: #f1f5f9; font-size: 13px; outline: none;
+    }
+    .search-input:focus { border-color: rgba(34,211,238,0.5); box-shadow: 0 0 0 2px rgba(34,211,238,0.15); }
+    .search-input::placeholder { color: #64748b; }
+    .search-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #64748b; pointer-events: none; }
+    .search-results { margin-top: 6px; max-height: 180px; overflow-y: auto; }
+    .search-item {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+      padding: 8px 10px; border-radius: 8px; border: none; background: transparent;
+      color: #e2e8f0; font-size: 13px; text-align: left; cursor: pointer;
+    }
+    .search-item:hover { background: rgba(51,65,85,0.6); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    #detail-panel {
+      position: fixed; top: 16px; right: 16px; bottom: 16px; width: 360px; z-index: 30;
+      border-radius: 16px; display: none; flex-direction: column; overflow: hidden;
+    }
+    #detail-panel.open { display: flex; animation: slideIn 0.3s ease-out; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+    .detail-header { padding: 18px 18px 14px; border-bottom: 1px solid rgba(71,85,105,0.5); display: flex; justify-content: space-between; align-items: flex-start; }
+    .cat-badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 500; margin-bottom: 8px;
+    }
+    .detail-title { font-size: 18px; font-weight: 600; color: #fff; line-height: 1.3; }
+    .close-btn {
+      width: 34px; height: 34px; border-radius: 8px; border: none; background: transparent;
+      color: #94a3b8; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .close-btn:hover { background: rgba(51,65,85,0.6); color: #fff; }
+    .detail-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+    .section-label { font-size: 11px; font-weight: 500; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .desc { font-size: 14px; color: #e2e8f0; line-height: 1.6; margin-bottom: 18px; }
+    .content-list { list-style: none; }
+    .content-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #cbd5e1; margin-bottom: 8px; }
+    .content-list li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; background: var(--cat-color, #22d3ee); }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; background: rgba(30,41,59,0.8); color: #cbd5e1; border: 1px solid rgba(71,85,105,0.6); }
+    .detail-footer { padding: 10px 18px; border-top: 1px solid rgba(71,85,105,0.5); text-align: center; font-size: 11px; color: #64748b; }
+
+    @media (max-width: 768px) {
+      #controls {
+        width: min(300px, calc(100vw - 24px));
+        max-height: calc(100vh - 70px);
+        top: 60px; left: 12px;
+      }
+      #controls.collapsed {
+        transform: translateX(calc(-100% - 20px));
+      }
+      #menu-toggle { top: 12px; left: 12px; }
+      #menu-toggle.open { left: 12px; } /* stay in corner on mobile */
+
+      #detail-panel {
+        top: auto; right: 0; left: 0; bottom: 0; width: 100%;
+        max-height: 55vh; height: auto;
+        border-radius: 16px 16px 0 0; animation: slideUp 0.35s ease-out;
+      }
+      #detail-panel.open { display: flex; }
+      @keyframes slideUp { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
+
+      .topic-list { max-height: 140px; }
+      .panel { padding: 10px; }
+      .title { font-size: 13px; }
+      .btn { padding: 8px 10px; font-size: 12px; }
+      #demo-badge { display: none; }
+    }
+
+    /* Landscape phone */
+    @media (max-height: 500px) and (orientation: landscape) {
+      #controls {
+        top: 8px; left: 8px; width: 260px;
+        max-height: calc(100vh - 16px);
+        overflow-y: auto;
+      }
+      #menu-toggle { top: 8px; left: 8px; width: 40px; height: 40px; }
+      #menu-toggle.open { left: 8px; }
+      #detail-panel {
+        max-height: 70vh; width: min(360px, 50vw);
+        right: 8px; left: auto; top: 8px; bottom: 8px;
+        border-radius: 12px;
+      }
+      .topic-list { max-height: 100px; }
+    }
+
+    .detail-body::-webkit-scrollbar, .search-results::-webkit-scrollbar { width: 5px; }
+    .detail-body::-webkit-scrollbar-thumb, .search-results::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.5); border-radius: 3px; }
+
+    
+    .topic-list {
+      margin-top: 8px; max-height: 280px; overflow-y: auto;
+    }
+    .topic-item {
+      display: flex; align-items: flex-start; gap: 8px; width: 100%;
+      padding: 8px 10px; border-radius: 8px; border: none; background: transparent;
+      color: #e2e8f0; font-size: 12px; text-align: left; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .topic-item:hover { background: rgba(51,65,85,0.65); }
+    .topic-item.active { background: rgba(8,145,178,0.25); border: 1px solid rgba(34,211,238,0.35); }
+    .topic-item .jp { font-weight: 500; color: #f1f5f9; line-height: 1.3; }
+    .topic-item .th { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+    .topic-item .lv {
+      font-size: 10px; padding: 1px 6px; border-radius: 4px; flex-shrink: 0; margin-top: 2px;
+      background: rgba(30,41,59,0.8); color: #94a3b8;
+    }
+
+    #demo-badge {
+      position: fixed; bottom: 12px; right: 12px; z-index: 15;
+      font-size: 10px; color: #475569; background: rgba(15,23,42,0.5); padding: 4px 8px; border-radius: 4px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <div class="ui-layer">
+    <button id="menu-toggle" class="open" aria-label="เปิด/ปิดเมนู" title="เปิด/ปิดเมนู">
+      <svg class="icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+
+    <div id="controls">
+      <div class="glass panel">
+        <div class="title">3D Japanese Grammar Universe</div>
+        <div class="subtitle">สำรวจไวยากรณ์ญี่ปุ่น N5-N4</div>
+      </div>
+
+      <div class="glass panel">
+        <div class="panel-header" data-panel="tools">
+          <span style="font-size:12px;font-weight:600;color:#e2e8f0">เครื่องมือ</span>
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="panel-body" id="panel-tools">
+        <button class="btn" id="btn-reset" title="กลับสู่มุมมองเริ่มต้น">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Reset View
+        </button>
+        <button class="btn active" id="btn-orbits" title="เปิด/ปิดวงโคจร">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><ellipse cx="12" cy="12" rx="10" ry="4"/></svg>
+          Hide Orbits
+        </button>
+        <button class="btn active" id="btn-labels" title="เปิด/ปิดชื่อหัวข้อ">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+          Hide Labels
+        </button>
+        <button class="btn" id="btn-close" style="display:none" title="ปิดรายละเอียด">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          Close Details
+        </button>
+        </div>
+      </div>
+
+      <div class="glass panel">
+        <div class="panel-header" data-panel="search">
+          <span style="font-size:12px;font-weight:600;color:#e2e8f0">ค้นหา</span>
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="panel-body" id="panel-search">
+        <div class="search-wrap">
+          <input type="text" class="search-input" id="search-input" placeholder="ค้นหาหัวข้อ..." autocomplete="off" />
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <div class="search-results" id="search-results"></div>
+        </div>
+      </div>
+
+      <div class="glass panel">
+        <div class="panel-header" data-panel="topics">
+          <span style="font-size:12px;font-weight:600;color:#e2e8f0">รายการหัวข้อ</span>
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="panel-body" id="panel-topics">
+          <div class="topic-list" id="topic-list"></div>
+        </div>
+      </div>
+
+      <div class="hint">ลากซ้าย = หมุน · ลากขวา/สองนิ้ว = เลื่อนจอ · เลื่อน = ซูม · คลิกดาว = ดูรายละเอียด</div>
+    </div>
+
+    <div id="detail-panel" class="glass">
+      <div class="detail-header">
+        <div>
+          <div class="cat-badge" id="detail-cat"></div>
+          <div class="detail-title" id="detail-title"></div>
+        </div>
+        <button class="close-btn" id="detail-close" aria-label="ปิด">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="detail-body">
+        <div class="section-label">คำอธิบาย</div>
+        <p class="desc" id="detail-desc"></p>
+        <div class="section-label">เนื้อหาหลัก</div>
+        <ul class="content-list" id="detail-content"></ul>
+        <div style="margin-top:16px">
+          <div class="section-label">สถานะ</div>
+          <span class="status-badge" id="detail-status"></span>
+        </div>
+      </div>
+      <div class="detail-footer">ข้อมูลจาก Japanese Grammar Summary (N5-N4) · 1 ดวง = 1 หัวข้อ</div>
+    </div>
+  </div>
+
+  <div id="demo-badge">Japanese Grammar N5-N4 · 1 Planet = 1 Topic</div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ========== ข้อมูลจาก Japanese Grammar Summary (N5-N4) ==========
+    // 1 ดวง = 1 หัวข้อไวยากรณ์ | มีฟุริงานะ + คำแปลไทย
+    const topics = [
+      {
+        id: 'jp-001',
+        title: '名詞（めいし）は〜です',
+        titleShort: 'めいしは〜です',
+        thaiTitle: 'นามคือ / เป็น...',
+        description: 'ประโยคพื้นฐาน: 名詞（めいし）1 は 名詞（めいし）2 です = นาม1 คือ / เป็น นาม2',
+        content: [
+          '名詞（めいし）1 は 名詞（めいし）2 です。',
+          '名詞（めいし）1 は 名詞（めいし）2 ですか。',
+          '名詞（めいし）1 は 名詞（めいし）2 ではありません / じゃありません。',
+          '名詞（めいし）1 も 名詞（めいし）2 です。'
+        ],
+        category: 'N5 พื้นฐาน',
+        status: 'N5',
+        planet: { size: 1.35, color: '#E8A838', position: [14, 3, -6], orbitRadius: 15, orbitTilt: 0.15, style: 'venus', hasRing: false }
+      },
+      {
+        id: 'jp-002',
+        title: 'これ・それ・あれ',
+        titleShort: 'これ・それ・あれ',
+        thaiTitle: 'อันนี้ / อันนั้น / อันโน้น',
+        description: 'คำชี้เฉพาะ: これ (ของใกล้ผู้พูด) / それ (ของใกล้ผู้ฟัง) / あれ (ของไกลทั้งคู่)',
+        content: [
+          'これは 名詞（めいし）です。',
+          'それは 何（なん）ですか。',
+          'あれは だれの ですか。',
+          'この / その / あの + 名詞（めいし）'
+        ],
+        category: 'N5 พื้นฐาน',
+        status: 'N5',
+        planet: { size: 1.25, color: '#C1440E', position: [18, 2, 5], orbitRadius: 18.5, orbitTilt: 0.25, style: 'mars', hasRing: false }
+      },
+      {
+        id: 'jp-003',
+        title: '場所（ばしょ）へ行（い）きます',
+        titleShort: 'ばしょへいきます',
+        thaiTitle: 'ไปที่... / มา / กลับ',
+        description: 'การไป/มา/กลับ: [場所（ばしょ）] へ(に) 行（い）きます / 来（き）ます / 帰（かえ）ります',
+        content: [
+          '[場所（ばしょ）] へ 行（い）きます / 来（き）ます / 帰（かえ）ります',
+          '[場所（ばしょ）] へ [乗（の）り物（もの）] で [人（ひと）] と [時間（じかん）] に 行（い）きます',
+          '何（なん）で / だれと / 何時（なんじ）に / いつ'
+        ],
+        category: 'N5 กริยา',
+        status: 'N5',
+        planet: { size: 1.4, color: '#2E86AB', position: [8, -7, 12], orbitRadius: 16, orbitTilt: 0.35, style: 'earth', hasRing: false }
+      },
+      {
+        id: 'jp-004',
+        title: 'を 動詞（どうし）',
+        titleShort: 'を どうし',
+        thaiTitle: 'ทำกริยากับกรรม',
+        description: 'กรรมตรง: [主語（しゅご）] は [目的語（もくてきご）] を 動詞（どうし） = ประธานทำกริยากับกรรม',
+        content: [
+          '[主語（しゅご）] は [目的語（もくてきご）] を 動詞（どうし）',
+          '[場所（ばしょ）] で [目的語（もくてきご）] を 動詞（どうし）',
+          '[道具（どうぐ）] で 動詞（どうし） (ด้วยอุปกรณ์)'
+        ],
+        category: 'N5 กริยา',
+        status: 'N5',
+        planet: { size: 1.3, color: '#8B7355', position: [-6, -9, 10], orbitRadius: 15, orbitTilt: 0.18, style: 'mercury', hasRing: false }
+      },
+      {
+        id: 'jp-005',
+        title: '〜ませんか・ましょう',
+        titleShort: '〜ませんか・ましょう',
+        thaiTitle: 'ซักชวน / กันเถอะ',
+        description: 'ซักชวน: 動詞（どうし）ます形 + ませんか / ましょう',
+        content: [
+          '動詞（どうし）ます形 + ませんか (ซักชวน)',
+          '動詞（どうし）ます形 + ましょう (กันเถอะ)',
+          '動詞（どうし）ます形 + ましょうか (เสนอตัว)'
+        ],
+        category: 'N5 กริยา',
+        status: 'N5',
+        planet: { size: 1.2, color: '#4FC3F7', position: [5, 10, -11], orbitRadius: 14.5, orbitTilt: -0.3, style: 'uranus', hasRing: true }
+      },
+      {
+        id: 'jp-006',
+        title: 'あげます・もらいます',
+        titleShort: 'あげます・もらいます',
+        thaiTitle: 'ให้ / ได้รับ',
+        description: 'การให้-รับ: [人（ひと）] に [物（もの）] を あげます / もらいます / 借（か）ります',
+        content: [
+          '[人（ひと）] に [物（もの）] を あげます / 貸（か）します',
+          '[人（ひと）] に / から [物（もの）] を もらいます',
+          '[場所（ばしょ）/ 人（ひと）] から [物（もの）] を 借（か）ります'
+        ],
+        category: 'N5 ให้-รับ',
+        status: 'N5',
+        planet: { size: 1.35, color: '#1B4F72', position: [11, -5, -9], orbitRadius: 14, orbitTilt: -0.22, style: 'neptune', hasRing: false }
+      },
+      {
+        id: 'jp-007',
+        title: 'い・な 形容詞（けいようし）',
+        titleShort: 'い・な けいようし',
+        thaiTitle: 'คุณศัพท์ い / な',
+        description: 'คุณศัพท์: 形容詞（けいようし）+ 名詞（めいし） / 名詞 は 形容詞 です (บอกลักษณะ)',
+        content: [
+          '形容詞（けいようし）(い/な) + 名詞（めいし）',
+          '名詞（めいし）は 形容詞（けいようし）です',
+          '形容詞（い）くないです / 形容詞（な）ではありません',
+          'どんな + 名詞（めいし）ですか'
+        ],
+        category: 'N5 คุณศัพท์',
+        status: 'N5',
+        planet: { size: 1.5, color: '#E8D5A3', position: [-16, 8, -3], orbitRadius: 17.5, orbitTilt: 0.4, style: 'saturn', hasRing: true }
+      },
+      {
+        id: 'jp-008',
+        title: 'あります・います',
+        titleShort: 'あります・います',
+        thaiTitle: 'มี / อยู่',
+        description: 'การมี/อยู่: [場所（ばしょ）] に [物（もの）] があります / [人（ひと）・動物（どうぶつ）] がいます',
+        content: [
+          '[場所（ばしょ）] に [物（もの）] があります (สิ่งไม่มีชีวิต)',
+          '[場所（ばしょ）] に [人（ひと）/動物（どうぶつ）] がいます (สิ่งมีชีวิต)',
+          '[名詞（めいし）] は [場所（ばしょ）] に います / あります',
+          'どこに いますか / ありますか'
+        ],
+        category: 'N5 มี-อยู่',
+        status: 'N5',
+        planet: { size: 1.55, color: '#6B5B95', position: [-12, 5, 8], orbitRadius: 15.5, orbitTilt: -0.2, style: 'neptune', hasRing: false }
+      },
+      {
+        id: 'jp-009',
+        title: 'て形（けい）+ ください',
+        titleShort: 'てけい + ください',
+        thaiTitle: 'กรุณา... / กำลัง...',
+        description: 'รูป て: 動詞（どうし）て形 + ください (กรุณา...) / ています (กำลัง...)',
+        content: [
+          '動詞（どうし）て形 + ください (กรุณาทำ...)',
+          '動詞（どうし）て形 + います (กำลังทำ...อยู่)',
+          '動詞（どうし）て形 + もいいです (อนุญาต)',
+          'หลักการผัน て-form กลุ่ม 1-2-3'
+        ],
+        category: 'N4 て形',
+        status: 'N4',
+        planet: { size: 1.7, color: '#D4A574', position: [-9, -4, -14], orbitRadius: 17, orbitTilt: -0.1, style: 'jupiter', hasRing: false }
+      },
+      {
+        id: 'jp-010',
+        title: '〜たいです',
+        titleShort: '〜たいです',
+        thaiTitle: 'อยากทำ / อยากได้',
+        description: 'ความอยาก: 動詞（どうし）ます形 + たいです / 名詞（めいし）が ほしいです',
+        content: [
+          'わたしは 動詞（どうし）ます形 + たいです',
+          'わたしは 名詞（めいし）が ほしいです',
+          '三人称（さんにんしょう）は 〜たがっています / ほしがっています',
+          '[場所（ばしょ）] へ 〜に 行（い）きます (ไปเพื่อ...)'
+        ],
+        category: 'N4 ความอยาก',
+        status: 'N4',
+        planet: { size: 1.15, color: '#A0522D', position: [-14, 1, 13], orbitRadius: 19, orbitTilt: 0.12, style: 'mars', hasRing: false }
+      },
+      {
+        id: 'jp-011',
+        title: 'た形（けい）+ ことがあります',
+        titleShort: 'たけい + ことがあります',
+        thaiTitle: 'เคยทำ...',
+        description: 'ประสบการณ์: 動詞（どうし）た形 + ことがあります = เคยทำ...',
+        content: [
+          '動詞（どうし）た形 + ことがあります (เคยทำ...)',
+          '動詞（どうし）1 たり、動詞（どうし）2 たりします',
+          'หลักการผัน た-form (เหมือน て แต่เป็น た/だ)'
+        ],
+        category: 'N4 ประสบการณ์',
+        status: 'N4',
+        planet: { size: 1.3, color: '#34D399', position: [16, -6, 4], orbitRadius: 16.5, orbitTilt: 0.2, style: 'earth', hasRing: false }
+      },
+      {
+        id: 'jp-012',
+        title: '〜と思（おも）います',
+        titleShort: '〜とおもいます',
+        thaiTitle: 'คิดว่า...',
+        description: 'ความคิดเห็น: 普通形（ふつうけい）+ と思（おも）います = คิดว่า...',
+        content: [
+          '普通形（ふつうけい）+ と思（おも）います (คิดว่า...)',
+          '普通形（ふつうけい）+ と言（い）いました (พูดว่า...)',
+          '普通形（ふつうけい）+ と聞（き）きました (ฟังมาว่า...)',
+          '普通形（ふつうけい）+ でしょう？'
+        ],
+        category: 'N4 ความคิด',
+        status: 'N4',
+        planet: { size: 1.45, color: '#A78BFA', position: [-4, 7, -16], orbitRadius: 18, orbitTilt: -0.25, style: 'neptune', hasRing: false }
+      }
+    ];
+
+    // ========== STATE ==========
+    let selectedId = null;
+    let showOrbits = true;
+    let showLabels = true;
+    const planetMeshes = {};
+    const labelSprites = {};
+    const orbitLines = {};
+    const planetGroups = {};
+    let selectionRing = null;
+
+    // ========== THREE SETUP ==========
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x020617);
+    scene.fog = new THREE.Fog(0x020617, 50, 120);
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200);
+    camera.position.set(0, 15, 38);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.enablePan = true;
+    controls.panSpeed = 1.2;
+    controls.screenSpacePanning = true;
+    controls.minDistance = 3;
+    controls.maxDistance = 120;
+    controls.maxPolarAngle = Math.PI;
+    controls.minPolarAngle = 0;
+    controls.rotateSpeed = 0.55;
+    controls.zoomSpeed = 0.8;
+
+    // Lighting – more cinematic
+    scene.add(new THREE.AmbientLight(0x1a1a2e, 0.25));
+    const keyLight = new THREE.DirectionalLight(0xfff5e6, 1.1);
+    keyLight.position.set(15, 25, 10);
+    scene.add(keyLight);
+    const fillLight = new THREE.DirectionalLight(0x6b8cff, 0.35);
+    fillLight.position.set(-20, 5, -10);
+    scene.add(fillLight);
+
+    // Stars
+    function createStars() {
+      const geo = new THREE.BufferGeometry();
+      const count = 3200;
+      const pos = new Float32Array(count * 3);
+      const colors = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        const i3 = i * 3;
+        pos[i3] = (Math.random() - 0.5) * 220;
+        pos[i3+1] = (Math.random() - 0.5) * 220;
+        pos[i3+2] = (Math.random() - 0.5) * 220;
+        const c = 0.7 + Math.random() * 0.3;
+        colors[i3] = c; colors[i3+1] = c; colors[i3+2] = c * (0.9 + Math.random()*0.1);
+      }
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      const mat = new THREE.PointsMaterial({ size: 0.32, sizeAttenuation: true, vertexColors: true, transparent: true, opacity: 0.9 });
+      scene.add(new THREE.Points(geo, mat));
+    }
+    createStars();
+
+    // ========== PROCEDURAL TEXTURE GENERATORS ==========
+    function noise(x, y) {
+      const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+      return n - Math.floor(n);
+    }
+
+    function createPlanetTexture(style, baseColor) {
+      const size = 512;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      // Base fill
+      ctx.fillStyle = baseColor;
+      ctx.fillRect(0, 0, size, size);
+
+      const img = ctx.getImageData(0, 0, size, size);
+      const d = img.data;
+
+      if (style === 'earth') {
+        // Continents + oceans + clouds
+        for (let y = 0; y < size; y++) {
+          for (let x = 0; x < size; x++) {
+            const i = (y * size + x) * 4;
+            const n1 = noise(x * 0.02, y * 0.02);
+            const n2 = noise(x * 0.05 + 10, y * 0.05);
+            const n3 = noise(x * 0.1, y * 0.1 + 5);
+            if (n1 > 0.55) {
+              // land
+              d[i] = 34 + n2 * 40; d[i+1] = 90 + n2 * 50; d[i+2] = 40 + n3 * 30;
+            } else if (n1 > 0.48) {
+              // coast
+              d[i] = 50; d[i+1] = 120; d[i+2] = 80;
+            } else {
+              // ocean
+              d[i] = 20 + n3 * 20; d[i+1] = 60 + n2 * 40; d[i+2] = 140 + n1 * 60;
+            }
+            // clouds
+            if (n3 > 0.72) {
+              d[i] = Math.min(255, d[i] + 90);
+              d[i+1] = Math.min(255, d[i+1] + 90);
+              d[i+2] = Math.min(255, d[i+2] + 100);
+            }
+          }
+        }
+      } else if (style === 'jupiter') {
+        // Horizontal bands
+        for (let y = 0; y < size; y++) {
+          for (let x = 0; x < size; x++) {
+            const i = (y * size + x) * 4;
+            const band = Math.sin(y * 0.04 + noise(x * 0.01, y * 0.02) * 2) * 0.5 + 0.5;
+            const n = noise(x * 0.03, y * 0.08);
+            d[i]   = 180 + band * 50 + n * 30;
+            d[i+1] = 140 + band * 40 + n * 20;
+            d[i+2] = 90  + band * 30 + n * 15;
+          }
+        }
+      } else if (style === 'mars') {
+        for (let y = 0; y < size; y++) {
+          for (let x = 0; x < size; x++) {
+            const i = (y * size + x) * 4;
+            const n1 = noise(x * 0.03, y * 0.03);
+            const n2 = noise(x * 0.08, y * 0.08);
+            d[i]   = 140 + n1 * 60 + n2 * 30;
+            d[i+1] = 60  + n1 * 40 + n2 * 20;
+            d[i+2] = 30  + n1 * 25;
+            // darker craters
+            if (n2 > 0.82) { d[i] *= 0.6; d[i+1] *= 0.55; d[i+2] *= 0.5; }
+          }
+        }
+      } else if (style === 'venus') {
+        for (let y = 0; y < size; y++) {
+          for (let x = 0; x < size; x++) {
+            const i = (y * size + x) * 4;
+            const n = noise(x * 0.04, y * 0.04);
+            const n2 = noise(x * 0.1 + 3, y * 0.06);
+            d[i]   = 210 + n * 40;
+            d[i+1] = 140 + n * 50 + n2 * 20;
+            d[i+2] = 40  + n * 30;
+          }
+        }
+      } else if (style === 'neptune' || style === 'uranus') {
+        for (let y = 0; y < size; y++) {
+          for (let x = 0; x < size; x++) {
+            const i = (y * size + x) * 4;
+            const n = noise(x * 0.025, y * 0.04);
+            const band = Math.sin(y * 0.03) * 0.15;
+            if (style === 'neptune') {
+              d[i] = 30 + n * 40; d[i+1] = 50 + n * 50 + band * 40; d[i+2] = 140 + n * 60;
+            } else {
+              d[i] = 80 + n * 40; d[i+1] = 180 + n * 40; d[i+2] = 200 + n * 30 + band * 20;
+            }
+          }
+        }
+      } else if (style === 'saturn') {
+        for (let y = 0; y < size; y++) {
+          for (let x = 0; x < size; x++) {
+            const i = (y * size + x) * 4;
+            const band = Math.sin(y * 0.05 + noise(x*0.01,y*0.02)) * 0.5 + 0.5;
+            d[i]   = 200 + band * 30;
+            d[i+1] = 180 + band * 25;
+            d[i+2] = 130 + band * 20;
+          }
+        }
+      } else { // mercury / rocky gray
+        for (let y = 0; y < size; y++) {
+          for (let x = 0; x < size; x++) {
+            const i = (y * size + x) * 4;
+            const n = noise(x * 0.05, y * 0.05);
+            const n2 = noise(x * 0.12, y * 0.12);
+            const v = 90 + n * 70 + n2 * 30;
+            d[i] = v; d[i+1] = v * 0.95; d[i+2] = v * 0.88;
+            if (n2 > 0.85) { d[i] *= 0.55; d[i+1] *= 0.55; d[i+2] *= 0.55; }
+          }
+        }
+      }
+
+      ctx.putImageData(img, 0, 0);
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      return tex;
+    }
+
+    function createRingTexture() {
+      const size = 512;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const cx = size/2, cy = size/2;
+      for (let i = 0; i < 80; i++) {
+        const r = size * 0.28 + (i / 80) * size * 0.22;
+        const alpha = 0.15 + Math.sin(i * 0.4) * 0.1 + Math.random() * 0.08;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(210, 190, 150, ${alpha})`;
+        ctx.lineWidth = 1.2 + Math.random();
+        ctx.stroke();
+      }
+      // darker gaps
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.38, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(20,15,10,0.5)';
+      ctx.lineWidth = 6;
+      ctx.stroke();
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    // ========== SUN ==========
+    function createSun() {
+      const group = new THREE.Group();
+      const core = new THREE.Mesh(
+        new THREE.SphereGeometry(2.4, 64, 64),
+        new THREE.MeshStandardMaterial({
+          color: 0xffcc66,
+          emissive: 0xff8800,
+          emissiveIntensity: 2.8,
+          roughness: 0.45,
+          metalness: 0.05
+        })
+      );
+      group.add(core);
+
+      // Corona layers
+      for (let i = 0; i < 3; i++) {
+        const glow = new THREE.Mesh(
+          new THREE.SphereGeometry(2.4, 32, 32),
+          new THREE.MeshBasicMaterial({
+            color: i === 0 ? 0xffaa44 : i === 1 ? 0xff7722 : 0xff5500,
+            transparent: true,
+            opacity: 0.22 - i * 0.06,
+            side: THREE.BackSide
+          })
+        );
+        glow.scale.setScalar(1.12 + i * 0.18);
+        group.add(glow);
+      }
+
+      const light = new THREE.PointLight(0xffcc88, 3.2, 90, 2);
+      group.add(light);
+      const light2 = new THREE.PointLight(0xffaa55, 1.2, 50, 2);
+      group.add(light2);
+      scene.add(group);
+      return { core };
+    }
+    const sun = createSun();
+
+    // ========== BILLBOARD LABEL ==========
+    function makeTextSprite(text) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const fontSize = 42;
+      ctx.font = `600 ${fontSize}px Inter, system-ui, sans-serif`;
+      const w = Math.ceil(ctx.measureText(text).width + 28);
+      canvas.width = w; canvas.height = fontSize + 24;
+      ctx.font = `600 ${fontSize}px Inter, system-ui, sans-serif`;
+      ctx.fillStyle = 'rgba(10,15,30,0.82)';
+      ctx.beginPath();
+      ctx.roundRect(0, 0, w, canvas.height, 10);
+      ctx.fill();
+      ctx.fillStyle = '#E2E8F0';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, w/2, canvas.height/2);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+      const spr = new THREE.Sprite(mat);
+      const s = 0.038;
+      spr.scale.set(w * s, canvas.height * s, 1);
+      return spr;
+    }
+
+    // ========== CREATE REALISTIC PLANETS ==========
+    topics.forEach((topic) => {
+      const p = topic.planet;
+      const group = new THREE.Group();
+      group.position.set(...p.position);
+
+      // Main body with procedural texture
+      const texture = createPlanetTexture(p.style, p.color);
+      const geo = new THREE.SphereGeometry(p.size, 48, 48);
+      const mat = new THREE.MeshStandardMaterial({
+        map: texture,
+        roughness: p.style === 'jupiter' || p.style === 'saturn' ? 0.55 : 0.7,
+        metalness: 0.08,
+        emissive: new THREE.Color(p.color).multiplyScalar(0.08),
+        emissiveIntensity: 0.35
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.userData = { id: topic.id, topic, size: p.size, baseY: 0 };
+      group.add(mesh);
+
+      // Subtle atmosphere glow for earth-like / gas giants
+      if (['earth', 'neptune', 'uranus', 'jupiter'].includes(p.style)) {
+        const atm = new THREE.Mesh(
+          new THREE.SphereGeometry(p.size * 1.06, 32, 32),
+          new THREE.MeshBasicMaterial({
+            color: p.style === 'earth' ? 0x88ccff : p.style === 'jupiter' ? 0xffddaa : 0xaaddff,
+            transparent: true,
+            opacity: 0.13,
+            side: THREE.BackSide
+          })
+        );
+        group.add(atm);
+      }
+
+      // Rings (Saturn / Uranus style)
+      if (p.hasRing) {
+        const ringTex = createRingTexture();
+        const ringGeo = new THREE.RingGeometry(p.size * 1.35, p.size * 2.35, 128);
+        // Flip UVs for proper mapping
+        const pos = ringGeo.attributes.position;
+        const uv = ringGeo.attributes.uv;
+        for (let i = 0; i < pos.count; i++) {
+          const x = pos.getX(i), y = pos.getY(i);
+          const u = (Math.atan2(y, x) / (Math.PI * 2)) + 0.5;
+          const r = Math.sqrt(x*x + y*y);
+          const v = (r - p.size * 1.35) / (p.size * 1.0);
+          uv.setXY(i, u, v);
+        }
+        const ringMat = new THREE.MeshBasicMaterial({
+          map: ringTex,
+          transparent: true,
+          opacity: 0.85,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2.15;
+        group.add(ring);
+      }
+
+      scene.add(group);
+      planetMeshes[topic.id] = mesh;
+      planetGroups[topic.id] = group;
+
+      // Label
+      const label = makeTextSprite(topic.titleShort || topic.title);
+      label.position.set(p.position[0], p.position[1] + p.size + 1.25, p.position[2]);
+      scene.add(label);
+      labelSprites[topic.id] = label;
+
+      // Orbit line
+      const pts = [];
+      for (let i = 0; i <= 128; i++) {
+        const a = (i / 128) * Math.PI * 2;
+        pts.push(new THREE.Vector3(Math.cos(a) * p.orbitRadius, 0, Math.sin(a) * p.orbitRadius * 0.92));
+      }
+      const orbit = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(pts),
+        new THREE.LineBasicMaterial({ color: 0x64748b, transparent: true, opacity: 0.22 })
+      );
+      orbit.rotation.x = p.orbitTilt;
+      orbit.rotation.z = Math.atan2(p.position[2], p.position[0]) * 0.12;
+      scene.add(orbit);
+      orbitLines[topic.id] = orbit;
+    });
+
+    // ========== SELECTION ==========
+    function updateSelection(id) {
+      if (selectionRing) {
+        scene.remove(selectionRing);
+        selectionRing.geometry.dispose();
+        selectionRing.material.dispose();
+        selectionRing = null;
+      }
+      Object.values(planetMeshes).forEach(m => {
+        m.scale.setScalar(1);
+        m.material.emissiveIntensity = 0.35;
+      });
+      if (!id) return;
+      const mesh = planetMeshes[id];
+      if (!mesh) return;
+      mesh.scale.setScalar(1.18);
+      mesh.material.emissiveIntensity = 0.9;
+
+      const size = mesh.userData.size;
+      const ringGeo = new THREE.RingGeometry(size * 1.45, size * 1.6, 64);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.9, side: THREE.DoubleSide });
+      selectionRing = new THREE.Mesh(ringGeo, ringMat);
+      selectionRing.rotation.x = Math.PI / 2;
+      const grp = planetGroups[id];
+      selectionRing.position.copy(grp.position);
+      scene.add(selectionRing);
+    }
+
+    // ========== RAYCASTER ==========
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let pointerDown = null;
+
+    renderer.domElement.addEventListener('pointerdown', (e) => {
+      pointerDown = { x: e.clientX, y: e.clientY, time: Date.now() };
+    });
+
+    renderer.domElement.addEventListener('pointerup', (e) => {
+      if (!pointerDown) return;
+      const dx = e.clientX - pointerDown.x, dy = e.clientY - pointerDown.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const dt = Date.now() - pointerDown.time;
+      pointerDown = null;
+      if (dist > 7 || dt > 450) return;
+
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(Object.values(planetMeshes));
+      if (hits.length > 0) selectTopic(hits[0].object.userData.id);
+    });
+
+    // ========== UI ==========
+    const detailPanel = document.getElementById('detail-panel');
+    const btnClose = document.getElementById('btn-close');
+
+    function selectTopic(id) {
+      selectedId = id;
+      const topic = topics.find(t => t.id === id);
+      if (!topic) return;
+      updateSelection(id);
+
+      const catEl = document.getElementById('detail-cat');
+      catEl.textContent = topic.category;
+      catEl.style.color = topic.planet.color;
+      catEl.style.background = topic.planet.color + '22';
+      catEl.style.border = `1px solid ${topic.planet.color}44`;
+
+      document.getElementById('detail-title').innerHTML = topic.title + (topic.thaiTitle ? '<div style="font-size:13px;font-weight:400;color:#94a3b8;margin-top:4px">' + topic.thaiTitle + '</div>' : '');
+      document.getElementById('detail-desc').textContent = topic.description;
+      document.getElementById('detail-status').textContent = topic.status || '-';
+
+      // Highlight in topic list
+      document.querySelectorAll('.topic-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === id);
+      });
+
+      const list = document.getElementById('detail-content');
+      list.innerHTML = '';
+      list.style.setProperty('--cat-color', topic.planet.color);
+      topic.content.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        list.appendChild(li);
+      });
+
+      detailPanel.classList.add('open');
+      btnClose.style.display = 'flex';
+
+      // Mobile: collapse left menu so user can see the planet
+      if (window.innerWidth <= 768) {
+        controlsEl.classList.add('collapsed');
+        menuToggle.classList.remove('open');
+      }
+    }
+
+    function closeDetail() {
+      selectedId = null;
+      updateSelection(null);
+      detailPanel.classList.remove('open');
+      btnClose.style.display = 'none';
+      document.querySelectorAll('.topic-item').forEach(el => el.classList.remove('active'));
+    }
+
+    document.getElementById('detail-close').addEventListener('click', closeDetail);
+    btnClose.addEventListener('click', closeDetail);
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      camera.position.set(0, 15, 38);
+      controls.target.set(0, 0, 0);
+      controls.update();
+    });
+
+    document.getElementById('btn-orbits').addEventListener('click', function () {
+      showOrbits = !showOrbits;
+      Object.values(orbitLines).forEach(o => o.visible = showOrbits);
+      this.classList.toggle('active', showOrbits);
+      this.innerHTML = (showOrbits ? 'Hide' : 'Show') + ' Orbits';
+    });
+
+    document.getElementById('btn-labels').addEventListener('click', function () {
+      showLabels = !showLabels;
+      Object.values(labelSprites).forEach(l => l.visible = showLabels);
+      this.classList.toggle('active', showLabels);
+      this.innerHTML = (showLabels ? 'Hide' : 'Show') + ' Labels';
+    });
+
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.trim().toLowerCase();
+      searchResults.innerHTML = '';
+      if (!q) return;
+      const filtered = topics.filter(t =>
+        t.title.toLowerCase().includes(q) ||
+        (t.titleShort && t.titleShort.toLowerCase().includes(q)) ||
+        (t.thaiTitle && t.thaiTitle.toLowerCase().includes(q)) ||
+        t.category.toLowerCase().includes(q) ||
+        t.description.toLowerCase().includes(q)
+      );
+      if (!filtered.length) {
+        searchResults.innerHTML = '<div style="padding:8px 10px;font-size:12px;color:#64748b">ไม่พบหัวข้อ</div>';
+        return;
+      }
+      filtered.forEach(t => {
+        const btn = document.createElement('button');
+        btn.className = 'search-item';
+        btn.innerHTML = `<span class="dot" style="background:${t.planet.color}"></span><span><div>${t.titleShort || t.title}</div><div style="font-size:11px;color:#94a3b8">${t.thaiTitle || ''}</div></span>`;
+        btn.onclick = () => { selectTopic(t.id); searchInput.value = ''; searchResults.innerHTML = ''; };
+        searchResults.appendChild(btn);
+      });
+    });
+
+
+    // Build left topic menu
+    
+    // ===== Collapsible menus + mobile =====
+    const controlsEl = document.getElementById('controls');
+    const menuToggle = document.getElementById('menu-toggle');
+
+    function isMobile() {
+      return window.innerWidth <= 768 || (window.innerHeight <= 500 && window.matchMedia('(orientation: landscape)').matches);
+    }
+
+    // Start collapsed on mobile
+    if (isMobile()) {
+      controlsEl.classList.add('collapsed');
+      menuToggle.classList.remove('open');
+    }
+
+    menuToggle.addEventListener('click', () => {
+      const open = controlsEl.classList.toggle('collapsed') === false;
+      // toggle returns true if class was added (now collapsed)
+      // we want: if collapsed, remove open from button
+      if (controlsEl.classList.contains('collapsed')) {
+        menuToggle.classList.remove('open');
+      } else {
+        menuToggle.classList.add('open');
+      }
+    });
+
+    // Section accordion
+    document.querySelectorAll('.panel-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const id = header.dataset.panel;
+        const body = document.getElementById('panel-' + id);
+        if (!body) return;
+        header.classList.toggle('collapsed');
+        body.classList.toggle('collapsed');
+      });
+    });
+
+    // On mobile: when selecting topic, auto-collapse menu to see 3D
+
+    function buildTopicList() {
+      const list = document.getElementById('topic-list');
+      if (!list) return;
+      list.innerHTML = '';
+      topics.forEach(t => {
+        const btn = document.createElement('button');
+        btn.className = 'topic-item';
+        btn.dataset.id = t.id;
+        btn.innerHTML = `
+          <span class="dot" style="background:${t.planet.color};margin-top:5px"></span>
+          <span style="flex:1;min-width:0">
+            <div class="jp">${t.titleShort || t.title}</div>
+            <div class="th">${t.thaiTitle || ''}</div>
+          </span>
+          <span class="lv">${t.status || ''}</span>
+        `;
+        btn.onclick = () => selectTopic(t.id);
+        list.appendChild(btn);
+      });
+    }
+    buildTopicList();
+
+
+    // ========== ANIMATE ==========
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+
+      sun.core.rotation.y += 0.0025;
+
+      Object.entries(planetGroups).forEach(([id, group]) => {
+        const mesh = planetMeshes[id];
+        const basePos = topics.find(tp => tp.id === id).planet.position;
+        group.position.y = basePos[1] + Math.sin(t * 0.35 + basePos[0]) * 0.12;
+        mesh.rotation.y += 0.0035;
+
+        const label = labelSprites[id];
+        if (label) {
+          label.position.x = group.position.x;
+          label.position.y = group.position.y + mesh.userData.size + 1.25;
+          label.position.z = group.position.z;
+        }
+        if (selectionRing && selectedId === id) {
+          selectionRing.position.copy(group.position);
+        }
+      });
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
