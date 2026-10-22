@@ -12,11 +12,11 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-
 .w{max-width:600px;margin:0 auto}
 h1{font-size:19px;margin:4px 0 10px}
 .tabs{display:flex;gap:8px;margin-bottom:12px}
-.tabs button{flex:1;font:inherit;padding:10px;border-radius:10px;border:1px solid #8886;background:var(--card);color:var(--fg)}
+.tabs button{flex:1;font:inherit;padding:10px 4px;font-size:15px;border-radius:10px;border:1px solid #8886;background:var(--card);color:var(--fg)}
 .tabs button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
 .bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 button{font:inherit;color:var(--fg);border:1px solid #8886;background:var(--card);border-radius:12px;padding:9px 13px;cursor:pointer}
-.chip{border-radius:999px;padding:6px 12px;font-size:14px}
+.chip{border-radius:999px;padding:6px 12px;font-size:14px;border:1px solid #8886;background:var(--card);cursor:pointer;display:inline-block}
 .chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
 .st{display:flex;justify-content:space-between;color:var(--mut);font-size:14px;margin-bottom:6px}
 .pg{height:6px;background:#8883;border-radius:9px;overflow:hidden;margin-bottom:12px}
@@ -44,9 +44,14 @@ button{font:inherit;color:var(--fg);border:1px solid #8886;background:var(--card
 .hero{background:var(--card);border-radius:16px;padding:18px;text-align:center}
 rt{font-size:10px;color:var(--mut);font-weight:400;line-height:1;user-select:none}
 ruby{margin:0 1px}
+.kj{font-size:84px;line-height:1.15}
+.ch.g2{grid-template-columns:1fr 1fr}
+.ch.g2 button{text-align:center}
+.ch button.big{font-size:40px;padding:10px}
+.kinfo{font-size:16px;line-height:1.7}
 </style></head><body><div class="w">
 <h1>🇯🇵 N5 ฟัง & จำลองสอบ</h1>
-<div class="tabs"><button id="t1" class="on">🎧 ฝึกฟัง</button><button id="t2">📝 จำลองสอบ</button></div>
+<div class="tabs"><button id="t1" class="on">🎧 ฝึกฟัง</button><button id="t3">🈁 ทายคันจิ</button><button id="t2">📝 จำลองสอบ</button></div>
 <div id="app"></div>
 </div>
 <script>
@@ -240,8 +245,159 @@ function mend(){
   <button id="ag">ทำชุดใหม่</button></div>`;
   $("ag").onclick=tabMock;
 }
+// ---- kanji guess tab ----
+// kanji | readings (on・kun) | meaning(thai) | example word | example reading
+const KJ=P(`一|いち・ひと|หนึ่ง|一つ|ひとつ
+二|に・ふた|สอง|二人|ふたり
+三|さん・みっ|สาม|三月|さんがつ
+四|よん・し|สี่|四時|よじ
+五|ご・いつ|ห้า|五分|ごふん
+六|ろく・むっ|หก|六百|ろっぴゃく
+七|しち・なな|เจ็ด|七時|しちじ
+八|はち・やっ|แปด|八月|はちがつ
+九|きゅう・く|เก้า|九時|くじ
+十|じゅう・とお|สิบ|十分|じゅっぷん
+百|ひゃく|ร้อย|三百|さんびゃく
+千|せん|พัน|千円|せんえん
+万|まん|หมื่น|一万円|いちまんえん
+円|えん|เยน / วงกลม|百円|ひゃくえん
+日|にち・ひ|วัน / ดวงอาทิตย์|日曜日|にちようび
+月|げつ・つき|เดือน / ดวงจันทร์|月曜日|げつようび
+火|か・ひ|ไฟ|火曜日|かようび
+水|すい・みず|น้ำ|水曜日|すいようび
+木|もく・き|ต้นไม้|木曜日|もくようび
+金|きん・かね|ทอง / เงิน|金曜日|きんようび
+土|ど・つち|ดิน|土曜日|どようび
+年|ねん・とし|ปี|今年|ことし
+時|じ・とき|เวลา / โมง|時間|じかん
+分|ふん・わ|นาที / แบ่ง|自分|じぶん
+半|はん|ครึ่ง|三時半|さんじはん
+今|こん・いま|ตอนนี้|今日|きょう
+何|なに・なん|อะไร|何時|なんじ
+午|ご|เที่ยง|午前|ごぜん
+前|ぜん・まえ|ข้างหน้า / ก่อน|名前|なまえ
+後|ご・うし|ข้างหลัง / หลังจาก|午後|ごご
+上|じょう・うえ|ข้างบน|上手|じょうず
+下|か・した|ข้างล่าง|地下鉄|ちかてつ
+中|ちゅう・なか|ข้างใน / กลาง|中国|ちゅうごく
+外|がい・そと|ข้างนอก|外国|がいこく
+左|さ・ひだり|ซ้าย|左手|ひだりて
+右|う・みぎ|ขวา|右手|みぎて
+東|とう・ひがし|ทิศตะวันออก|東京|とうきょう
+西|せい・にし|ทิศตะวันตก|西口|にしぐち
+南|なん・みなみ|ทิศใต้|南口|みなみぐち
+北|ほく・きた|ทิศเหนือ|北口|きたぐち
+山|さん・やま|ภูเขา|富士山|ふじさん
+川|せん・かわ|แม่น้ำ|川|かわ
+天|てん|ท้องฟ้า / สวรรค์|天気|てんき
+気|き|จิตใจ / บรรยากาศ|元気|げんき
+雨|う・あめ|ฝน|大雨|おおあめ
+花|か・はな|ดอกไม้|花見|はなみ
+人|じん・ひと|คน|日本人|にほんじん
+男|だん・おとこ|ผู้ชาย|男の子|おとこのこ
+女|じょ・おんな|ผู้หญิง|女の人|おんなのひと
+子|し・こ|เด็ก|子ども|こども
+父|ふ・ちち|พ่อ|お父さん|おとうさん
+母|ぼ・はは|แม่|お母さん|おかあさん
+友|ゆう・とも|เพื่อน|友達|ともだち
+名|めい・な|ชื่อ|名前|なまえ
+目|もく・め|ตา|目|め
+耳|じ・みみ|หู|耳|みみ
+口|こう・くち|ปาก|入口|いりぐち
+手|しゅ・て|มือ|手紙|てがみ
+足|そく・あし|เท้า / ขา|足|あし
+大|だい・おお|ใหญ่|大学|だいがく
+小|しょう・ちい|เล็ก|小学校|しょうがっこう
+高|こう・たか|สูง / แพง|高校|こうこう
+安|あん・やす|ถูก / ปลอดภัย|安い|やすい
+新|しん・あたら|ใหม่|新聞|しんぶん
+古|こ・ふる|เก่า|古い|ふるい
+長|ちょう・なが|ยาว|社長|しゃちょう
+白|はく・しろ|ขาว|白い|しろい
+行|こう・い|ไป|銀行|ぎんこう
+来|らい・く|มา|来週|らいしゅう
+見|けん・み|ดู|見る|みる
+食|しょく・た|กิน|食べる|たべる
+飲|いん・の|ดื่ม|飲み物|のみもの
+読|どく・よ|อ่าน|読む|よむ
+書|しょ・か|เขียน|辞書|じしょ
+聞|ぶん・き|ฟัง / ถาม|聞く|きく
+話|わ・はな|พูด / เรื่องราว|電話|でんわ
+言|げん・い|พูด / กล่าว|言う|いう
+買|ばい・か|ซื้อ|買い物|かいもの
+休|きゅう・やす|พัก / หยุด|休み|やすみ
+出|しゅつ・で|ออก|出口|でぐち
+入|にゅう・はい|เข้า|入る|はいる
+立|りつ・た|ยืน|立つ|たつ
+会|かい・あ|พบ / ประชุม|会社|かいしゃ
+学|がく・まな|เรียน|学生|がくせい
+校|こう|โรงเรียน|学校|がっこう
+生|せい・い|เกิด / ชีวิต|先生|せんせい
+先|せん・さき|ก่อน / ล่วงหน้า|先週|せんしゅう
+語|ご|ภาษา|日本語|にほんご
+国|こく・くに|ประเทศ|外国|がいこく
+車|しゃ・くるま|รถ|電車|でんしゃ
+電|でん|ไฟฟ้า|電気|でんき
+駅|えき|สถานี|駅|えき
+道|どう・みち|ถนน / ทาง|道|みち
+店|てん・みせ|ร้าน|店|みせ
+社|しゃ|บริษัท / ศาลเจ้า|会社|かいしゃ
+週|しゅう|สัปดาห์|毎週|まいしゅう
+毎|まい|ทุก ๆ|毎日|まいにち
+間|かん・あいだ|ระหว่าง / ช่วง|時間|じかん
+多|た・おお|มาก|多い|おおい
+少|しょう・すく|น้อย|少し|すこし`).map(a=>({k:a[0],r:a[1],m:a[2],ex:a[3],exr:a[4]}));
+let kMode="mean",kLen=10,KQ=[],ki=0,ksc=0,kwr=[];
+const KMODES={mean:"คันจิ → ความหมาย",read:"คันจิ → การอ่าน",rev:"ความหมาย → คันจิ"};
+function tabKanji(){
+  $("app").innerHTML=`<div class="bar">${Object.entries(KMODES).map(([k,v])=>`<span class="chip${k===kMode?" on":""}" data-m="${k}">${v}</span>`).join("")}</div>
+  <div class="bar"><span class="chip${kLen===10?" on":""}" data-l="10">10 ข้อ</span><span class="chip${kLen===20?" on":""}" data-l="20">20 ข้อ</span><span class="chip${kLen===KJ.length?" on":""}" data-l="${KJ.length}">ทั้งหมด ${KJ.length}</span><button id="krs">🔀 เริ่มชุดใหม่</button></div><div id="kst"></div>`;
+  document.querySelectorAll("[data-m]").forEach(c=>c.onclick=()=>{kMode=c.dataset.m;tabKanji()});
+  document.querySelectorAll("[data-l]").forEach(c=>c.onclick=()=>{kLen=+c.dataset.l;tabKanji()});
+  $("krs").onclick=kstart;
+  kstart();
+}
+function kstart(){KQ=sh(KJ).slice(0,kLen);ki=0;ksc=0;kwr=[];kshow()}
+function kpick(it,field){
+  const seen=new Set([it[field]]),out=[];
+  for(const x of sh(KJ)){if(out.length>=3)break;if(!seen.has(x[field])){seen.add(x[field]);out.push(x)}}
+  return sh([it,...out]);
+}
+function kshow(){
+  if(ki>=KQ.length){
+    $("kst").innerHTML=`<div class="res"><div class="n">${ksc}/${KQ.length}</div>
+    ${kwr.length?`<p>ทบทวนตัวที่ผิด (${kwr.length})</p><ul>${kwr.map(x=>`<li><span class="jp" style="font-size:26px">${x.k}</span> — ${x.r}<br>${x.m} · <span class="jp">${furi(x.ex,x.exr)}</span></li>`).join("")}</ul>
+    <button id="kwr">🔁 ฝึกเฉพาะตัวที่ผิด</button> `:"<p>🎉 ถูกทั้งหมด!</p>"}
+    <button id="kag">ทำชุดใหม่</button></div>`;
+    $("kag").onclick=kstart;
+    if(kwr.length)$("kwr").onclick=()=>{KQ=sh(kwr);ki=0;ksc=0;kwr=[];kshow()};
+    return;
+  }
+  const it=KQ[ki],field=kMode==="read"?"r":(kMode==="mean"?"m":"k"),opts=kpick(it,field);
+  const prompt=kMode==="rev"
+    ?`<div class="tag">เลือกคันจิที่ตรงกับความหมาย</div><div class="sent" style="font-size:26px;margin:14px 0">${it.m}</div>`
+    :`<div class="tag">${kMode==="read"?"อ่านว่าอะไร (音・訓)":"ความหมายคืออะไร"}</div><div class="kj jp">${it.k}</div>`;
+  $("kst").innerHTML=`<div class="st"><span>ข้อ ${ki+1}/${KQ.length}</span><span>ถูก ${ksc}</span></div>
+  <div class="pg"><i style="width:${ki/KQ.length*100}%"></i></div>
+  <div class="q">${prompt}<div class="note kinfo" id="knt"></div></div>
+  <div class="ch${kMode==="rev"?" g2":""}">${opts.map((o,k)=>`<button data-k="${k}" class="${kMode==="rev"?"jp big":(kMode==="read"?"jp":"")}">${o[field]}</button>`).join("")}</div>
+  <button class="nx" id="knx">ข้อต่อไป →</button>`;
+  document.querySelectorAll(".ch button").forEach((b,k)=>b.onclick=()=>{
+    if(b.disabled)return;
+    const ok=opts[k]===it;if(ok)ksc++;else kwr.push(it);
+    document.querySelectorAll(".ch button").forEach((x,j)=>{x.disabled=true;if(opts[j]===it)x.classList.add("ok");else if(x===b)x.classList.add("bad")});
+    const nt=$("knt");nt.style.display="block";nt.style.textAlign="center";
+    nt.innerHTML=`<span class="jp" style="font-size:30px">${it.k}</span> <b>${it.r}</b> — ${it.m}<br>ตัวอย่าง: <span class="jp" style="font-size:20px">${furi(it.ex,it.exr)}</span> <button class="chip" id="ksp">🔊</button>`;
+    $("ksp").onclick=()=>speak(it.exr,slow);
+    speak(it.exr,slow);
+    $("knx").style.display="block";
+  });
+  $("knx").onclick=()=>{ki++;kshow()};
+}
 // ---- tabs ----
-$("t1").onclick=()=>{$("t1").classList.add("on");$("t2").classList.remove("on");clearInterval(mTimer);tabListen()};
-$("t2").onclick=()=>{$("t2").classList.add("on");$("t1").classList.remove("on");tabMock()};
+function setTab(id,fn){["t1","t2","t3"].forEach(t=>$(t).classList.toggle("on",t===id));clearInterval(mTimer);try{speechSynthesis.cancel()}catch(e){}fn()}
+$("t1").onclick=()=>setTab("t1",tabListen);
+$("t2").onclick=()=>setTab("t2",tabMock);
+$("t3").onclick=()=>setTab("t3",tabKanji);
 tabListen();
 </script></body></html>
