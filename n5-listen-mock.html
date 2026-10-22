@@ -193,7 +193,8 @@ function tabMock(){
   document.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{mLen=+b.dataset.n;mstart()});
 }
 function mstart(){
-  const pool=sh([...KVQ,...GR,...L]);
+  const KJQ=sh(KJ).slice(0,20).map(x=>{const m=["mean","read","rev"][Math.random()*3|0],f=m==="read"?"r":(m==="mean"?"m":"k");return{type:"kj",x,mode:m,field:f,ans:x[f]}});
+  const pool=sh([...KVQ,...GR,...L,...KJQ]);
   MQ=pool.slice(0,mLen);mi=0;msc=0;mwr=[];
   mEnd=Date.now()+(mLen<=15?600:1500)*1000;
   clearInterval(mTimer);mTimer=setInterval(mtick,500);
@@ -212,6 +213,14 @@ function mshow(){
     opts=sh([it.ans,...sh(it.pool).slice(0,3)]);
     disp=t=>t;
     body=`<div class="tag">คำศัพท์/คันจิ</div><div class="sent jp" style="font-size:36px">${furi(it.word,it.read)}</div><div class="ques">ความหมายคืออะไร</div>`;
+  }else if(it.type==="kj"){
+    const seen=new Set([it.ans]),ds=[];
+    for(const y of sh(KJ)){if(ds.length>=3)break;if(!seen.has(y[it.field])){seen.add(y[it.field]);ds.push(y[it.field])}}
+    opts=sh([it.ans,...ds]);
+    disp=t=>t;
+    body=it.mode==="rev"
+      ?`<div class="tag">คันจิ</div><div class="sent" style="font-size:24px">${it.x.m}</div><div class="ques">เลือกคันจิที่ตรงกับความหมาย</div>`
+      :`<div class="tag">คันจิ</div><div class="kj jp" style="font-size:64px">${it.x.k}</div><div class="ques">${it.mode==="read"?"อ่านว่าอะไร":"ความหมายคืออะไร"}</div>`;
   }else if(it.type==="gram"){
     opts=sh(it.ch);
     disp=furiText;
@@ -225,11 +234,11 @@ function mshow(){
   $("app").innerHTML=`<div class="st"><span>ข้อ ${mi+1}/${MQ.length}</span><span class="timer" id="mtm">-</span></div>
   <div class="pg"><i style="width:${mi/MQ.length*100}%"></i></div>
   <div class="q">${body}</div>
-  <div class="ch">${opts.map((t,k)=>`<button data-k="${k}" data-val="${encodeURIComponent(t)}" class="jp">${disp(t)}</button>`).join("")}</div>`;
+  <div class="ch${it.type==="kj"&&it.mode==="rev"?" g2":""}">${opts.map((t,k)=>`<button data-k="${k}" data-val="${encodeURIComponent(t)}" class="jp${it.type==="kj"&&it.mode==="rev"?" big":""}">${disp(t)}</button>`).join("")}</div>`;
   mtick();
   if(it.type==="listen"){const p=$("pl");if(p)p.onclick=()=>speak(it.speak,false);speak(it.speak,false)}
   document.querySelectorAll(".ch button").forEach(b=>b.onclick=()=>{
-    const val=decodeURIComponent(b.dataset.val),correct=it.type==="kv"?it.ans:it.ch[it.ans];
+    const val=decodeURIComponent(b.dataset.val),correct=(it.type==="kv"||it.type==="kj")?it.ans:it.ch[it.ans];
     if(val===correct)msc++;else mwr.push([it,correct]);
     mi++;mshow();
   });
@@ -238,8 +247,8 @@ function mend(){
   clearInterval(mTimer);
   $("app").innerHTML=`<div class="res"><div class="n">${msc}/${MQ.length}</div>
   ${mwr.length?`<p>เฉลยข้อที่ผิด (${mwr.length})</p><ul>${mwr.map(([it,c])=>{
-    const label=it.type==="kv"?(furi(it.word,it.read)+" — "+c):(it.type==="gram"?furiText(it.sentence.replace("___",c)):furiText(it.speak));
-    const extra=it.type==="gram"?("💡 "+it.note+(it.trans?("<br>🇹🇭 "+it.trans):"")):(it.type==="listen"?("Q: "+it.ques+" → "+furiText(c)+(it.trans?("<br>🇹🇭 "+it.trans):"")):"");
+    const label=it.type==="kj"?(it.x.k+" — "+it.x.r+" · "+it.x.m):it.type==="kv"?(furi(it.word,it.read)+" — "+c):(it.type==="gram"?furiText(it.sentence.replace("___",c)):furiText(it.speak));
+    const extra=it.type==="gram"?("💡 "+it.note+(it.trans?("<br>🇹🇭 "+it.trans):"")):(it.type==="listen"?("Q: "+it.ques+" → "+furiText(c)+(it.trans?("<br>🇹🇭 "+it.trans):"")):(it.type==="kj"?("ตัวอย่าง: <span class=\"jp\">"+furi(it.x.ex,it.x.exr)+"</span>"):""));
     return `<li><span class="jp">${label}</span>${extra?("<br>"+extra):""}</li>`;
   }).join("")}</ul>`:"<p>🎉 ถูกทั้งหมด!</p>"}
   <button id="ag">ทำชุดใหม่</button></div>`;
