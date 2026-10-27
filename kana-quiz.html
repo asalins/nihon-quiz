@@ -20,6 +20,7 @@ button,.chip{font:inherit;border:1px solid #8884;background:var(--card);color:va
 .prog{height:6px;background:#8883;border-radius:9px;overflow:hidden;margin-bottom:14px}
 .prog i{display:block;height:100%;width:0;background:var(--ok);transition:width .2s}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:8px}
+.grid.ordered{grid-template-columns:repeat(5,minmax(0,1fr))}
 .k{background:var(--pend);border-radius:12px;padding:6px 6px 8px;text-align:center;color:#fff;transition:background .15s}
 .k .c{font-size:34px;line-height:1.3;font-family:var(--kf,"Klee One"),sans-serif}
 .k input{width:100%;border:0;border-radius:6px;text-align:center;font:inherit;font-size:16px;padding:4px 0;background:#fff;color:#111;outline:none}
@@ -39,9 +40,11 @@ textarea{width:100%;font:inherit;font-size:16px;color:var(--fg);background:var(-
 <span class="chip" id="yo">เสียงควบ きゃ・しゅ</span>
 <span class="chip" id="sk">เสียงกัก っ</span>
 <span class="chip" id="lg">เสียงยาว ー</span>
-<button id="rs">🔀 เริ่มใหม่ / สลับ</button>
+<button id="ord" aria-pressed="false">🔤 เรียงตามตัวอักษร</button>
+ <button id="rs">🔀 เริ่มใหม่ / สลับ</button>
 <button id="gv">💡 เฉลย</button>
 </div>
+<p style="color:var(--mut);font-size:13px;margin:4px 0 10px">โหมดฝึกอ่าน: พิมพ์คำตอบเป็น <b>โรมาจิ</b> เช่น a, ka, shi ไม่ต้องเปลี่ยนแป้นพิมพ์เป็นคาตาคานะ</p>
 <div class="stats"><span>เวลา <b id="tm">0:00</b></span><span>ถูก <b id="sc">0</b>/<b id="tt">0</b></span><span>ผิด <b id="er">0</b></span><span>สถิติดีสุด <b id="bt">-</b></span></div>
 <div class="prog"><i id="pg"></i></div>
 <div class="res" id="res"></div>
@@ -66,7 +69,7 @@ const ktc=s=>[...s].map(kt).join("");
 const SK=[],LG=[];
 [["かきくけこ","ka ki ku ke ko"],["さしすせそ","sa shi su se so"],["たちつてと","ta chi tsu te to"],["ぱぴぷぺぽ","pa pi pu pe po"]].forEach(([h,r])=>[...h].forEach((c,i)=>{const x=r.split(" ")[i],y=(x[0]=="c"?"t":x[0])+x;AL[y]=(AL[x]||[]).map(a=>a[0]+a);if(x=="chi")AL[y].push("cchi");SK.push(["っ"+c,y])}));
 H.forEach((c,i)=>{const r=R[i];if(r=="n"||r=="wo")return;const v=r.slice(-1),y=r+v;AL[y]=(AL[r]||[]).map(a=>a+v);if(v=="e")AL[y].push(r+"i");if(v=="o")AL[y].push(r+"u");LG.push([c+"あいういう"["aiueo".indexOf(v)],y,kt(c)+"ー"])});
-let m="h",se=true,dk=false,yo=false,sk=false,lg=false,items=[],t0=0,tick=null,done=0,err=0;
+let ordered=false,m="h",se=true,dk=false,yo=false,sk=false,lg=false,items=[],t0=0,tick=null,done=0,err=0;
 const $=id=>document.getElementById(id);
 const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
 function bkey(){return "kbest_"+m+(se?"s":"")+(dk?"d":"")+(yo?"y":"")+(sk?"q":"")+(lg?"l":"")}
@@ -80,7 +83,33 @@ function build(){
   if(sk)a=a.concat(SK);if(lg)a=a.concat(LG);let o=[];
   if(m!="k")o=o.concat(a.map(x=>[x[0],x[1]]));
   if(m!="h")o=o.concat(a.map(x=>[x[2]||ktc(x[0]),x[1]]));
-  for(let i=o.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[o[i],o[j]]=[o[j],o[i]]}
+  // 五十音順: Japanese phonetic order, with voiced sounds following their base kana.
+  if(ordered){
+    const baseOrder=[...H];
+    const voiced={"が":"か","ぎ":"き","ぐ":"く","げ":"け","ご":"こ",
+      "ざ":"さ","じ":"し","ず":"す","ぜ":"せ","ぞ":"そ",
+      "だ":"た","ぢ":"ち","づ":"つ","で":"て","ど":"と",
+      "ば":"は","び":"ひ","ぶ":"ふ","べ":"へ","ぼ":"ほ",
+      "ぱ":"は","ぴ":"ひ","ぷ":"ふ","ぺ":"へ","ぽ":"ほ"};
+    const small={"ぁ":"あ","ぃ":"い","ぅ":"う","ぇ":"え","ぉ":"お",
+      "ゃ":"や","ゅ":"ゆ","ょ":"よ","っ":"つ"};
+    const hira=c=>[...c].map(x=>{const n=x.charCodeAt(0);return n>=0x30A1&&n<=0x30F6?String.fromCharCode(n-0x60):x}).join("");
+    const rank=c=>{const h=hira(c),head=h[0]==="っ"?(h[1]||h[0]):h[0];
+      const normalized=voiced[head]||small[head]||head;
+      const i=baseOrder.indexOf(normalized);
+      const voice=head===normalized?0:("ぱぴぷぺぽ".includes(head)?2:1);
+      const modifier=h.length>1?1:0;
+      return [(i<0?999:i),voice,modifier,h];
+    };
+    o.sort((a,b)=>{
+      const x=rank(a[0]),y=rank(b[0]);
+      for(let i=0;i<3;i++)if(x[i]!==y[i])return x[i]-y[i];
+      return x[3].localeCompare(y[3],"ja");
+    });
+  }else{
+    for(let i=o.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[o[i],o[j]]=[o[j],o[i]]}
+  }
+  $("g").classList.toggle("ordered",ordered);
   items=o;done=0;err=0;clearInterval(tick);tick=null;t0=0;
   $("tm").textContent="0:00";$("er").textContent=0;$("res").style.display="none";
   $("bt").textContent=best()?fmt(+best()):"-";
@@ -129,7 +158,8 @@ $("gv").onclick=()=>{
     const inp=d.querySelector("input");inp.disabled=true;inp.value=items[idx][1];d.style.opacity=.6;
   });clearInterval(tick);tick=null;
 };
-$("rs").onclick=build;
+$("ord").onclick=()=>{ordered=!ordered;$("ord").textContent=ordered?"🔤 เรียงตามตัวอักษร ✓":"🔤 เรียงตามตัวอักษร";$("ord").setAttribute("aria-pressed",String(ordered));$("ord").classList.toggle("chip",ordered);$("ord").classList.toggle("on",ordered);build()};
+$("rs").onclick=()=>{ordered=false;$("ord").textContent="🔤 เรียงตามตัวอักษร";$("ord").setAttribute("aria-pressed","false");$("ord").classList.remove("on");build()};
 function ensureOne(){if(!se&&!dk&&!yo&&!sk&&!lg){se=true;$("se").classList.add("on")}}
 $("se").onclick=()=>{se=!se;ensureOne();$("se").classList.toggle("on",se);build()};
 $("dk").onclick=()=>{dk=!dk;ensureOne();$("dk").classList.toggle("on",dk);build()};
