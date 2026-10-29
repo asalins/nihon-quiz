@@ -1,0 +1,57 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>คันจิออกสอบ — ฝึกจำและแบบทดสอบ</title><style>
+:root{font-family:system-ui,"Noto Sans Thai",sans-serif;color:#19283e;background:#f3f6fc}*{box-sizing:border-box}
+body{margin:0}header{background:linear-gradient(120deg,#172a50,#355fc3);color:white;padding:25px 18px}
+.wrap{max-width:780px;margin:auto}main{padding:18px}.muted{color:#64748b}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.stat{background:white;border:1px solid #e1e7f0;padding:14px;border-radius:15px;flex:1;min-width:100px}
+.stat b{display:block;font-size:23px}.panel{background:white;padding:24px;border-radius:22px;box-shadow:0 6px 25px #172a5010}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}button,select{font:inherit;border:1px solid #d7dfed;border-radius:12px;background:white;padding:11px 14px;cursor:pointer}
+button.active,button.primary{background:#2854c4;color:white;border-color:#2854c4}button:disabled{opacity:.5;cursor:default}
+.word{text-align:center;font-size:clamp(50px,12vw,82px);font-weight:750;margin:18px 0}
+.reading{text-align:center;color:#315dc1;font-size:26px}.meaning{text-align:center;font-size:23px;margin:10px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}.options button{text-align:left;min-height:64px}
+.options button.correct{background:#d9f6e5;border-color:#159759;color:#135f3d}
+.options button.wrong{background:#ffe5e5;border-color:#e05555;color:#9b2424}
+.feedback{background:#eef3ff;padding:15px;border-radius:13px;margin:14px 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+.small{font-size:13px}footer{margin:20px 0;color:#64748b}h1{margin:0 0 8px}h2{margin:0 0 10px}
+@media(max-width:480px){.options{grid-template-columns:1fr}.panel{padding:18px}}
+</style></head><body><header><div class="wrap"><h1>日本語 คันจิออกสอบ</h1><div>คำศัพท์เป็นข้อความ • เรียนก่อนตอบ • ไม่ต้องเดา</div></div></header>
+<main class="wrap"><div class="stats"><div class="stat">คำศัพท์ทั้งหมด<b id="total"></b></div><div class="stat">ตอบถูก<b id="correct">0</b></div><div class="stat">ต้องทบทวน<b id="missed">0</b></div></div>
+<div class="toolbar"><button id="studyBtn" class="active">📖 เรียนคำศัพท์</button><button id="quizBtn">📝 แบบทดสอบ</button><select id="kind"><option value="meaning">เลือกความหมาย</option><option value="reading">เลือกคำอ่าน</option></select><button id="reviewBtn">ทบทวนข้อที่ยังไม่แม่น</button><button id="resetBtn">เริ่มใหม่</button></div>
+<section class="panel"><div class="muted small" id="count"></div><div class="word" id="word"></div>
+<div id="study"><div class="reading" id="reading"></div><div class="meaning" id="meaning"></div><div class="actions"><button id="speak">🔊 ฟังเสียง</button><button id="practice">ฝึกตอบคำนี้</button></div></div>
+<div id="quiz" hidden><h2 id="question"></h2><div class="options" id="options"></div><div class="actions"><button id="unknown">ไม่ทราบ / ดูเฉลย</button></div><div id="feedback" class="feedback" hidden></div></div>
+<div class="actions"><button id="prev">← ย้อนกลับ</button><button id="next" class="primary">คำถัดไป →</button></div></section>
+<footer class="small">ข้อมูลคำศัพท์แยกจากข้อความที่จัดทำไว้ในเวอร์ชันก่อนหน้า • คำที่ปรากฏซ้ำถูกตัดออก • ระบบบันทึกความคืบหน้าเฉพาะในเบราว์เซอร์ • ไม่มีรูปภาพ</footer>
+</main><script>
+const DATA=[{"word":"前","reading":"まえ","meaning":"ข้างหน้า / ก่อน"},{"word":"道","reading":"みち","meaning":"ถนน / ทาง"},{"word": "安い", "reading": "やすい", "meaning": "ราคาถูก"}, {"word": "女の子", "reading": "おんなのこ", "meaning": "เด็กผู้หญิง"}, {"word": "長い", "reading": "ながい", "meaning": "ยาว"}, {"word": "短い", "reading": "みじかい", "meaning": "สั้น"}, {"word": "低い", "reading": "ひくい", "meaning": "ต่ำ"}, {"word": "北", "reading": "きた", "meaning": "ทิศเหนือ"}, {"word": "南", "reading": "みなみ", "meaning": "ทิศใต้"}, {"word": "店", "reading": "みせ", "meaning": "ร้านค้า"}, {"word": "千", "reading": "せん", "meaning": "พัน"}, {"word": "年", "reading": "ねん", "meaning": "ปี"}, {"word": "百", "reading": "ひゃく", "meaning": "ร้อย"}, {"word": "万", "reading": "まん", "meaning": "หมื่น"}, {"word": "大", "reading": "だい・おお", "meaning": "ใหญ่"}, {"word": "言", "reading": "げん・い(う)", "meaning": "พูด"}, {"word": "外国", "reading": "がいこく", "meaning": "ต่างประเทศ"}, {"word": "会", "reading": "かい・あ(う)", "meaning": "พบ"}, {"word": "今", "reading": "いま", "meaning": "ตอนนี้"}, {"word": "男", "reading": "おとこ", "meaning": "ผู้ชาย"}, {"word": "英語", "reading": "えいご", "meaning": "ภาษาอังกฤษ"}, {"word": "開け", "reading": "あけ", "meaning": "เปิด"}, {"word": "聞く", "reading": "きく", "meaning": "ฟังหรือถาม"}, {"word": "問", "reading": "と(う)", "meaning": "คำถาม"}, {"word": "西", "reading": "にし", "meaning": "ทิศตะวันตก"}, {"word": "他", "reading": "ほか", "meaning": "อื่น"}, {"word": "有名", "reading": "ゆうめい", "meaning": "มีชื่อเสียง"}, {"word": "今週", "reading": "こんしゅう", "meaning": "สัปดาห์นี้"}, {"word": "小さい", "reading": "ちいさい", "meaning": "เล็ก"}, {"word": "少ない", "reading": "すくない", "meaning": "น้อย"}, {"word": "東", "reading": "ひがし", "meaning": "ตะวันออก"}, {"word": "空", "reading": "そら", "meaning": "ท้องฟ้า"}, {"word": "池", "reading": "いけ", "meaning": "บ่อน้ำ"}, {"word": "風", "reading": "かぜ", "meaning": "ลม"}, {"word": "午後", "reading": "ごご", "meaning": "ช่วงบ่าย"}, {"word": "午前", "reading": "ごぜん", "meaning": "ช่วงเช้า"}, {"word": "立って", "reading": "たって", "meaning": "ยืนอยู่"}, {"word": "電話", "reading": "でんわ", "meaning": "โทรศัพท์"}, {"word": "電車", "reading": "でんしゃ", "meaning": "รถไฟ"}, {"word": "古い", "reading": "ふるい", "meaning": "เก่า"}, {"word": "悪い", "reading": "わるい", "meaning": "ไม่ดี"}, {"word": "行きます", "reading": "いきます", "meaning": "ไป"}, {"word": "来ます", "reading": "きます", "meaning": "มา"}, {"word": "帰ります", "reading": "かえります", "meaning": "กลับ"}, {"word": "会社", "reading": "かいしゃ", "meaning": "บริษัท"}, {"word": "来年", "reading": "らいねん", "meaning": "ปีหน้า"}, {"word": "高い", "reading": "たかい", "meaning": "สูงหรือแพง"}, {"word": "四月", "reading": "しがつ", "meaning": "เมษายน"}, {"word": "毎朝", "reading": "まいあさ", "meaning": "ทุกเช้า"}, {"word": "毎晩", "reading": "まいばん", "meaning": "ทุกคืน"}, {"word": "食べ", "reading": "たべ", "meaning": "กิน"}, {"word": "飲み", "reading": "のみ", "meaning": "ดื่ม"}, {"word": "読んで", "reading": "よんで", "meaning": "อ่าน (รูป て)"}, {"word": "大きな", "reading": "おおきな", "meaning": "ใหญ่"}, {"word": "多い", "reading": "おおい", "meaning": "มาก"}];
+let order=DATA.map((_,i)=>i),pos=0,mode="study",answered=false,review=false;
+const $=id=>document.getElementById(id),saved=JSON.parse(localStorage.getItem("kanji_text_quiz_v1")||"{}");
+let state=saved;
+function persist(){localStorage.setItem("kanji_text_quiz_v1",JSON.stringify(state))}
+function current(){return DATA[order[pos]]}
+function stats(){$("total").textContent=DATA.length;$("correct").textContent=Object.values(state).filter(x=>x==="correct").length;$("missed").textContent=Object.values(state).filter(x=>x==="missed").length}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function choices(d,key){let others=shuffle(DATA.filter(x=>x.word!==d.word&&x[key]!==d[key]).map(x=>x[key]));return shuffle([d[key],...Array.from(new Set(others)).slice(0,3)])}
+function render(){if(!order.length){$("word").textContent="ยังไม่มีคำที่ต้องทบทวน";$("study").hidden=true;$("quiz").hidden=true;$("count").textContent="";stats();return}
+pos=(pos+order.length)%order.length;answered=false;let d=current();
+$("count").textContent=`ข้อ ${pos+1} / ${order.length}`;$("word").textContent=d.word;
+$("study").hidden=mode!=="study";$("quiz").hidden=mode!=="quiz";$("reading").textContent=d.reading;$("meaning").textContent=d.meaning;
+$("studyBtn").classList.toggle("active",mode==="study");$("quizBtn").classList.toggle("active",mode==="quiz");
+$("feedback").hidden=true;$("unknown").disabled=false;
+if(mode==="quiz"){let key=$("kind").value;$("question").textContent=key==="meaning"?"คำนี้มีความหมายว่าอะไร?":"คำนี้อ่านว่าอะไร?";
+$("options").innerHTML="";choices(d,key).forEach(value=>{let b=document.createElement("button");b.textContent=value;b.onclick=()=>answer(value);$("options").append(b)})}
+stats()}
+function answer(value){if(answered)return;answered=true;let d=current(),key=$("kind").value,ok=value===d[key];state[d.word]=ok?"correct":"missed";persist();
+document.querySelectorAll("#options button").forEach(b=>{b.disabled=true;if(b.textContent===d[key])b.classList.add("correct");else if(b.textContent===value)b.classList.add("wrong")});
+$("feedback").hidden=false;$("feedback").textContent=(ok?"✓ ถูกต้อง! ":"ยังไม่ถูกต้อง — ") + `${d.word} (${d.reading}) หมายถึง ${d.meaning}`;$("unknown").disabled=true;stats()}
+$("unknown").onclick=()=>answer(null);
+$("studyBtn").onclick=()=>{mode="study";render()};$("quizBtn").onclick=()=>{mode="quiz";render()};
+$("practice").onclick=()=>{mode="quiz";render()};
+$("kind").onchange=render;$("next").onclick=()=>{pos++;render()};$("prev").onclick=()=>{pos--;render()};
+$("reviewBtn").onclick=()=>{review=!review;order=review?DATA.map((x,i)=>state[x.word]==="missed"?i:-1).filter(i=>i>=0):DATA.map((_,i)=>i);pos=0;$("reviewBtn").classList.toggle("active",review);render()};
+$("resetBtn").onclick=()=>{if(confirm("ต้องการล้างผลการตอบทั้งหมดและเริ่มใหม่หรือไม่?")){state={};persist();review=false;order=DATA.map((_,i)=>i);pos=0;render()}};
+$("speak").onclick=()=>{if("speechSynthesis" in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(current().word);u.lang="ja-JP";u.rate=.8;speechSynthesis.speak(u)}};
+render();
+</script></body></html>
